@@ -1,10 +1,25 @@
 package main
 
 import (
-	"galaveg/bootstrap/app"
+	"galaveg/bootstrap"
+	"os"
 )
 
 func main() {
-	//galaveg/bootstrap/console.Create()
-	app.Create()
+	bootstrap.Root()
+
+	arg := ""
+
+	if len(os.Args) > 1 {
+		arg = os.Args[1]
+	}
+
+	switch arg {
+	case "server":
+		bootstrap.Server()
+		break
+	default:
+		bootstrap.Console()
+		break
+	}
 }

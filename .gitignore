@@ -34,3 +34,5 @@ go.work.sum
 /.idea/galaveg.iml
 /.idea/modules.xml
 /.idea/vcs.xml
+
+/gin-boilerplate-examples-main

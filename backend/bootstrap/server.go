@@ -1,4 +1,4 @@
-package app
+package bootstrap
 
 import (
 	"galaveg/config"
@@ -8,13 +8,14 @@ import (
 	"github.com/spf13/viper"
 )
 
-func Create() *gin.Engine {
+func Server() *gin.Engine {
+	viper.SetDefault("APP_LOG_LEVEL", "info")
+
 	if err := config.SetupConfig(); err != nil {
 		logger.Fatalf("config SetupConfig() error: %s", err)
 		panic(err)
 	}
 
-	viper.SetDefault("APP_LOG_LEVEL", "info")
 	logger.SetLogLevel(viper.GetString("APP_LOG_LEVEL"))
 
 	environment := viper.GetBool("APP_DEBUG")
