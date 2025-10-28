@@ -1,25 +1,38 @@
 package main
 
 import (
+	"galaveg/app/console/commands/migrate"
 	"galaveg/bootstrap"
+	"galaveg/config"
+	"galaveg/utils/logger"
+	"github.com/samber/lo"
+	"github.com/spf13/viper"
 	"os"
 )
 
 func main() {
-	bootstrap.Root()
+	viper.SetDefault("APP_LOG_LEVEL", "info")
 
-	arg := ""
-
-	if len(os.Args) > 1 {
-		arg = os.Args[1]
+	if err := config.SetupConfig(); err != nil {
+		logger.Fatalf("config SetupConfig() error: %s", err)
+		panic(err)
 	}
 
-	switch arg {
+	logger.SetLogLevel(viper.GetString("APP_LOG_LEVEL"))
+
+	switch lo.NthOr(os.Args, 1, "") {
 	case "server":
 		bootstrap.Server()
 		break
-	default:
-		bootstrap.Console()
+	case "migrate":
+		switch lo.NthOr(os.Args, 2, "") {
+		case "up":
+			migrate.Up()
+			break
+		case "down":
+			migrate.Down()
+			break
+		}
 		break
 	}
 }
