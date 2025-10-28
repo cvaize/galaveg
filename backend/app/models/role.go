@@ -2,13 +2,11 @@ package models
 
 import (
 	"galaveg/app/enums/permissions"
-	"gorm.io/gorm"
 	"time"
 )
 
 type Role struct {
-	gorm.Model
-	ID          uint64 `gorm:"primaryKey"`
+	ID          uint64
 	Code        string
 	Name        string
 	Description *string
