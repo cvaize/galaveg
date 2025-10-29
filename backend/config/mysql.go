@@ -5,38 +5,36 @@ import (
 	"github.com/spf13/viper"
 )
 
-type MysqlConfiguration struct {
-	Dbname   string
-	Username string
-	Password string
-	Host     string
-	Port     string
-	LogMode  bool
+func init() {
+	viper.SetDefault("MYSQL_HOST", "mysql")
+	viper.SetDefault("MYSQL_PORT", "3306")
+	viper.SetDefault("MYSQL_DATABASE", "database")
+	viper.SetDefault("MYSQL_USERNAME", "database_user")
+	viper.SetDefault("MYSQL_PASSWORD", "database_password")
 }
 
-func StrMysqlConfiguration() (string, string) {
-	masterDBName := viper.GetString("MASTER_DB_NAME")
-	masterDBUser := viper.GetString("MASTER_DB_USER")
-	masterDBPassword := viper.GetString("MASTER_DB_PASSWORD")
-	masterDBHost := viper.GetString("MASTER_DB_HOST")
-	masterDBPort := viper.GetString("MASTER_DB_PORT")
-	masterDBSslMode := viper.GetString("MASTER_SSL_MODE")
+type MysqlConfiguration struct {
+	Host     string
+	Port     string
+	Database string
+	Username string
+	Password string
+}
 
-	replicaDBName := viper.GetString("REPLICA_DB_NAME")
-	replicaDBUser := viper.GetString("REPLICA_DB_USER")
-	replicaDBPassword := viper.GetString("REPLICA_DB_PASSWORD")
-	replicaDBHost := viper.GetString("REPLICA_DB_HOST")
-	replicaDBPort := viper.GetString("REPLICA_DB_PORT")
-	replicaDBSslMode := viper.GetString("REPLICA_SSL_MODE")
-
-	masterDBDSN := fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
-		masterDBHost, masterDBUser, masterDBPassword, masterDBName, masterDBPort, masterDBSslMode,
+func (c MysqlConfiguration) Str() string {
+	//"user:password@tcp(127.0.0.1:3306)/hello",
+	return fmt.Sprintf(
+		"%s:%s@tcp(%s:%s)/%s",
+		c.Username, c.Password, c.Host, c.Port, c.Database,
 	)
+}
 
-	replicaDBDSN := fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
-		replicaDBHost, replicaDBUser, replicaDBPassword, replicaDBName, replicaDBPort, replicaDBSslMode,
-	)
-	return masterDBDSN, replicaDBDSN
+func MakeMysqlConfig() MysqlConfiguration {
+	return MysqlConfiguration{
+		Host:     viper.GetString("MYSQL_HOST"),
+		Port:     viper.GetString("MYSQL_PORT"),
+		Database: viper.GetString("MYSQL_DATABASE"),
+		Username: viper.GetString("MYSQL_USERNAME"),
+		Password: viper.GetString("MYSQL_PASSWORD"),
+	}
 }

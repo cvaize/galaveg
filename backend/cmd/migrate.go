@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"galaveg/config"
 
 	"github.com/spf13/cobra"
 )
@@ -13,6 +14,7 @@ var migrateCmd = &cobra.Command{
 	Long:  `Запуск миграции базы данных.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("migrate called")
+		fmt.Println(config.Config)
 	},
 }
 

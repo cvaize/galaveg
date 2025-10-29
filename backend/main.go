@@ -1,14 +1,12 @@
-/*
-Copyright © 2025 Dmitry Orlov cvaize@gmail.com
-*/
 package main
 
 import (
-	"galaveg/bootstrap"
 	"galaveg/cmd"
+	"galaveg/config"
+	"galaveg/utils/logger"
 )
 
 func main() {
-	bootstrap.Config()
+	logger.SetLogLevel(config.Config.App.LogLevel)
 	cmd.Execute()
 }

@@ -1,25 +1,23 @@
 package bootstrap
 
 import (
+	"fmt"
+	"galaveg/config"
 	"galaveg/routes"
 	"galaveg/utils/logger"
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
 )
 
 func Http() *gin.Engine {
-	environment := viper.GetBool("APP_DEBUG")
-	if environment {
+	if config.Config.App.Debug {
 		gin.SetMode(gin.DebugMode)
 	} else {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	allowedHosts := viper.GetString("APP_ALLOWED_HOSTS")
 	router := gin.New()
 
-	if err := router.SetTrustedProxies([]string{allowedHosts}); err != nil {
-		logger.Fatalf("router SetTrustedProxies() error: %s", err)
+	if err := router.SetTrustedProxies(config.Config.App.AllowedHosts); err != nil {
 		panic(err)
 	}
 
@@ -29,9 +27,13 @@ func Http() *gin.Engine {
 
 	routes.Register(router)
 
-	logger.Infof("Starting HTTP server at http://0.0.0.0:8080")
-	if err := router.Run("127.0.0.1:8080"); err != nil {
-		logger.Fatalf("router Run() error: %s", err)
+	protocol := "http"
+	host := config.Config.App.Host
+	port := config.Config.App.Port
+	url := fmt.Sprintf("%s:%d", host, port)
+	logger.Infof(fmt.Sprintf("Starting HTTP server at %s://%s", protocol, url))
+	if err := router.Run(url); err != nil {
+		logger.Fatalf("Router Run() error: %s", err)
 		panic(err)
 	}
 
