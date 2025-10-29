@@ -21,8 +21,8 @@ type MysqlConfiguration struct {
 	Password string
 }
 
-func (c MysqlConfiguration) Str() string {
-	//"user:password@tcp(127.0.0.1:3306)/hello",
+func (c MysqlConfiguration) DSN() string {
+	//"user:password@tcp(localhost:3306)/database?parseTime=true"
 	return fmt.Sprintf(
 		"%s:%s@tcp(%s:%s)/%s",
 		c.Username, c.Password, c.Host, c.Port, c.Database,
