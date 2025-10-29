@@ -1,7 +1,6 @@
 package bootstrap
 
 import (
-	"galaveg/config"
 	"galaveg/routes"
 	"galaveg/utils/logger"
 	"github.com/gin-gonic/gin"
@@ -9,15 +8,6 @@ import (
 )
 
 func Server() *gin.Engine {
-	viper.SetDefault("APP_LOG_LEVEL", "info")
-
-	if err := config.SetupConfig(); err != nil {
-		logger.Fatalf("config SetupConfig() error: %s", err)
-		panic(err)
-	}
-
-	logger.SetLogLevel(viper.GetString("APP_LOG_LEVEL"))
-
 	environment := viper.GetBool("APP_DEBUG")
 	if environment {
 		gin.SetMode(gin.DebugMode)
@@ -42,6 +32,7 @@ func Server() *gin.Engine {
 	logger.Infof("Starting HTTP server at http://0.0.0.0:8080")
 	if err := router.Run("127.0.0.1:8080"); err != nil {
 		logger.Fatalf("router Run() error: %s", err)
+		panic(err)
 	}
 
 	return router
