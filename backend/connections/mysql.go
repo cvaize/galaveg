@@ -7,16 +7,13 @@ import (
 	"time"
 )
 
-func InitMySQL() *sql.DB {
+var MySQL *sql.DB
+
+func init() {
 	dsn := config.Config.Mysql.DSN()
 
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
-		panic(err)
-	}
-
-	// Проверка соединения
-	if err := db.Ping(); err != nil {
 		panic(err)
 	}
 
@@ -26,5 +23,5 @@ func InitMySQL() *sql.DB {
 	db.SetConnMaxLifetime(time.Hour)
 	db.SetConnMaxIdleTime(5 * time.Minute)
 
-	return db
+	MySQL = db
 }

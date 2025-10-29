@@ -22,6 +22,7 @@ type MysqlConfiguration struct {
 }
 
 func (c MysqlConfiguration) DSN() string {
+	// TODO: Подумать над параметрами, на вроде multiStatements
 	//"user:password@tcp(localhost:3306)/database?parseTime=true"
 	return fmt.Sprintf(
 		"%s:%s@tcp(%s:%s)/%s",
