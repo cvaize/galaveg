@@ -1,0 +1,68 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: ../../backend
+      dockerfile: ../deploy/local/app/Dockerfile
+    links:
+      - mysql
+      - valkey
+    volumes:
+      - '../../backend:/app'
+      - '.env:/app/.env'
+    ports:
+      - '${FORWARD_APP_PORT:-8080}:8080'
+    environment:
+      WWWUSER: '${WWWUSER:-1000}'
+      WWWGROUP: '${WWWGROUP:-1000}'
+
+  fake_smtp_server:
+    image: gessnerfl/fake-smtp-server:2.2.1
+    hostname: "fake-smtp-server"
+    restart: always
+    environment:
+      - FAKESMTP_AUTHENTICATION_USERNAME=${MAIL_USERNAME:-test}
+      - FAKESMTP_AUTHENTICATION_PASSWORD=${MAIL_PASSWORD:-test}
+    ports:
+      - '${FORWARD_FAKE_SMTP_APP_PORT:-1080}:8080'
+      - '${FORWARD_FAKE_SMTP_API_PORT:-1081}:8081'
+      - '${FORWARD_FAKE_SMTP_PORT:-8025}:8025'
+
+  mysql:
+    image: 'mysql/mysql-server:8.0'
+    ports:
+      - '${FORWARD_MYSQL_PORT:-3306}:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASSWORD}'
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_DATABASE: '${MYSQL_DATABASE}'
+      MYSQL_USER: '${MYSQL_USER}'
+      MYSQL_PASSWORD: '${MYSQL_PASSWORD}'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+    volumes:
+      - 'volume-mysql:/var/lib/mysql'
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - '${FORWARD_PHPMYADMIN_PORT:-8090}:80'
+    environment:
+      - PMA_ARBITRARY=1
+
+  valkey:
+    image: valkey/valkey:9
+    restart: always
+    ports:
+      - '${FORWARD_VALKEY_PORT:-6379}:6379'
+    volumes:
+      - 'volume-valkey:/data'
+
+volumes:
+  volume-cargo:
+    driver: local
+  volume-mysql:
+    driver: local
+  volume-valkey:
+    driver: local
