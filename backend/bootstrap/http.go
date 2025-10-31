@@ -25,7 +25,7 @@ func Http() *gin.Engine {
 	router.Use(gin.Recovery())
 	//router.Use(middleware.CORSMiddleware())
 
-	routes.Register(router)
+	routes.Http(router)
 
 	protocol := "http"
 	host := config.Config.App.Host

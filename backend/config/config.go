@@ -6,7 +6,6 @@ import (
 )
 
 type Configuration struct {
-	//Server   ServerConfiguration
 	App   AppConfiguration
 	Mysql MysqlConfiguration
 }

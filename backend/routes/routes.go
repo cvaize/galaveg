@@ -1,10 +1,15 @@
 package routes
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
-func Register(router *gin.Engine) {
+func Http(router *gin.Engine) {
 	apiRegister(router)
 	webRegister(router)
+}
+
+func Chat() {
+	fmt.Println("Chat routes")
 }
