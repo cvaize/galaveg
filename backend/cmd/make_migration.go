@@ -1,36 +1,64 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
-
+	"github.com/samber/lo"
 	"github.com/spf13/cobra"
+	"os"
+	"time"
 )
 
 // makeMigrationCmd represents the makeMigration command
 var makeMigrationCmd = &cobra.Command{
-	Use:   "make:migration",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Use:                   "make:migration [name]",
+	Short:                 "Create a migration.",
+	Long:                  `Create a migration.`,
+	Args:                  cobra.ExactArgs(1),
+	DisableFlagsInUseLine: true,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		originalName, err := lo.Nth(args, 0)
+		if err != nil {
+			return errors.New("the [name] argument is not specified")
+		}
+		snakeName := lo.SnakeCase(originalName)
+		camelName := lo.CamelCase(originalName)
+		fmt.Println(snakeName)
+		fmt.Println(camelName)
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("makeMigration called")
+		wd, err := os.Getwd()
+		if err != nil {
+			return errors.New(err.Error())
+		}
+
+		migrationFileName := fmt.Sprintf("%s/database/migrations/%s_%s.go", wd, time.Now().Format("2006_01_02_150405"), snakeName)
+
+		if _, err := os.Stat(migrationFileName); err == nil {
+			return errors.New(fmt.Sprintf("the %s file already exists", migrationFileName))
+		}
+
+		file, err := os.Create(migrationFileName)
+		if err != nil {
+			panic(err)
+		}
+		defer file.Close()
+
+		migrationContent := getMakeMigrationTemplate()
+		_, err = file.WriteString(migrationContent)
+		if err != nil {
+			return errors.New(err.Error())
+		}
+
+		fmt.Printf("%s created at %s\n", originalName, migrationFileName)
+		return nil
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(makeMigrationCmd)
+}
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// makeMigrationCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// makeMigrationCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+func getMakeMigrationTemplate() string {
+	return `package migrations
+`
 }

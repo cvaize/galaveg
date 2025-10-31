@@ -6,8 +6,8 @@ import (
 )
 
 type Configuration struct {
-	App   AppConfiguration
-	Mysql MysqlConfiguration
+	App AppConfiguration
+	Db  DbConfiguration
 }
 
 // Config - Глобальный конфиг. Заполняется при запуске.
@@ -32,7 +32,7 @@ func Make() Configuration {
 	time.Local = loc
 
 	return Configuration{
-		App:   MakeAppConfig(),
-		Mysql: MakeMysqlConfig(),
+		App: MakeAppConfig(),
+		Db:  MakeDbConfig(),
 	}
 }

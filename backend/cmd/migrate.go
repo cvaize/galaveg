@@ -1,32 +1,26 @@
 package cmd
 
 import (
-	"galaveg/config"
-	"galaveg/connections"
 	"github.com/spf13/cobra"
-
-	"github.com/golang-migrate/migrate/v4"
-	"github.com/golang-migrate/migrate/v4/database/mysql"
-	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
 // migrateCmd represents the migrate command
 var migrateCmd = &cobra.Command{
 	Use:   "migrate",
-	Short: "Запуск миграции базы данных.",
-	Long:  `Запуск миграции базы данных.`,
+	Short: "Start database migrations.",
+	Long:  `Start database migrations.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		driver, _ := mysql.WithInstance(connections.MySQL, &mysql.Config{})
-		m, _ := migrate.NewWithDatabaseInstance(
-			"file:///migrations/mysql",
-			config.Config.Mysql.Database,
-			driver,
-		)
-
-		//m.Steps(1)
-		if err := m.Up(); err != nil {
-			panic(err)
-		}
+		//driver, _ := mysql.WithInstance(connections.MySQL, &mysql.Config{})
+		//m, _ := migrate.NewWithDatabaseInstance(
+		//	"file:///migrations/mysql",
+		//	config.Config.Mysql.Database,
+		//	driver,
+		//)
+		//
+		////m.Steps(1)
+		//if err := m.Up(); err != nil {
+		//	panic(err)
+		//}
 
 	},
 }

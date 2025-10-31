@@ -8,8 +8,8 @@ import (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "galaveg",
-	Short: "Galaveg - это заготовка для веб-проектов на Golang.",
-	Long:  `Galaveg - это заготовка для веб-проектов на Golang.`,
+	Short: "Galaveg is a blank for web projects on Golang.",
+	Long:  `Galaveg is a blank for web projects on Golang.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },

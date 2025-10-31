@@ -8,8 +8,8 @@ import (
 // chatCmd represents the chat command
 var chatCmd = &cobra.Command{
 	Use:   "chat",
-	Short: "Запуск socket.io сервера чата.",
-	Long:  `Запуск socket.io сервера чата.`,
+	Short: "Start socket.io the chat server.",
+	Long:  `Start socket.io the chat server.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		bootstrap.Chat()
 	},

@@ -7,12 +7,12 @@ import (
 	"time"
 )
 
-var MySQL *sql.DB
+var DB *sql.DB
 
 func init() {
-	dsn := config.Config.Mysql.DSN()
+	dsn := config.Config.Db.DSN()
 
-	db, err := sql.Open("mysql", dsn)
+	db, err := sql.Open(config.Config.Db.Driver, dsn)
 	if err != nil {
 		panic(err)
 	}
@@ -23,5 +23,5 @@ func init() {
 	db.SetConnMaxLifetime(time.Hour)
 	db.SetConnMaxIdleTime(5 * time.Minute)
 
-	MySQL = db
+	DB = db
 }
