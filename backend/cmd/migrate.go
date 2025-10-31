@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	_ "galaveg/database/migrations"
 	"github.com/spf13/cobra"
 )
 
