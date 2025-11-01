@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"galaveg/database"
+	"galaveg/database/migrations"
 	"github.com/spf13/cobra"
 )
 
@@ -13,7 +13,7 @@ var migrateCmd = &cobra.Command{
 	Long:  `Start database migrations.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		fmt.Println(database.Migrations)
+		fmt.Println(migrations.Migrations)
 		//driver, _ := mysql.WithInstance(connections.MySQL, &mysql.Config{})
 		//m, _ := migrate.NewWithDatabaseInstance(
 		//	"file:///migrations/mysql",
