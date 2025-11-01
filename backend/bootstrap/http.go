@@ -3,12 +3,14 @@ package bootstrap
 import (
 	"fmt"
 	"galaveg/config"
+	"galaveg/connections"
 	"galaveg/routes"
 	"galaveg/utils/logger"
 	"github.com/gin-gonic/gin"
 )
 
 func Http() *gin.Engine {
+	defer connections.DB.Close()
 	if config.Config.App.Debug {
 		gin.SetMode(gin.DebugMode)
 	} else {

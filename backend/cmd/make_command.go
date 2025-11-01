@@ -35,10 +35,10 @@ var makeCommandCmd = &cobra.Command{
 		}
 
 		file, err := os.Create(commandFileName)
+		defer file.Close()
 		if err != nil {
 			panic(err)
 		}
-		defer file.Close()
 
 		commandContent := strings.ReplaceAll(getMakeCommandTemplate(), "{{ cmdName }}", originalName)
 		commandContent = strings.ReplaceAll(commandContent, "{{ cmdVarName }}", camelName)
