@@ -1,9 +1,13 @@
 package migrations
 
-import "fmt"
+import (
+	"database/sql"
+)
 
-//var
+func CreateUsersTable00010101000000Up(db *sql.DB) error {
+	return nil
+}
 
-func init() {
-	fmt.Println("Init users")
+func CreateUsersTable00010101000000Down(db *sql.DB) error {
+	return nil
 }
