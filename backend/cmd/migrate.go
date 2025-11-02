@@ -28,11 +28,10 @@ func createMigrationsTable(db *sql.DB) error {
 		id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
 		name VARCHAR(255) NOT NULL UNIQUE
 	);`
-	stmt, err := db.Prepare(query)
+	_, err := db.Exec(query)
 	if err != nil {
 		return err
 	}
-	defer stmt.Close()
 
 	return nil
 }

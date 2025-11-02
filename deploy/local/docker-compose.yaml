@@ -15,6 +15,8 @@ services:
     environment:
       WWWUSER: '${WWWUSER:-1000}'
       WWWGROUP: '${WWWGROUP:-1000}'
+    networks:
+      - app-network
 
   fake_smtp_server:
     image: gessnerfl/fake-smtp-server:2.2.1
@@ -27,8 +29,11 @@ services:
       - '${FORWARD_FAKE_SMTP_APP_PORT:-1080}:8080'
       - '${FORWARD_FAKE_SMTP_API_PORT:-1081}:8081'
       - '${FORWARD_FAKE_SMTP_PORT:-8025}:8025'
+    networks:
+      - app-network
 
   mysql:
+    container_name: mysql
     image: 'mysql/mysql-server:8.0'
     ports:
       - '${FORWARD_MYSQL_PORT:-3306}:3306'
@@ -42,6 +47,8 @@ services:
     volumes:
       - 'volume-mysql:/var/lib/mysql'
       - './init.sql:/docker-entrypoint-initdb.d/init.sql'
+    networks:
+      - app-network
 
   phpmyadmin:
     image: phpmyadmin
@@ -50,6 +57,8 @@ services:
       - '${FORWARD_PHPMYADMIN_PORT:-8090}:80'
     environment:
       - PMA_ARBITRARY=1
+    networks:
+      - app-network
 
   valkey:
     image: valkey/valkey:9
@@ -58,6 +67,8 @@ services:
       - '${FORWARD_VALKEY_PORT:-6379}:6379'
     volumes:
       - 'volume-valkey:/data'
+    networks:
+      - app-network
 
 volumes:
   volume-cargo:
@@ -66,3 +77,7 @@ volumes:
     driver: local
   volume-valkey:
     driver: local
+
+networks:
+  app-network:
+    driver: bridge
