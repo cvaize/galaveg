@@ -31,9 +31,6 @@ go.work.sum
  .idea/
  .vscode/
 /.idea
-/.idea/.gitignore
-/.idea/galaveg.iml
-/.idea/modules.xml
-/.idea/vcs.xml
+/.vscode
 
 /gin-boilerplate-examples-main
