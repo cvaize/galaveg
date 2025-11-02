@@ -1,13 +1,9 @@
 package migrations
 
-import (
-	"database/sql"
-)
-
 type Migration struct {
 	Uuid string
-	Up   func(db *sql.DB) error
-	Down func(db *sql.DB) error
+	Up   func() error
+	Down func() error
 }
 
 var Migrations = []Migration{

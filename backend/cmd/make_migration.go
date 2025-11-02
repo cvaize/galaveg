@@ -112,11 +112,11 @@ import (
 	"database/sql"
 )
 
-func {{ upName }}(db *sql.DB) error {
+func {{ upName }}() error {
 	return nil
 }
 
-func {{ downName }}(db *sql.DB) error {
+func {{ downName }}() error {
 	return nil
 }
 `

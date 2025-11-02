@@ -1,13 +1,9 @@
 package migrations
 
-import (
-	"database/sql"
-)
-
-func CreateUsersTable00010101000000Up(db *sql.DB) error {
+func CreateUsersTable00010101000000Up() error {
 	return nil
 }
 
-func CreateUsersTable00010101000000Down(db *sql.DB) error {
+func CreateUsersTable00010101000000Down() error {
 	return nil
 }
