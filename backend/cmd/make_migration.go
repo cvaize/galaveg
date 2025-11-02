@@ -47,10 +47,10 @@ var makeMigrationCmd = &cobra.Command{
 		}
 
 		file, err := os.Create(migrationFileName)
-		defer file.Close()
 		if err != nil {
 			panic(err)
 		}
+		defer file.Close()
 
 		migrationContent := strings.ReplaceAll(getMakeMigrationTemplate(), "{{ upName }}", upFuncName)
 		migrationContent = strings.ReplaceAll(migrationContent, "{{ downName }}", downFuncName)
@@ -86,10 +86,10 @@ var makeMigrationCmd = &cobra.Command{
 		}
 
 		migrationsFile, err := os.Create(migrationsFileName)
-		defer migrationsFile.Close()
 		if err != nil {
 			panic(err)
 		}
+		defer migrationsFile.Close()
 
 		_, err = migrationsFile.WriteString(updatedMigrationsContent)
 		if err != nil {
