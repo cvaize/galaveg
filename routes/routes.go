@@ -8,6 +8,7 @@ import (
 func Http(router *gin.Engine) {
 	apiRegister(router)
 	webRegister(router)
+	staticFilesRegister(router)
 }
 
 func Chat() {
