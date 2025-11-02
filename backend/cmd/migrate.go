@@ -96,7 +96,7 @@ func upMigration() error {
 
 	for _, m := range migrations.Migrations {
 		if _, ok := index[m.Uuid]; !ok {
-			logger.Infof(fmt.Sprintf("Up migrating - %s", m.Uuid))
+			logger.Infof(fmt.Sprintf("Migrating - %s", m.Uuid))
 			err1 := m.Up()
 			if err1 != nil {
 				return err1
@@ -105,7 +105,7 @@ func upMigration() error {
 			if err2 != nil {
 				return err2
 			}
-			logger.Infof(fmt.Sprintf("Up migrated - %s", m.Uuid))
+			logger.Infof(fmt.Sprintf("Migrated - %s", m.Uuid))
 		}
 	}
 
