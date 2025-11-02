@@ -12,6 +12,7 @@ func init() {
 	viper.SetDefault("DB_DATABASE", "database")
 	viper.SetDefault("DB_USERNAME", "database_user")
 	viper.SetDefault("DB_PASSWORD", "database_password")
+	viper.SetDefault("DB_PREFIX", "")
 }
 
 type DbConfiguration struct {
@@ -21,6 +22,7 @@ type DbConfiguration struct {
 	Database string
 	Username string
 	Password string
+	Prefix   string
 }
 
 func (c DbConfiguration) DSN() string {
@@ -40,5 +42,6 @@ func MakeDbConfig() DbConfiguration {
 		Database: viper.GetString("DB_DATABASE"),
 		Username: viper.GetString("DB_USERNAME"),
 		Password: viper.GetString("DB_PASSWORD"),
+		Prefix:   viper.GetString("DB_PREFIX"),
 	}
 }
