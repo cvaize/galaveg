@@ -1,0 +1,187 @@
+{
+  "login": {
+    "title": "{{page.login.header}} - {{app.name}}",
+    "header": "Login",
+    "fields": {
+      "email": "{{validation.attributes.email}}",
+      "password": "{{validation.attributes.password}}"
+    },
+    "submit": "Submit",
+    "reset_password": "Reset password?",
+    "register": "Register"
+  },
+  "reset_password": {
+    "title": "{{page.reset_password.header}} - {{app.name}}",
+    "header": "Reset password",
+    "back": "Back",
+    "fields": {
+      "email": "{{validation.attributes.email}}"
+    },
+    "submit": "Submit",
+    "text": "Send confirmation code to email.",
+    "validation": {
+      "email": {
+        "not_exists": "{{validation.custom.email.not_exists}}"
+      }
+    }
+  },
+  "reset_password_confirm": {
+    "title": "{{page.reset_password_confirm.header}} - {{app.name}}",
+    "header": "Reset password",
+    "back": "Back",
+    "fields": {
+      "email": "{{validation.attributes.email}}",
+      "password": "{{validation.attributes.password}}",
+      "confirm_password": "{{validation.attributes.confirm_password}}"
+    },
+    "submit": "Submit"
+  },
+  "register": {
+    "title": "{{page.register.header}} - {{app.name}}",
+    "header": "Register",
+    "back": "Back",
+    "fields": {
+      "email": "{{validation.attributes.email}}",
+      "password": "{{validation.attributes.password}}",
+      "confirm_password": "{{validation.attributes.confirm_password}}"
+    },
+    "submit": "Submit",
+    "reset_password": "Reset password?",
+    "login": "Login"
+  },
+  "home": {
+    "title": "{{page.home.header}} - {{app.name}}",
+    "header": "Panel",
+    "breadcrumbs": {
+      "home": "{{page.home.header}}"
+    }
+  },
+  "profile": {
+    "title": "{{page.profile.header}} - {{app.name}}",
+    "header": "My profile",
+    "breadcrumbs": {
+      "home": "{{page.home.header}}",
+      "profile": "{{page.profile.header}}"
+    }
+  },
+  "users": {
+    "index": {
+      "title": "Page :page of :per_page - {{page.users.index.header}} - {{app.name}}",
+      "header": "Users list",
+      "sort": {
+        "id_asc": "ID 0-9",
+        "id_desc": "ID 9-0",
+        "email_asc": "E-mail A-Z",
+        "email_desc": "E-mail Z-A",
+        "surname_asc": "Surname A-Z",
+        "surname_desc": "Surname Z-A",
+        "name_asc": "Name A-Z",
+        "name_desc": "Name Z-A",
+        "patronymic_asc": "Patronymic A-Z",
+        "patronymic_desc": "Patronymic Z-A",
+        "full_name_asc": "Full name A-Z",
+        "full_name_desc": "Full name Z-A"
+      },
+      "columns": {
+        "id": "ID",
+        "email": "E-mail",
+        "surname": "Surname",
+        "name": "Name",
+        "patronymic": "Patronymic",
+        "locale": "Locale",
+        "actions": "Actions"
+      }
+    },
+    "create": {
+      "title": "{{page.users.create.header}} - {{app.name}}",
+      "header": "Create user",
+      "fields": {
+        "email": "{{validation.attributes.email}}",
+        "password": "{{validation.attributes.password}}",
+        "confirm_password": "{{validation.attributes.confirm_password}}",
+        "surname": "{{validation.attributes.surname}}",
+        "name": "{{validation.attributes.user_name}}",
+        "patronymic": "{{validation.attributes.patronymic}}",
+        "locale": "{{validation.attributes.locale}}",
+        "roles_ids": "{{validation.attributes.roles_ids}}",
+        "avatar": "{{validation.attributes.avatar}}"
+      },
+      "tabs": {
+        "main": "Main",
+        "extended": "Extended"
+      }
+    },
+    "edit": {
+      "title": "{{page.users.edit.header}} - {{app.name}}",
+      "header": "Edit user \":user_name\""
+    }
+  },
+  "roles": {
+    "index": {
+      "title": "Page :page of :per_page - {{page.roles.index.header}} - {{app.name}}",
+      "header": "Roles list",
+      "sort": {
+        "id_asc": "ID 0-9",
+        "id_desc": "ID 9-0",
+        "code_asc": "Code A-Z",
+        "code_desc": "Code Z-A",
+        "name_asc": "Name A-Z",
+        "name_desc": "Name Z-A"
+      },
+      "columns": {
+        "id": "ID",
+        "code": "Code",
+        "name": "Name",
+        "description": "Description",
+        "actions": "Actions"
+      }
+    },
+    "create": {
+      "title": "{{page.roles.create.header}} - {{app.name}}",
+      "header": "Create role",
+      "fields": {
+        "code": "{{validation.attributes.code}}",
+        "name": "{{validation.attributes.name}}",
+        "description": "{{validation.attributes.description}}",
+        "permissions": "{{validation.attributes.permissions}}"
+      },
+      "tabs": {
+        "main": "Main",
+        "permissions": "Permissions"
+      }
+    },
+    "edit": {
+      "title": "{{page.roles.edit.header}} - {{app.name}}",
+      "header": "Edit role \":name\""
+    }
+  },
+  "files": {
+    "index": {
+      "title": "Page :page of :per_page - {{page.files.index.header}} - {{app.name}}",
+      "header": "Files list",
+      "sort": {
+        "id_asc": "ID 0-9",
+        "id_desc": "ID 9-0"
+      },
+      "columns": {
+        "id": "ID",
+        "filename": "File name",
+        "local_path": "Local path",
+        "is_deleted": "Is deleted?",
+        "actions": "Actions"
+      }
+    },
+    "create": {
+      "title": "{{page.files.create.header}} - {{app.name}}",
+      "header": "Create file",
+      "fields": {
+        "file": "Select a file",
+        "is_public": "A public file?"
+      }
+    },
+    "edit": {
+      "title": "{{page.files.edit.header}} - {{app.name}}",
+      "header": "Edit file \":name\""
+    }
+  }
+}

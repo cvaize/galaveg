@@ -1,0 +1,187 @@
+{
+  "login": {
+    "title": "{{page.login.header}} - {{app.name}}",
+    "header": "Вход",
+    "fields": {
+      "email": "{{validation.attributes.email}}",
+      "password": "{{validation.attributes.password}}"
+    },
+    "submit": "Войти",
+    "reset_password": "Сбросить пароль?",
+    "register": "Зарегистрироваться"
+  },
+  "reset_password": {
+    "title": "{{page.reset_password.header}} - {{app.name}}",
+    "header": "Сброс пароля",
+    "back": "Назад",
+    "fields": {
+      "email": "{{validation.attributes.email}}"
+    },
+    "submit": "Отправить",
+    "text": "Отправить код подтверждения на E-mail.",
+    "validation": {
+      "email": {
+        "not_exists": "{{validation.custom.email.not_exists}}"
+      }
+    }
+  },
+  "reset_password_confirm": {
+    "title": "{{page.reset_password_confirm.header}} - {{app.name}}",
+    "header": "Сброс пароля",
+    "back": "Назад",
+    "fields": {
+      "email": "{{validation.attributes.email}}",
+      "password": "{{validation.attributes.password}}",
+      "confirm_password": "{{validation.attributes.confirm_password}}"
+    },
+    "submit": "Сбросить"
+  },
+  "register": {
+    "title": "{{page.register.header}} - {{app.name}}",
+    "header": "Регистрация",
+    "back": "Назад",
+    "fields": {
+      "email": "{{validation.attributes.email}}",
+      "password": "{{validation.attributes.password}}",
+      "confirm_password": "{{validation.attributes.confirm_password}}"
+    },
+    "submit": "Зарегистрироваться",
+    "reset_password": "Сбросить пароль?",
+    "login": "Войти"
+  },
+  "home": {
+    "title": "{{page.home.header}} - {{app.name}}",
+    "header": "Панель управления",
+    "breadcrumbs": {
+      "home": "{{page.home.header}}"
+    }
+  },
+  "profile": {
+    "title": "{{page.profile.header}} - {{app.name}}",
+    "header": "Мой профиль",
+    "breadcrumbs": {
+      "home": "{{page.home.header}}",
+      "profile": "{{page.profile.header}}"
+    }
+  },
+  "users": {
+    "index": {
+      "title": "Страница :page из :total_pages - {{page.users.index.header}} - {{app.name}}",
+      "header": "Список пользователей",
+      "sort": {
+        "id_asc": "ID 0-9",
+        "id_desc": "ID 9-0",
+        "email_asc": "E-mail A-Z",
+        "email_desc": "E-mail Z-A",
+        "surname_asc": "Фамилия А-Я",
+        "surname_desc": "Фамилия Я-А",
+        "name_asc": "Имя А-Я",
+        "name_desc": "Имя Я-А",
+        "patronymic_asc": "Отчество А-Я",
+        "patronymic_desc": "Отчество Я-А",
+        "full_name_asc": "ФИО А-Я",
+        "full_name_desc": "ФИО Я-А"
+      },
+      "columns": {
+        "id": "ID",
+        "email": "E-mail",
+        "surname": "Фамилия",
+        "name": "Имя",
+        "patronymic": "Отчество",
+        "locale": "Язык",
+        "actions": "Действия"
+      }
+    },
+    "create": {
+      "title": "{{page.users.create.header}} - {{app.name}}",
+      "header": "Создание пользователя",
+      "fields": {
+        "email": "{{validation.attributes.email}}",
+        "password": "{{validation.attributes.password}}",
+        "confirm_password": "{{validation.attributes.confirm_password}}",
+        "surname": "{{validation.attributes.surname}}",
+        "name": "{{validation.attributes.user_name}}",
+        "patronymic": "{{validation.attributes.patronymic}}",
+        "locale": "{{validation.attributes.locale}}",
+        "roles_ids": "{{validation.attributes.roles_ids}}",
+        "avatar": "{{validation.attributes.avatar}}"
+      },
+      "tabs": {
+        "main": "Основные",
+        "extended": "Расширенные"
+      }
+    },
+    "edit": {
+      "title": "{{page.users.edit.header}} - {{app.name}}",
+      "header": "Редактирование пользователя \":user_name\""
+    }
+  },
+  "roles": {
+    "index": {
+      "title": "Страница :page из :total_pages - {{page.roles.index.header}} - {{app.name}}",
+      "header": "Список ролей",
+      "sort": {
+        "id_asc": "ID 0-9",
+        "id_desc": "ID 9-0",
+        "code_asc": "Код A-Z",
+        "code_desc": "Код Z-A",
+        "name_asc": "Название А-Я",
+        "name_desc": "Название Я-А"
+      },
+      "columns": {
+        "id": "ID",
+        "code": "Код",
+        "name": "Название",
+        "description": "Описание",
+        "actions": "Действия"
+      }
+    },
+    "create": {
+      "title": "{{page.roles.create.header}} - {{app.name}}",
+      "header": "Создание роли",
+      "fields": {
+        "code": "{{validation.attributes.code}}",
+        "name": "{{validation.attributes.name}}",
+        "description": "{{validation.attributes.description}}",
+        "permissions": "{{validation.attributes.permissions}}"
+      },
+      "tabs": {
+        "main": "Основные",
+        "permissions": "Разрешения"
+      }
+    },
+    "edit": {
+      "title": "{{page.roles.edit.header}} - {{app.name}}",
+      "header": "Редактирование роли \":name\""
+    }
+  },
+  "files": {
+    "index": {
+      "title": "Страница :page из :total_pages - {{page.files.index.header}} - {{app.name}}",
+      "header": "Список файлов",
+      "sort": {
+        "id_asc": "ID 0-9",
+        "id_desc": "ID 9-0"
+      },
+      "columns": {
+        "id": "ID",
+        "filename": "Название файла",
+        "local_path": "Файл сохранён по пути",
+        "is_deleted": "Удалён?",
+        "actions": "Действия"
+      }
+    },
+    "create": {
+      "title": "{{page.files.create.header}} - {{app.name}}",
+      "header": "Создание файла",
+      "fields": {
+        "file": "Выберите файл",
+        "is_public": "Публичный файл?"
+      }
+    },
+    "edit": {
+      "title": "{{page.files.edit.header}} - {{app.name}}",
+      "header": "Редактирование файла \":name\""
+    }
+  }
+}

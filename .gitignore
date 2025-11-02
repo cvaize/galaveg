@@ -34,3 +34,6 @@ go.work.sum
 /.vscode
 
 /gin-boilerplate-examples-main
+
+/node_modules
+/target

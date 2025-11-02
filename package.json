@@ -1,0 +1,27 @@
+{
+  "name": "galaveg",
+  "version": "1.0.0",
+  "description": "",
+  "main": "build.js",
+  "bin": {
+    "build": "build.js"
+  },
+  "scripts": {
+    "build": "node build.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cvaize/galaveg.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cvaize/galaveg/issues"
+  },
+  "homepage": "https://github.com/cvaize/galaveg#readme",
+  "dependencies": {
+    "@node-minify/clean-css": "^9.0.1",
+    "@node-minify/core": "^9.0.2",
+    "@node-minify/uglify-js": "^9.0.1"
+  }
+}
