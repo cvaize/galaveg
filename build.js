@@ -33,56 +33,56 @@ const svg = [
 ].filter((item, i, ar) => ar.indexOf(item) === i);
 
 async function runStyles(){
-    !fs.existsSync("static/css") && fs.mkdirSync("static/css")
+    !fs.existsSync("public/css") && fs.mkdirSync("public/css")
     let content = '';
 
     for (const style of styles) {
         content += fs.readFileSync(style);
     }
 
-    fs.writeFileSync('./static/css/app.css', content);
+    fs.writeFileSync('./public/css/app.css', content);
 
     await minify({
         compressor: cleanCSS,
-        input: './static/css/app.css',
-        output: './static/css/app.min.css'
+        input: './public/css/app.css',
+        output: './public/css/app.min.css'
     });
 
-    content = fs.readFileSync('./static/css/app.min.css');
+    content = fs.readFileSync('./public/css/app.min.css');
 
     content = zlib.gzipSync(content, {level: 9});
 
-    fs.writeFileSync('./static/css/app.min.css.gz', content);
+    fs.writeFileSync('./public/css/app.min.css.gz', content);
 
 }
 
 async function runScripts(){
-    !fs.existsSync("static/js") && fs.mkdirSync("static/js")
+    !fs.existsSync("public/js") && fs.mkdirSync("public/js")
     let content = '';
 
     for (const script of scripts) {
         content += fs.readFileSync(script);
     }
 
-    fs.writeFileSync('./static/js/app.js', content);
+    fs.writeFileSync('./public/js/app.js', content);
 
     await minify({
         compressor: uglifyjs,
-        input: './static/js/app.js',
-        output: './static/js/app.min.js',
+        input: './public/js/app.js',
+        output: './public/js/app.min.js',
     });
 
-    content = fs.readFileSync('./static/js/app.min.js');
+    content = fs.readFileSync('./public/js/app.min.js');
 
     content = zlib.gzipSync(content, {level: 9});
 
-    fs.writeFileSync('./static/js/app.min.js.gz', content);
+    fs.writeFileSync('./public/js/app.min.js.gz', content);
 }
 async function runSvg(){
-    !fs.existsSync("static/svg") && fs.mkdirSync("static/svg")
+    !fs.existsSync("public/svg") && fs.mkdirSync("public/svg")
     for (const svgElement of svg) {
         let content = fs.readFileSync(svgElement);
-        let path = svgElement.replace('./resources/svg/', './static/svg/').trim();
+        let path = svgElement.replace('./resources/svg/', './public/svg/').trim();
         fs.writeFileSync(path, content);
 
         content = zlib.gzipSync(content, {level: 9});
