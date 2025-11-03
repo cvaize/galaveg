@@ -6,5 +6,5 @@ import (
 )
 
 func Login(c *gin.Context) {
-	c.HTML(http.StatusOK, "email/login", gin.H{"Title": "Главная"})
+	c.HTML(http.StatusOK, "pages/login", gin.H{"Title": "Главная"})
 }
