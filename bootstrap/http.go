@@ -19,6 +19,8 @@ func Http() *gin.Engine {
 
 	router := gin.New()
 
+	router.LoadHTMLGlob("resources/html/**/*")
+
 	if err := router.SetTrustedProxies(config.Config.App.AllowedHosts); err != nil {
 		panic(err)
 	}

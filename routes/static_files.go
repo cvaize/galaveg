@@ -18,10 +18,6 @@ func staticFilesRegister(r *gin.Engine) {
 	r.GET("/logo.svg", static_files.Gzip("./public/svg/logo.svg", "image/svg+xml"))
 
 	//	cfg.service(
-	//		web::resource("/storage/files/{filename}")
-	//	.route(web::get().to(static_files::storage::public)),
-	//);
-	//	cfg.service(
 	//		web::resource("/storage/private-files/{filename}")
 	//	.wrap(WebAuthMiddleware)
 	//	.route(web::get().to(static_files::storage::private)),

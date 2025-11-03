@@ -1,7 +1,6 @@
 package middlewares
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"mime"
 	"os"
@@ -15,7 +14,6 @@ func GzipStaticMiddleware() gin.HandlerFunc {
 			filePath := filepath.Join("./", c.Request.URL.Path)
 
 			gzipPath := filePath + ".gz"
-			fmt.Println(gzipPath)
 			if _, err := os.Stat(gzipPath); err == nil {
 				file, err := os.Open(gzipPath)
 				if err == nil {
