@@ -58,7 +58,15 @@
                         <h1 class="admin-login__header">{{.Heading}}</h1>
                         {{ if .Form.Fields }}
                             {{ range $index, $field := .Form.Fields }}
-                                {{ template "components/field" dict "Label" $field.Label "Type" $field.Type "Name" $field.Name "Value" $field.Value "Errors" $field.Errors "FieldClass" "admin-login__field" "InputClass" "admin-login__field__input" }}
+                                {{ template "components/field" dict
+                                "Label" $field.Label
+                                "Type" $field.Type
+                                "Name" $field.Name
+                                "Value" $field.Value
+                                "Errors" $field.Errors
+                                "FieldClass" "admin-login__field"
+                                "InputClass" "admin-login__field__input"
+                                }}
                             {{end}}
                         {{end}}
                         {{if or .Form.ResetPassword .Form.Register .Form.Login}}
