@@ -1,0 +1,10 @@
+{{ define "components/checkbox" }}
+    <label class="admin-checkbox">
+        <input class="admin-checkbox__input" type="checkbox" name="{{.Name}}" value="{{.Value}}" hidden
+                {{if .Checked}} checked{{end}}
+                {{if .Form}} form="{{.Form}}"{{end}}
+        >
+        <span class="admin-checkbox__box"></span>
+        <span class="admin-checkbox__text">{{.Label}}</span>
+    </label>
+{{end}}

@@ -7,6 +7,7 @@ import (
 	"galaveg/routes"
 	"galaveg/utils/logger"
 	"github.com/gin-gonic/gin"
+	"strings"
 )
 
 func Http() *gin.Engine {
@@ -21,6 +22,7 @@ func Http() *gin.Engine {
 
 	router.FuncMap["eq"] = func(a, b string) bool { return a == b }
 	router.FuncMap["ne"] = func(a, b string) bool { return a != b }
+	router.FuncMap["replace"] = strings.ReplaceAll
 	router.FuncMap["unless"] = func(v any) bool {
 		return v == nil || v == "" || v == false
 	}
@@ -32,6 +34,10 @@ func Http() *gin.Engine {
 			dict[key] = value
 		}
 		return dict
+	}
+	router.FuncMap["sub1"] = func(x int) int { return x - 1 }
+	router.FuncMap["startsWith"] = func(s, prefix string) bool {
+		return strings.HasPrefix(s, prefix)
 	}
 	router.LoadHTMLGlob("resources/html/**/*.gohtml")
 

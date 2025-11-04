@@ -1,0 +1,19 @@
+{{ define "components/breadcrumb" }}
+    {{if .Breadcrumbs}}
+        <nav aria-label="breadcrumb">
+            <ol class="admin-breadcrumb">
+                {{range $i, $crumb := .Breadcrumbs}}
+                    {{if eq $i (sub1 (len $.Breadcrumbs))}}
+                        <li class="admin-breadcrumb__item admin-breadcrumb__item--active" aria-current="page">
+                            {{$crumb.Label}}
+                        </li>
+                    {{else}}
+                        <li class="admin-breadcrumb__item">
+                            <a href="{{$crumb.Href}}" class="admin-breadcrumb__link">{{$crumb.Label}}</a>
+                        </li>
+                    {{end}}
+                {{end}}
+            </ol>
+        </nav>
+    {{end}}
+{{end}}

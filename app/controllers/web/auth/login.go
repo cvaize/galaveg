@@ -50,11 +50,13 @@ func Login(c *gin.Context) {
 			"Errors": []string{},
 		},
 		"Locale": map[string]string{
+			"FullName":  "ru",
 			"ShortName": "ru",
 			"Code":      "ru",
 		},
 		"Locales": []map[string]string{
 			{
+				"FullName":  "en",
 				"ShortName": "en",
 				"Code":      "en",
 			},

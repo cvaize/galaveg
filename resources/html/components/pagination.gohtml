@@ -1,0 +1,23 @@
+{{ define "components/pagination" }}
+    <nav aria-label="Page navigation">
+        <ul class="admin-pagination">
+            {{range $i, $Num := .PaginationNums}}
+                {{if ne $Num -1}}
+                    {{if eq $Num 0}}
+                        <li class="admin-pagination__item">
+                            <span class="admin-pagination__link">...</span>
+                        </li>
+                    {{else}}
+                        <li class="admin-pagination__item">
+                            <a href="{{replace $.PaginationLink ":page" (printf "%d" $Num)}}"
+                               class="admin-pagination__link{{if eq $Num $.Page}} admin-active{{end}}"
+                            >
+                                {{$Num}}
+                            </a>
+                        </li>
+                    {{end}}
+                {{end}}
+            {{end}}
+        </ul>
+    </nav>
+{{end}}

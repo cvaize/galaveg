@@ -1,0 +1,23 @@
+{{ define "components/error-content" }}
+    <div class="admin-login">
+        <div class="admin-container admin-login__container">
+            <div class="admin-login__card">
+                {{if .StatusCode}}
+                    <h1 class="admin-login__header">{{.StatusCode}}</h1>
+                {{end}}
+
+                {{if .ErrorMessage}}
+                    {{.ErrorMessage}}
+                {{end}}
+
+                {{if .Back}}
+                    <div style="margin-top: 1rem; text-align: right">
+                        <a href="/" class="admin-btn admin-btn--link" style="text-decoration: underline;">
+                            {{.Back}}
+                        </a>
+                    </div>
+                {{end}}
+            </div>
+        </div>
+    </div>
+{{end}}
