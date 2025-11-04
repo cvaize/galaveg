@@ -4,5 +4,5 @@
     <input id="admin-dark-mode__radio--light" class="admin-dark-mode__radio--light" type="radio"
            name="admin-dark-mode__radio" hidden {{ if eq .DarkMode.Value "light" }} checked {{ end }}>
     <input id="admin-dark-mode__radio--auto" class="admin-dark-mode__radio--auto" type="radio" name="admin-dark-mode__radio"
-           hidden {{ if eq .DarkMode.Value "auto" }} checked {{ end }} {{ if unless .DarkMode.Value "auto" }} checked {{ end }}>
+           hidden {{ if eq .DarkMode.Value "auto" }} checked {{ end }}>
 {{ end }}

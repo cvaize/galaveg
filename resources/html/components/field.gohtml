@@ -1,0 +1,90 @@
+{{ define "components/field" }}
+    <label class="{{if .FieldClass}}{{.FieldClass}} {{end}}admin-field{{if .Errors}} admin-danger{{end}}"
+            {{if .Style}} style="{{.Style}}"{{end}}>
+        {{if .Label}}
+            <span class="{{if .LabelClass}}{{.LabelClass}} {{end}}admin-field__text">{{.Label}}</span>
+        {{end}}
+
+        {{if eq .Type "file"}}
+            <br>
+            <span class="admin-btn" tabindex="0">
+            {{if .Placeholder}}
+                {{.Placeholder}}
+            {{else}}
+                {{.Label}}
+            {{end}}
+        </span>
+        {{end}}
+
+        {{if eq .Type "select"}}
+            <select class="{{if .InputClass}}{{.InputClass}} {{end}}admin-field__input"
+                    {{if .InputStyle}} style="{{.InputStyle}}"{{end}}
+                    {{if .Form}} form="{{.Form}}"{{end}}
+                    {{if .Type}} type="{{.Type}}"{{end}}
+                    {{if .Name}} name="{{.Name}}"{{end}}
+                    {{if .Multiple}} multiple{{end}}
+                    {{if .Required}} required{{end}}
+            >
+                {{if .Placeholder}}
+                    <option value="">{{.Placeholder}}</option>
+                {{end}}
+
+                {{if .OptionsValues}}
+                    {{range $OptionValue := .OptionsValues}}
+                        <option value="{{$OptionValue}}"
+                                {{if eq $.Value $OptionValue}} selected{{end}}
+                        >{{$OptionValue}}</option>
+                    {{end}}
+                {{end}}
+
+                {{if .Options}}
+                    {{range $Option := .Options}}
+                        <option value="{{index $Option $.OptionValueKey}}"
+                                {{if eq $.Value (index $Option $.OptionValueKey)}} selected{{end}}
+                        >{{index $Option $.OptionLabelKey}}</option>
+                    {{end}}
+                {{end}}
+            </select>
+
+        {{else if eq .Type "textarea"}}
+            <textarea class="{{if .InputClass}}{{.InputClass}} {{end}}admin-field__input"
+            {{if .InputStyle}} style="{{.InputStyle}}"{{end}}
+                    {{if .Form}} form="{{.Form}}"{{end}}
+                    {{if .Type}} type="{{.Type}}"{{end}}
+                    {{if .Name}} name="{{.Name}}"{{end}}
+                    {{if .Placeholder}} placeholder="{{.Placeholder}}"{{end}}
+                    {{if .Readonly}} readonly{{end}}
+                    {{if .Required}} required{{end}}
+        >{{if .Value}}{{.Value}}{{end}}</textarea>
+
+        {{else}}
+            <input class="{{if .InputClass}}{{.InputClass}} {{end}}admin-field__input"
+                    {{if .InputStyle}} style="{{.InputStyle}}"{{end}}
+                    {{if .Form}} form="{{.Form}}"{{end}}
+                    {{if .Type}} type="{{.Type}}"{{end}}
+                    {{if .Name}} name="{{.Name}}"{{end}}
+                    {{if .Value}} value="{{.Value}}"{{end}}
+                    {{if ne .Type "file"}}
+                        {{if .Placeholder}} placeholder="{{.Placeholder}}"{{end}}
+                    {{end}}
+                    {{if .Multiple}} multiple{{end}}
+                    {{if .Readonly}} readonly{{end}}
+                    {{if .Required}} required{{end}}
+                    {{if .Autofocus}} autofocus{{end}}
+                    {{if .Autocomplete}} autocomplete="{{.Autocomplete}}"{{end}}
+                    {{if .Autocorrect}} autocorrect="{{.Autocorrect}}"{{end}}
+                    {{if .Autocapitalize}} autocapitalize="{{.Autocapitalize}}"{{end}}
+                    {{if .Min}} min="{{.Min}}"{{end}}
+                    {{if .Max}} max="{{.Max}}"{{end}}
+                    {{if .Step}} step="{{.Step}}"{{end}}
+                    {{if .Accept}} accept="{{.Accept}}"{{end}}
+            >
+        {{end}}
+
+        {{if .Errors}}
+            {{range .Errors}}
+                <span class="admin-text--mini admin-text--danger" style="display: block">{{.}}</span>
+            {{end}}
+        {{end}}
+    </label>
+{{ end }}

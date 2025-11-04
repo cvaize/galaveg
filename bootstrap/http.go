@@ -24,7 +24,16 @@ func Http() *gin.Engine {
 	router.FuncMap["unless"] = func(v any) bool {
 		return v == nil || v == "" || v == false
 	}
-	router.LoadHTMLGlob("resources/html/**/*")
+	router.FuncMap["dict"] = func(values ...interface{}) map[string]interface{} {
+		dict := make(map[string]interface{})
+		for i := 0; i < len(values); i += 2 {
+			key := values[i].(string)
+			value := values[i+1]
+			dict[key] = value
+		}
+		return dict
+	}
+	router.LoadHTMLGlob("resources/html/**/*.gohtml")
 
 	if err := router.SetTrustedProxies(config.Config.App.AllowedHosts); err != nil {
 		panic(err)

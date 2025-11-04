@@ -1,0 +1,16 @@
+{{ define "components/alert" }}
+    <input id="admin-alert__{{.Index}}" class="admin-alert__checkbox" type="checkbox"
+           name="admin-alert__{{.Index}}"
+           hidden checked>
+    <div class="admin-alert
+        {{if .Alert.Style}}
+            {{if (eq .Alert.Style "info")}} admin-accent {{end}}
+            {{if (eq .Alert.Style "warning")}} admin-warning {{end}}
+            {{if (eq .Alert.Style "success")}} admin-success {{end}}
+            {{if (eq .Alert.Style "error")}} admin-danger {{end}}
+        {{end}}" role="alert" style="margin-bottom: 1rem;">
+        {{.Alert.Content}}
+        <label for="admin-alert__{{.Index}}" class="admin-alert__close"
+               aria-label="Close">X</label>
+    </div>
+{{ end }}

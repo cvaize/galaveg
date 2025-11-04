@@ -1,0 +1,105 @@
+{{ define "pages/auth" }}
+    <!doctype html>
+    <html lang="{{ .Lang }}" class="admin-html">
+    <head>
+        <meta charset="UTF-8">
+        <title>{{ .Title }}</title>
+        <meta name="viewport"
+              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="stylesheet" href="/css/app.css">
+        <script src="/js/app.js" defer></script>
+    </head>
+    <body class="admin-body">
+    {{ template "components/admin-dark-mode-inputs" . }}
+    <main class="admin-app">
+        {{ template "components/admin-dark-mode-btn" . }}
+
+        <div class="admin-content">
+            <div class="admin-login">
+                <div class="admin-container admin-login__container">
+                    {{ if .Alerts }}
+                        <div class="admin-login__alerts">
+                            {{ range $index, $alert := .Alerts }}
+                                {{ template "components/alert" dict "Index" $index "Alert" $alert }}
+                            {{ end }}
+                        </div>
+                    {{ end }}
+                    <form action="{{ .Form.Action }}" method="{{ .Form.Method }}" class="admin-login__card">
+                        {{ if and .Locales .Locale }}
+                            <div class="admin-login__lang admin-dropdown" tabindex="-1">
+                                <button class="admin-btn admin-dropdown__btn" type="button"
+                                        style="text-transform: uppercase;min-width: 3.5rem;">
+                                    {{ .Locale.ShortName }}
+                                </button>
+                                <ul class="admin-dropdown__menu" style="min-width: 3.5rem;">
+                                    {{ range .Locales }}
+                                        <li>
+                                            <button form="switch_locale" type="submit" name="locale" value="{{.Code}}"
+                                                    class="admin-dropdown__item"
+                                                    style="text-transform: uppercase">{{ .ShortName }}</button>
+                                        </li>
+                                    {{end}}
+                                </ul>
+                            </div>
+                        {{ end }}
+                        {{if .Back}}
+                            <div class="admin-login__back">
+                                <a href="{{.Back.Href}}" class="admin-login__back-link">
+                                    <svg class="admin-icon--svg" xmlns="http://www.w3.org/2000/svg" width="24"
+                                         height="24"
+                                         viewBox="0 0 24 24">
+                                        <path d="M16.62 2.99a1.25 1.25 0 0 0-1.77 0L6.54 11.3a.996.996 0 0 0 0 1.41l8.31 8.31c.49.49 1.28.49 1.77 0s.49-1.28 0-1.77L9.38 12l7.25-7.25c.48-.48.48-1.28-.01-1.76z"/>
+                                    </svg>
+                                    {{.Back.Label}}
+                                </a>
+                            </div>
+                        {{end}}
+                        <h1 class="admin-login__header">{{.Heading}}</h1>
+                        {{ if .Form.Fields }}
+                            {{ range $index, $field := .Form.Fields }}
+                                {{ template "components/field" dict "Label" $field.Label "Type" $field.Type "Name" $field.Name "Value" $field.Value "Errors" $field.Errors "FieldClass" "admin-login__field" "InputClass" "admin-login__field__input" }}
+                            {{end}}
+                        {{end}}
+                        {{if or .Form.ResetPassword .Form.Register .Form.Login}}
+                            <div class="admin-login__nav">
+                                {{if .Form.ResetPassword}}
+                                    <a href="{{.Form.ResetPassword.Href}}" class="admin-login__reset-link">
+                                        {{.Form.ResetPassword.Label}}
+                                    </a>
+                                {{end}}
+                                {{if .Form.Register}}
+                                    <a href="{{.Form.Register.Href}}" class="admin-login__register-link">
+                                        {{.Form.Register.Label}}
+                                    </a>
+                                {{end}}
+                                {{if .Form.Login}}
+                                    <a href="{{.Form.Login.Href}}" class="admin-login__register-link">
+                                        {{.Form.Login.Label}}
+                                    </a>
+                                {{end}}
+                            </div>
+                        {{end}}
+
+                        {{if .Form.Errors}}
+                            {{range .Form.Errors}}
+                                <div class="admin-text--danger" style="margin: 0.5rem 0;">{{.}}</div>
+                            {{end}}
+                        {{end}}
+
+                        {{if .Form.Submit.Label}}
+                            <button type="submit" class="admin-btn admin-login__submit">{{.Form.Submit.Label}}</button>
+                        {{end}}
+
+                        {{if .Form.Submit.Text}}
+                            <div class="admin-text">{{.Form.Submit.Text}}</div>
+                        {{end}}
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+    </body>
+    </html>
+{{ end }}
