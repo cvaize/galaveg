@@ -15,6 +15,7 @@ func init() {
 	viper.SetDefault("APP_LOG_LEVEL", "info")
 	viper.SetDefault("APP_ALLOWED_HOSTS", "")
 	viper.SetDefault("APP_FOLDER", path.FindModuleRoot(path.Cwd()))
+	viper.SetDefault("APP_LOCALE", "en")
 }
 
 type AppConfig struct {
@@ -25,6 +26,7 @@ type AppConfig struct {
 	LogLevel     string
 	AllowedHosts []string
 	Folder       string
+	Locale       string
 }
 
 func NewAppConfig() AppConfig {
@@ -40,5 +42,6 @@ func NewAppConfig() AppConfig {
 			return s != ""
 		}),
 		Folder: viper.GetString("APP_FOLDER"),
+		Locale: viper.GetString("APP_LOCALE"),
 	}
 }
