@@ -28,7 +28,9 @@ func NewTranslatorServiceFromFiles(dir, locale string) (*TranslatorService, erro
 		return nil, fmt.Errorf("NewTranslatorServiceFromFiles: translates folder not found: %s", dir)
 	}
 
-	var fullKey string
+	var fullKey, lang, prefixKey, key, value string
+	var dotIndex int
+	var valueAny interface{}
 	err = filepath.WalkDir(dir, func(fullPath string, d fs.DirEntry, walkErr error) error {
 		if walkErr != nil {
 			return walkErr
@@ -58,9 +60,9 @@ func NewTranslatorServiceFromFiles(dir, locale string) (*TranslatorService, erro
 			}
 
 			if len(flat) != 0 {
-				dotIndex := strings.Index(fullKey, ".")
-				lang := ""
-				prefixKey := ""
+				dotIndex = strings.Index(fullKey, ".")
+				lang = ""
+				prefixKey = ""
 
 				if dotIndex == -1 {
 					lang = fullKey
@@ -80,11 +82,11 @@ func NewTranslatorServiceFromFiles(dir, locale string) (*TranslatorService, erro
 					translates[lang] = map[string]string{}
 				}
 
-				for key, valueAny := range flat {
+				for key, valueAny = range flat {
 					key = fmt.Sprintf("%s.%s", prefixKey, key)
 					key = strings.TrimLeft(key, ".")
 					key = strings.TrimSpace(key)
-					value := strings.TrimSpace(fmt.Sprintf("%s", valueAny))
+					value = strings.TrimSpace(fmt.Sprintf("%s", valueAny))
 					translates[lang][key] = value
 				}
 			}
@@ -95,7 +97,38 @@ func NewTranslatorServiceFromFiles(dir, locale string) (*TranslatorService, erro
 		return nil, fmt.Errorf("NewTranslatorServiceFromFiles: %w", err)
 	}
 
-	fmt.Println(translates)
+	var variables, sp1, sp2 []string
+	var varSt, v string
+	var ok bool
+	for lang, _ = range translates {
+		for key, value = range translates[lang] {
+			variables = []string{}
+
+			sp1 = strings.Split(value, "{{")
+			for _, varSt = range sp1 {
+				sp2 = strings.Split(varSt, "}}")
+
+				if len(sp2) > 1 {
+					variables = append(variables, sp2[0])
+				}
+			}
+
+			if len(variables) > 0 {
+				for _, varSt = range variables {
+					v, ok = translates[lang][strings.TrimSpace(varSt)]
+					if !ok {
+						_, ok = translates[locale]
+						if ok {
+							v, ok = translates[locale][strings.TrimSpace(varSt)]
+						}
+					}
+					if ok {
+						translates[lang][key] = strings.ReplaceAll(translates[lang][key], "{{"+varSt+"}}", v)
+					}
+				}
+			}
+		}
+	}
 
 	return NewTranslatorService(locale, translates), nil
 }
