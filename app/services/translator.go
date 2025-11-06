@@ -156,6 +156,10 @@ func (s TranslatorService) Translate(lang, key string) string {
 	return key
 }
 
+func (s TranslatorService) T(lang, key string) string {
+	return s.Translate(lang, key)
+}
+
 func (s TranslatorService) Contains(lang, key string) bool {
 	if _, ok := s.translates[lang][key]; ok {
 		return true
@@ -166,4 +170,19 @@ func (s TranslatorService) Contains(lang, key string) bool {
 		}
 	}
 	return false
+}
+
+func (s TranslatorService) applyVariables(value string, vars map[string]string) string {
+	for k, v := range vars {
+		value = strings.ReplaceAll(value, s.vKey(k), v)
+	}
+	return value
+}
+
+func (s TranslatorService) Variables(lang, key string, vars map[string]string) string {
+	return s.applyVariables(s.Translate(lang, key), vars)
+}
+
+func (s TranslatorService) V(lang, key string, vars map[string]string) string {
+	return s.Variables(lang, key, vars)
 }
