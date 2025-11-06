@@ -117,10 +117,7 @@ func NewTranslatorServiceFromFiles(dir, locale string) (*TranslatorService, erro
 				for _, varSt = range variables {
 					v, ok = translates[lang][strings.TrimSpace(varSt)]
 					if !ok {
-						_, ok = translates[locale]
-						if ok {
-							v, ok = translates[locale][strings.TrimSpace(varSt)]
-						}
+						v, ok = translates[locale][strings.TrimSpace(varSt)]
 					}
 					if ok {
 						translates[lang][key] = strings.ReplaceAll(translates[lang][key], "{{"+varSt+"}}", v)
@@ -131,4 +128,42 @@ func NewTranslatorServiceFromFiles(dir, locale string) (*TranslatorService, erro
 	}
 
 	return NewTranslatorService(locale, translates), nil
+}
+
+func (s TranslatorService) Get(lang, key string) string {
+	v, _ := s.translates[lang][key]
+	return v
+}
+
+func (s TranslatorService) Is(lang, key string) bool {
+	_, ok := s.translates[lang][key]
+	return ok
+}
+
+func (s TranslatorService) vKey(key string) string {
+	return ":" + key
+}
+
+func (s TranslatorService) Translate(lang, key string) string {
+	if v, ok := s.translates[lang][key]; ok {
+		return v
+	}
+	if lang != s.locale {
+		if v, ok := s.translates[s.locale][key]; ok {
+			return v
+		}
+	}
+	return key
+}
+
+func (s TranslatorService) Contains(lang, key string) bool {
+	if _, ok := s.translates[lang][key]; ok {
+		return true
+	}
+	if lang != s.locale {
+		if _, ok := s.translates[s.locale][key]; ok {
+			return true
+		}
+	}
+	return false
 }
