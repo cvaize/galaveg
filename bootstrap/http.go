@@ -38,6 +38,7 @@ func Http() *gin.Engine {
 	router.FuncMap["startsWith"] = func(s, prefix string) bool {
 		return strings.HasPrefix(s, prefix)
 	}
+	// TODO: Проверить LoadHTMLGlob, возможно он не читает resources/html/*.gohtml . Если так, то создать отдельную функцию из filepath.WalkDir.
 	router.LoadHTMLGlob("resources/html/**/*.gohtml")
 
 	if err := router.SetTrustedProxies(singleton.C.App.AllowedHosts); err != nil {

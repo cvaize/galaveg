@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"github.com/spf13/viper"
 	"path/filepath"
 	"time"
@@ -13,7 +12,6 @@ type Config struct {
 }
 
 func New(envPath string) Config {
-	fmt.Println(envPath)
 	viper.SetConfigFile(envPath)
 	if err := viper.ReadInConfig(); err != nil {
 		panic(err)
