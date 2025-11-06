@@ -15,7 +15,7 @@ func init() {
 	viper.SetDefault("DB_PREFIX", "")
 }
 
-type DbConfiguration struct {
+type DbConfig struct {
 	Driver   string
 	Host     string
 	Port     string
@@ -25,7 +25,7 @@ type DbConfiguration struct {
 	Prefix   string
 }
 
-func (c DbConfiguration) DSN() string {
+func (c DbConfig) DSN() string {
 	// TODO: Подумать над параметрами, на вроде multiStatements
 	//"user:password@tcp(localhost:3306)/database?parseTime=true"
 	return fmt.Sprintf(
@@ -34,8 +34,8 @@ func (c DbConfiguration) DSN() string {
 	)
 }
 
-func MakeDbConfig() DbConfiguration {
-	return DbConfiguration{
+func NewDbConfig() DbConfig {
+	return DbConfig{
 		Driver:   viper.GetString("DB_DRIVER"),
 		Host:     viper.GetString("DB_HOST"),
 		Port:     viper.GetString("DB_PORT"),

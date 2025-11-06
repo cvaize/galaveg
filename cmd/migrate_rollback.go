@@ -1,8 +1,10 @@
 package cmd
 
 import (
+	"database/sql"
 	"fmt"
-	"galaveg/connections"
+	"galaveg/bootstrap/singleton"
+	"galaveg/config"
 	"galaveg/database/migrations"
 	"galaveg/utils/logger"
 	"github.com/samber/lo"
@@ -16,7 +18,7 @@ var migrateRollbackCmd = &cobra.Command{
 	Short: "Rollback the database migration.",
 	Long:  `Rollback the database migration.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		err := rollbackMigration()
+		err := RollbackMigration(singleton.C, singleton.DB)
 		logger.Infof("The rollback migration was successful!")
 		return err
 	},
@@ -26,10 +28,10 @@ func init() {
 	rootCmd.AddCommand(migrateRollbackCmd)
 }
 
-func deleteMigration(name string) error {
+func DeleteMigration(c *config.Config, db *sql.DB, name string) error {
 	//goland:noinspection ALL
-	query := `DELETE FROM __migrations WHERE name=?`
-	_, err := connections.DB.Exec(query, name)
+	query := "DELETE FROM " + c.Db.Prefix + "_migrations WHERE name=?"
+	_, err := db.Exec(query, name)
 	if err != nil {
 		return err
 	}
@@ -37,13 +39,13 @@ func deleteMigration(name string) error {
 	return nil
 }
 
-func rollbackMigration() error {
-	err := createMigrationsTable()
+func RollbackMigration(c *config.Config, db *sql.DB) error {
+	err := createMigrationsTable(c, db)
 	if err != nil {
 		return err
 	}
 
-	migrationRows, err := loadMigrations()
+	migrationRows, err := LoadMigrations(c, db)
 	if err != nil {
 		return err
 	}
@@ -54,14 +56,16 @@ func rollbackMigration() error {
 		return nil
 	}
 
-	for _, m := range migrations.Migrations {
+	ms := migrations.GetMigrations()
+
+	for _, m := range ms {
 		if lastMigrationRow.name == m.Uuid {
 			logger.Infof(fmt.Sprintf("Rollback migrating - %s", m.Uuid))
-			err1 := m.Down()
+			err1 := m.Down(c, db)
 			if err1 != nil {
 				return err1
 			}
-			err2 := deleteMigration(m.Uuid)
+			err2 := DeleteMigration(c, db, m.Uuid)
 			if err2 != nil {
 				return err2
 			}

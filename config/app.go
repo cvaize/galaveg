@@ -1,6 +1,7 @@
 package config
 
 import (
+	"galaveg/utils/path"
 	"github.com/samber/lo"
 	"github.com/spf13/viper"
 	"strings"
@@ -13,19 +14,21 @@ func init() {
 	viper.SetDefault("APP_TIMEZONE", "UTC")
 	viper.SetDefault("APP_LOG_LEVEL", "info")
 	viper.SetDefault("APP_ALLOWED_HOSTS", "")
+	viper.SetDefault("APP_FOLDER", path.FindModuleRoot(path.Cwd()))
 }
 
-type AppConfiguration struct {
+type AppConfig struct {
 	Debug        bool
 	Host         string
 	Port         uint
 	Timezone     string
 	LogLevel     string
 	AllowedHosts []string
+	Folder       string
 }
 
-func MakeAppConfig() AppConfiguration {
-	return AppConfiguration{
+func NewAppConfig() AppConfig {
+	return AppConfig{
 		Debug:    viper.GetBool("APP_DEBUG"),
 		Host:     viper.GetString("APP_HOST"),
 		Port:     viper.GetUint("APP_PORT"),
@@ -36,5 +39,6 @@ func MakeAppConfig() AppConfiguration {
 		}), func(s string, _ int) bool {
 			return s != ""
 		}),
+		Folder: viper.GetString("APP_FOLDER"),
 	}
 }

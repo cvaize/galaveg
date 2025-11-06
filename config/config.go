@@ -2,23 +2,16 @@ package config
 
 import (
 	"github.com/spf13/viper"
+	"path/filepath"
 	"time"
 )
 
-type Configuration struct {
-	App AppConfiguration
-	Db  DbConfiguration
+type Config struct {
+	App AppConfig
+	Db  DbConfig
 }
 
-// Config - Глобальный конфиг. Заполняется при запуске.
-// Изменять его во время исполнения запрещено, иначе будет гонка данных.
-var Config Configuration
-
-func init() {
-	Config = Make()
-}
-
-func Make() Configuration {
+func New() Config {
 	viper.SetConfigFile(".env")
 	if err := viper.ReadInConfig(); err != nil {
 		panic(err)
@@ -31,8 +24,12 @@ func Make() Configuration {
 	}
 	time.Local = loc
 
-	return Configuration{
-		App: MakeAppConfig(),
-		Db:  MakeDbConfig(),
+	return Config{
+		App: NewAppConfig(),
+		Db:  NewDbConfig(),
 	}
+}
+
+func (c Config) GetFolder(path string) string {
+	return filepath.Join(c.App.Folder, path)
 }

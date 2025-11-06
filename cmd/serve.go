@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"galaveg/bootstrap"
-
 	"github.com/spf13/cobra"
 )
 

@@ -1,8 +1,10 @@
 package cmd
 
 import (
+	"database/sql"
 	"fmt"
-	"galaveg/connections"
+	"galaveg/bootstrap/singleton"
+	"galaveg/config"
 	"galaveg/database/migrations"
 	"galaveg/utils/logger"
 	"github.com/spf13/cobra"
@@ -14,7 +16,7 @@ var migrateCmd = &cobra.Command{
 	Short: "Start database migrations.",
 	Long:  `Start database migrations.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		err := upMigration()
+		err := UpMigration(singleton.C, singleton.DB)
 		logger.Infof("The migration was successful!")
 		return err
 	},
@@ -24,13 +26,13 @@ func init() {
 	rootCmd.AddCommand(migrateCmd)
 }
 
-func createMigrationsTable() error {
+func createMigrationsTable(c *config.Config, db *sql.DB) error {
 	//goland:noinspection ALL
-	query := `CREATE TABLE IF NOT EXISTS __migrations (
+	query := `CREATE TABLE IF NOT EXISTS ` + c.Db.Prefix + `_migrations (
 		id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
 		name VARCHAR(255) NOT NULL UNIQUE
 	);`
-	_, err := connections.DB.Exec(query)
+	_, err := db.Exec(query)
 	if err != nil {
 		return err
 	}
@@ -43,10 +45,10 @@ type migrationRow struct {
 	name string
 }
 
-func loadMigrations() ([]migrationRow, error) {
+func LoadMigrations(c *config.Config, db *sql.DB) ([]migrationRow, error) {
 	//goland:noinspection ALL
-	query := "SELECT * FROM __migrations ORDER BY id ASC;"
-	rows, err := connections.DB.Query(query)
+	query := "SELECT * FROM " + c.Db.Prefix + "_migrations ORDER BY id ASC;"
+	rows, err := db.Query(query)
 	if err != nil {
 		return nil, err
 	}
@@ -66,10 +68,10 @@ func loadMigrations() ([]migrationRow, error) {
 	return migrationRows, err
 }
 
-func insertMigration(name string) error {
+func InsertMigration(c *config.Config, db *sql.DB, name string) error {
 	//goland:noinspection ALL
-	query := `INSERT INTO __migrations (name) VALUES (?);`
-	_, err := connections.DB.Exec(query, name)
+	query := "INSERT INTO " + c.Db.Prefix + "_migrations (name) VALUES (?);"
+	_, err := db.Exec(query, name)
 	if err != nil {
 		return err
 	}
@@ -77,13 +79,13 @@ func insertMigration(name string) error {
 	return nil
 }
 
-func upMigration() error {
-	err := createMigrationsTable()
+func UpMigration(c *config.Config, db *sql.DB) error {
+	err := createMigrationsTable(c, db)
 	if err != nil {
 		return err
 	}
 
-	migrationRows, err := loadMigrations()
+	migrationRows, err := LoadMigrations(c, db)
 	if err != nil {
 		return err
 	}
@@ -94,14 +96,16 @@ func upMigration() error {
 		index[m.name] = m.id
 	}
 
-	for _, m := range migrations.Migrations {
+	ms := migrations.GetMigrations()
+
+	for _, m := range ms {
 		if _, ok := index[m.Uuid]; !ok {
 			logger.Infof(fmt.Sprintf("Migrating - %s", m.Uuid))
-			err1 := m.Up()
+			err1 := m.Up(c, db)
 			if err1 != nil {
 				return err1
 			}
-			err2 := insertMigration(m.Uuid)
+			err2 := InsertMigration(c, db, m.Uuid)
 			if err2 != nil {
 				return err2
 			}

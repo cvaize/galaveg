@@ -1,25 +1,24 @@
 package migrations
 
 import (
+	"database/sql"
 	"galaveg/config"
-	"galaveg/connections"
 )
 
-func CreateRolesTable00010101000010Up() error {
-
-	query := `CREATE TABLE ` + config.Config.Db.Prefix + `roles (
+func CreateRolesTable00010101000010Up(c *config.Config, db *sql.DB) error {
+	query := `CREATE TABLE ` + c.Db.Prefix + `roles (
 id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
 code VARCHAR(255) NOT NULL UNIQUE,
 name VARCHAR(255) NOT NULL UNIQUE,
 description VARCHAR(255) NULL DEFAULT NULL,
 permissions JSON NULL DEFAULT NULL
 );`
-	_, err := connections.DB.Exec(query)
+	_, err := db.Exec(query)
 	if err != nil {
 		return err
 	}
 
-	query = `INSERT INTO ` + config.Config.Db.Prefix + `roles (id, code, name, permissions) VALUES (1, 'admin', 'Admin', '["users_show",
+	query = `INSERT INTO ` + c.Db.Prefix + `roles (id, code, name, permissions) VALUES (1, 'admin', 'Admin', '["users_show",
 "users_create",
 "users_update",
 "users_delete",
@@ -28,7 +27,7 @@ permissions JSON NULL DEFAULT NULL
 "roles_create",
 "roles_update",
 "roles_delete"]');`
-	_, err = connections.DB.Exec(query)
+	_, err = db.Exec(query)
 	if err != nil {
 		return err
 	}
@@ -36,10 +35,9 @@ permissions JSON NULL DEFAULT NULL
 	return nil
 }
 
-func CreateRolesTable00010101000010Down() error {
-
-	query := `DROP TABLE ` + config.Config.Db.Prefix + `roles;`
-	_, err := connections.DB.Exec(query)
+func CreateRolesTable00010101000010Down(c *config.Config, db *sql.DB) error {
+	query := `DROP TABLE ` + c.Db.Prefix + `roles;`
+	_, err := db.Exec(query)
 	if err != nil {
 		return err
 	}

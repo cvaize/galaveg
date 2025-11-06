@@ -6,7 +6,6 @@ import (
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"os"
-	"regexp"
 	"strings"
 	"time"
 )
@@ -67,23 +66,14 @@ var makeMigrationCmd = &cobra.Command{
 
 		migrationsContent := string(migrationsContentBytes)
 
-		newMigration := `
-	Migration{
-		Uuid: "` + migrationName + `",
-		Up:   ` + upFuncName + `,
-		Down: ` + downFuncName + `,
-	},`
+		newMigration := `Migration{
+			Uuid: "` + migrationName + `",
+			Up:   ` + upFuncName + `,
+			Down: ` + downFuncName + `,
+		},
+		// NEW_MIGRATIONS_TAG`
 
-		substring := "var Migrations = []Migration{}"
-		updatedMigrationsContent := migrationsContent
-		if strings.Contains(migrationsContent, substring) {
-			template := `var Migrations = []Migration{` + newMigration + `
-}`
-			updatedMigrationsContent = strings.ReplaceAll(migrationsContent, substring, template)
-		} else {
-			re := regexp.MustCompile(`(?s)(var\s+Migrations\s*=\s*\[\]\s*Migration\s*{)(.*?)(\n}\s*)`)
-			updatedMigrationsContent = re.ReplaceAllString(migrationsContent, "${1}${2}"+newMigration+"${3}")
-		}
+		updatedMigrationsContent := strings.ReplaceAll(migrationsContent, "// NEW_MIGRATIONS_TAG", newMigration)
 
 		migrationsFile, err := os.Create(migrationsFileName)
 		if err != nil {
@@ -110,13 +100,14 @@ func getMakeMigrationTemplate() string {
 
 import (
 	"database/sql"
+	"galaveg/config"
 )
 
-func {{ upName }}() error {
+func {{ upName }}(c *config.Config, db *sql.DB) error {
 	return nil
 }
 
-func {{ downName }}() error {
+func {{ downName }}(c *config.Config, db *sql.DB) error {
 	return nil
 }
 `

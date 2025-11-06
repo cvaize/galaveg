@@ -1,12 +1,12 @@
 package migrations
 
 import (
+	"database/sql"
 	"galaveg/config"
-	"galaveg/connections"
 )
 
-func CreateUsersFilesTable00010101000030Up() error {
-	query := `CREATE TABLE ` + config.Config.Db.Prefix + `users_files (
+func CreateUsersFilesTable00010101000030Up(c *config.Config, db *sql.DB) error {
+	query := `CREATE TABLE ` + c.Db.Prefix + `users_files (
    id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
    file_id BIGINT UNSIGNED NOT NULL COMMENT 'Relation to the files table.',
    filename VARCHAR(255) CHARACTER SET ascii COLLATE ascii_bin NULL DEFAULT NULL COMMENT 'The file name.',
@@ -21,37 +21,37 @@ func CreateUsersFilesTable00010101000030Up() error {
    is_public BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Label: public file or not.',
    disk VARCHAR(255) CHARACTER SET ascii COLLATE ascii_bin NOT NULL COMMENT 'The disk where the file is stored.'
 ) COMMENT 'Files belonging to users.';`
-	_, err := connections.DB.Exec(query)
+	_, err := db.Exec(query)
 	if err != nil {
 		return err
 	}
 
-	query = `ALTER TABLE ` + config.Config.Db.Prefix + `users_files ADD UNIQUE file_user_udx (user_id, file_id);`
-	_, err = connections.DB.Exec(query)
+	query = `ALTER TABLE ` + c.Db.Prefix + `users_files ADD UNIQUE file_user_udx (user_id, file_id);`
+	_, err = db.Exec(query)
 	if err != nil {
 		return err
 	}
 
-	query = `ALTER TABLE ` + config.Config.Db.Prefix + `users_files ADD INDEX user_idx (user_id);`
-	_, err = connections.DB.Exec(query)
+	query = `ALTER TABLE ` + c.Db.Prefix + `users_files ADD INDEX user_idx (user_id);`
+	_, err = db.Exec(query)
 	if err != nil {
 		return err
 	}
 
-	query = `ALTER TABLE ` + config.Config.Db.Prefix + `users_files ADD INDEX path_idx (path);`
-	_, err = connections.DB.Exec(query)
+	query = `ALTER TABLE ` + c.Db.Prefix + `users_files ADD INDEX path_idx (path);`
+	_, err = db.Exec(query)
 	if err != nil {
 		return err
 	}
 
-	query = `ALTER TABLE ` + config.Config.Db.Prefix + `users_files ADD INDEX filename_idx (filename);`
-	_, err = connections.DB.Exec(query)
+	query = `ALTER TABLE ` + c.Db.Prefix + `users_files ADD INDEX filename_idx (filename);`
+	_, err = db.Exec(query)
 	if err != nil {
 		return err
 	}
 
-	query = `ALTER TABLE ` + config.Config.Db.Prefix + `users_files ADD INDEX upload_filename_idx (upload_filename);`
-	_, err = connections.DB.Exec(query)
+	query = `ALTER TABLE ` + c.Db.Prefix + `users_files ADD INDEX upload_filename_idx (upload_filename);`
+	_, err = db.Exec(query)
 	if err != nil {
 		return err
 	}
@@ -59,9 +59,9 @@ func CreateUsersFilesTable00010101000030Up() error {
 	return nil
 }
 
-func CreateUsersFilesTable00010101000030Down() error {
-	query := `DROP TABLE ` + config.Config.Db.Prefix + `users_files;`
-	_, err := connections.DB.Exec(query)
+func CreateUsersFilesTable00010101000030Down(c *config.Config, db *sql.DB) error {
+	query := `DROP TABLE ` + c.Db.Prefix + `users_files;`
+	_, err := db.Exec(query)
 	if err != nil {
 		return err
 	}

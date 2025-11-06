@@ -1,12 +1,12 @@
 package main
 
 import (
+	"galaveg/bootstrap/singleton"
 	"galaveg/cmd"
-	"galaveg/config"
 	"galaveg/utils/logger"
 )
 
 func main() {
-	logger.SetLogLevel(config.Config.App.LogLevel)
+	logger.SetLogLevel(singleton.C.App.LogLevel)
 	cmd.Execute()
 }
