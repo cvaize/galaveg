@@ -11,8 +11,8 @@ import (
 )
 
 type TranslatorService struct {
-	locale     string
-	translates map[string]map[string]string
+	Locale     string
+	Translates map[string]map[string]string
 }
 
 func NewTranslatorService(locale string, translates map[string]map[string]string) *TranslatorService {
@@ -131,12 +131,12 @@ func NewTranslatorServiceFromFiles(dir, locale string) (*TranslatorService, erro
 }
 
 func (s TranslatorService) Get(lang, key string) string {
-	v, _ := s.translates[lang][key]
+	v, _ := s.Translates[lang][key]
 	return v
 }
 
 func (s TranslatorService) Is(lang, key string) bool {
-	_, ok := s.translates[lang][key]
+	_, ok := s.Translates[lang][key]
 	return ok
 }
 
@@ -145,11 +145,11 @@ func (s TranslatorService) vKey(key string) string {
 }
 
 func (s TranslatorService) Translate(lang, key string) string {
-	if v, ok := s.translates[lang][key]; ok {
+	if v, ok := s.Translates[lang][key]; ok {
 		return v
 	}
-	if lang != s.locale {
-		if v, ok := s.translates[s.locale][key]; ok {
+	if lang != s.Locale {
+		if v, ok := s.Translates[s.Locale][key]; ok {
 			return v
 		}
 	}
@@ -161,11 +161,11 @@ func (s TranslatorService) T(lang, key string) string {
 }
 
 func (s TranslatorService) Contains(lang, key string) bool {
-	if _, ok := s.translates[lang][key]; ok {
+	if _, ok := s.Translates[lang][key]; ok {
 		return true
 	}
-	if lang != s.locale {
-		if _, ok := s.translates[s.locale][key]; ok {
+	if lang != s.Locale {
+		if _, ok := s.Translates[s.Locale][key]; ok {
 			return true
 		}
 	}
@@ -224,11 +224,10 @@ func (s TranslatorService) C(lang, key string, value int, vars map[string]string
 }
 
 func (s TranslatorService) choicesRuleEn(value int) int {
-	if value > 1 {
-		return 1
-	} else {
+	if value == 1 {
 		return 0
 	}
+	return 1
 }
 
 func (s TranslatorService) choicesRuleRu(value, choices int) int {
