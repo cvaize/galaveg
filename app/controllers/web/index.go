@@ -1,13 +1,11 @@
-package v1
+package web
 
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
-type Controller struct{}
-
-func (ctrl *Controller) Index(ctx *gin.Context) {
+func Index(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"status": "ok",
 	})

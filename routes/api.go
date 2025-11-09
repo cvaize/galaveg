@@ -6,7 +6,6 @@ import (
 )
 
 func apiRegister(router *gin.Engine) {
-	var ctrl v1.Controller
 	g := router.Group("/api/v1")
-	g.GET("/", ctrl.Index)
+	g.GET("/", v1.Index)
 }

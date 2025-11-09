@@ -1,14 +1,16 @@
 package routes
 
 import (
-	"galaveg/app/controllers/api/v1"
+	"galaveg/app/controllers/web"
 	"galaveg/app/controllers/web/auth"
+	"galaveg/app/controllers/web/users"
 	"github.com/gin-gonic/gin"
 )
 
-func webRegister(router *gin.Engine) {
-	var ctrl v1.Controller
-	g := router.Group("/")
-	g.GET("/", ctrl.Index)
-	g.GET("/login", auth.Login)
+func webRegister(r *gin.Engine) {
+	r.GET("/", web.Index)
+	r.GET("/login", auth.Login)
+
+	g := r.Group("/users")
+	g.GET("/", users.Index)
 }
