@@ -186,3 +186,58 @@ func (s TranslatorService) Variables(lang, key string, vars map[string]string) s
 func (s TranslatorService) V(lang, key string, vars map[string]string) string {
 	return s.Variables(lang, key, vars)
 }
+
+func (s TranslatorService) Choices(lang, key string, value int, vars map[string]string) string {
+	result := s.Translate(lang, key)
+	resultSplit := strings.Split(result, "|")
+	resultSplitLen := len(resultSplit)
+
+	if resultSplitLen < 2 {
+		return result
+	}
+
+	if value < 0 {
+		value = value * -1
+	}
+
+	index := 0
+	if lang == "ru" {
+		index = s.choicesRuleRu(value, resultSplitLen)
+	} else if lang == "en" {
+		index = s.choicesRuleEn(value)
+	}
+
+	resultSplitLen--
+	if resultSplitLen >= index {
+		result = resultSplit[index]
+	}
+
+	if vars != nil {
+		return s.applyVariables(result, vars)
+	}
+
+	return result
+}
+
+func (s TranslatorService) C(lang, key string, value int, vars map[string]string) string {
+	return s.Choices(lang, key, value, vars)
+}
+
+func (s TranslatorService) choicesRuleEn(value int) int {
+	if value > 1 {
+		return 1
+	} else {
+		return 0
+	}
+}
+
+func (s TranslatorService) choicesRuleRu(value, choices int) int {
+	if value%10 == 1 && value%100 != 11 {
+		return 0
+	}
+
+	if choices == 2 || (value%10 >= 2 && value%10 <= 4 && (value%100 < 10 || value%100 >= 20)) {
+		return 1
+	}
+	return 2
+}
