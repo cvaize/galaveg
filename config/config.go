@@ -30,6 +30,6 @@ func New(envPath string) *Config {
 	}
 }
 
-func (c Config) GetFolder(path string) string {
+func (c *Config) GetFolder(path string) string {
 	return filepath.Join(c.App.Folder, path)
 }

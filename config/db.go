@@ -25,7 +25,7 @@ type DbConfig struct {
 	Prefix   string
 }
 
-func (c DbConfig) DSN() string {
+func (c *DbConfig) DSN() string {
 	// TODO: Подумать над параметрами, на вроде multiStatements
 	//"user:password@tcp(localhost:3306)/database?parseTime=true"
 	return fmt.Sprintf(

@@ -138,29 +138,29 @@ func MustTranslatorServiceFromFiles(dir, locale string) *TranslatorService {
 	return s
 }
 
-func (s TranslatorService) GetLocale() string {
+func (s *TranslatorService) GetLocale() string {
 	return s.locale
 }
 
-func (s TranslatorService) GetTranslates() map[string]map[string]string {
+func (s *TranslatorService) GetTranslates() map[string]map[string]string {
 	return s.translates
 }
 
-func (s TranslatorService) Get(lang, key string) string {
+func (s *TranslatorService) Get(lang, key string) string {
 	v, _ := s.translates[lang][key]
 	return v
 }
 
-func (s TranslatorService) Is(lang, key string) bool {
+func (s *TranslatorService) Is(lang, key string) bool {
 	_, ok := s.translates[lang][key]
 	return ok
 }
 
-func (s TranslatorService) vKey(key string) string {
+func (s *TranslatorService) vKey(key string) string {
 	return ":" + key
 }
 
-func (s TranslatorService) Translate(lang, key string) string {
+func (s *TranslatorService) Translate(lang, key string) string {
 	if v, ok := s.translates[lang][key]; ok {
 		return v
 	}
@@ -172,11 +172,11 @@ func (s TranslatorService) Translate(lang, key string) string {
 	return key
 }
 
-func (s TranslatorService) T(lang, key string) string {
+func (s *TranslatorService) T(lang, key string) string {
 	return s.Translate(lang, key)
 }
 
-func (s TranslatorService) Contains(lang, key string) bool {
+func (s *TranslatorService) Contains(lang, key string) bool {
 	if _, ok := s.translates[lang][key]; ok {
 		return true
 	}
@@ -188,22 +188,22 @@ func (s TranslatorService) Contains(lang, key string) bool {
 	return false
 }
 
-func (s TranslatorService) applyVariables(value string, vars map[string]string) string {
+func (s *TranslatorService) applyVariables(value string, vars map[string]string) string {
 	for k, v := range vars {
 		value = strings.ReplaceAll(value, s.vKey(k), v)
 	}
 	return value
 }
 
-func (s TranslatorService) Variables(lang, key string, vars map[string]string) string {
+func (s *TranslatorService) Variables(lang, key string, vars map[string]string) string {
 	return s.applyVariables(s.Translate(lang, key), vars)
 }
 
-func (s TranslatorService) V(lang, key string, vars map[string]string) string {
+func (s *TranslatorService) V(lang, key string, vars map[string]string) string {
 	return s.Variables(lang, key, vars)
 }
 
-func (s TranslatorService) Choices(lang, key string, value int, vars map[string]string) string {
+func (s *TranslatorService) Choices(lang, key string, value int, vars map[string]string) string {
 	result := s.Translate(lang, key)
 	resultSplit := strings.Split(result, "|")
 	resultSplitLen := len(resultSplit)
@@ -235,18 +235,18 @@ func (s TranslatorService) Choices(lang, key string, value int, vars map[string]
 	return result
 }
 
-func (s TranslatorService) C(lang, key string, value int, vars map[string]string) string {
+func (s *TranslatorService) C(lang, key string, value int, vars map[string]string) string {
 	return s.Choices(lang, key, value, vars)
 }
 
-func (s TranslatorService) choicesRuleEn(value int) int {
+func (s *TranslatorService) choicesRuleEn(value int) int {
 	if value == 1 {
 		return 0
 	}
 	return 1
 }
 
-func (s TranslatorService) choicesRuleRu(value, choices int) int {
+func (s *TranslatorService) choicesRuleRu(value, choices int) int {
 	if value%10 == 1 && value%100 != 11 {
 		return 0
 	}

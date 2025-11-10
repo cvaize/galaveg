@@ -20,7 +20,7 @@ func init() {
 	C = config.New(filepath.Join(viper.GetString("APP_FOLDER"), ".env"))
 	DB = db.New(C.Db)
 	TS = services.MustTranslatorServiceFromFiles(C.GetFolder("resources/lang/"), C.App.Locale)
-	LS = services.NewLocaleService(C.App.Locale, C.App.Locale, []dto.Locale{
+	LS = services.MustLocaleService(C.App.Locale, C.App.Locale, []dto.Locale{
 		{Code: "en", ShortName: "en", FullName: "English"},
 		{Code: "ru", ShortName: "ru", FullName: "Русский"},
 	})
