@@ -2,6 +2,7 @@ package singleton
 
 import (
 	"database/sql"
+	"galaveg/app/services"
 	"galaveg/config"
 	"galaveg/connections/db"
 	_ "github.com/go-sql-driver/mysql"
@@ -9,12 +10,12 @@ import (
 	"path/filepath"
 )
 
-var c config.Config
 var C *config.Config
 var DB *sql.DB
+var TS *services.TranslatorService
 
 func init() {
-	c = config.New(filepath.Join(viper.GetString("APP_FOLDER"), ".env"))
-	C = &c
+	C = config.New(filepath.Join(viper.GetString("APP_FOLDER"), ".env"))
 	DB = db.New(C.Db)
+	TS = services.MustTranslatorServiceFromFiles(C.GetFolder("resources/lang/"), C.App.Locale)
 }

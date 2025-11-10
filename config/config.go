@@ -11,7 +11,7 @@ type Config struct {
 	Db  DbConfig
 }
 
-func New(envPath string) Config {
+func New(envPath string) *Config {
 	viper.SetConfigFile(envPath)
 	if err := viper.ReadInConfig(); err != nil {
 		panic(err)
@@ -24,7 +24,7 @@ func New(envPath string) Config {
 	}
 	time.Local = loc
 
-	return Config{
+	return &Config{
 		App: NewAppConfig(),
 		Db:  NewDbConfig(),
 	}

@@ -10,6 +10,6 @@ func GetEnv() string {
 	return filepath.Join(viper.GetString("APP_FOLDER"), "tests.env")
 }
 
-func GetConfig() config.Config {
+func GetConfig() *config.Config {
 	return config.New(GetEnv())
 }

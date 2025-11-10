@@ -14,6 +14,7 @@ func Home(c *gin.Context) {
 		"Breadcrumbs": []map[string]string{
 			{
 				"Label": "Главная",
+				"Href":  "/",
 			},
 		},
 	})

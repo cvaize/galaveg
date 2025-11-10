@@ -25,3 +25,8 @@ go run . migrate
 go test <test_file_path> -v
 ```
 , например: `go test ./tests/unit/utils/path/path_test.go -v`.
+
+В разработке использовалась утилита [watchexec](https://github.com/watchexec/watchexec), команда:
+```shell
+watchexec -r -e go,gohtml,html go run . serve
+```
