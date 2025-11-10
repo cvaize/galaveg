@@ -35,8 +35,8 @@ func TestNewTranslatorService(t *testing.T) {
 	service := services.NewTranslatorService("en", translates)
 
 	assert.NotNil(t, service)
-	assert.Equal(t, service.Locale, "en")
-	assert.Equal(t, len(service.Translates), 2)
+	assert.Equal(t, service.GetLocale(), "en")
+	assert.Equal(t, len(service.GetTranslates()), 2)
 }
 
 func TestNewTranslatorServiceFromFiles(t *testing.T) {
