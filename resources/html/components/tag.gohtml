@@ -1,15 +1,13 @@
 {{ define "components/tag" }}
-    {{ if .Values }}
-        <div class="admin-tag">
-            <div class="admin-tag__name">{{ .Label }}:</div>
-            {{ range .Values }}
-                <div class="admin-tag__value">
-                    {{ .Label }}
-                    {{ if .Reset }}
-                        <a href="{{ .Reset.Href }}" class="admin-tag__close" aria-label="{{ .Reset.Label }}"></a>
-                    {{ end }}
-                </div>
-            {{ end }}
-        </div>
-    {{ end }}
+    <div class="admin-tag">
+        <div class="admin-tag__name">{{ .Label }}:</div>
+        {{ range .Values }}
+            <div class="admin-tag__value">
+                {{ .Label }}
+                {{ if .Reset }}
+                    <a href="{{ .Reset.Href }}" class="admin-tag__close" aria-label="{{ .Reset.Label }}"></a>
+                {{ end }}
+            </div>
+        {{ end }}
+    </div>
 {{ end }}

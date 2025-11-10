@@ -5,8 +5,16 @@ import (
 	"net/http"
 )
 
-func Index(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, gin.H{
-		"status": "ok",
+func Home(c *gin.Context) {
+	c.HTML(http.StatusOK, "layouts/home", gin.H{
+		"Lang":     "ru",
+		"Title":    "Главная - Galaveg",
+		"Heading":  "Компоненты",
+		"DarkMode": "auto",
+		"Breadcrumbs": []map[string]string{
+			{
+				"Label": "Главная",
+			},
+		},
 	})
 }

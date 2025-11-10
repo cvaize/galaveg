@@ -7,16 +7,11 @@ import (
 )
 
 func Login(c *gin.Context) {
-	c.HTML(http.StatusOK, "pages/auth", gin.H{
-		"Lang":    "ru",
-		"Title":   "Вход - Galaveg",
-		"Heading": "Вход",
-		"DarkMode": map[string]any{
-			"DarkTitle":  "1",
-			"LightTitle": "2",
-			"AutoTitle":  "3",
-			"Value":      "auto",
-		},
+	c.HTML(http.StatusOK, "layouts/auth", gin.H{
+		"Lang":     "ru",
+		"Title":    "Вход - Galaveg",
+		"Heading":  "Вход",
+		"DarkMode": "auto",
 		"Form": map[string]any{
 			"Action": "/login",
 			"Method": "post",

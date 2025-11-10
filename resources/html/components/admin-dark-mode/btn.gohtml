@@ -1,11 +1,8 @@
-{{ define "components/admin-dark-mode-btn" }}
+{{ define "components/admin-dark-mode/btn" }}
     <div class="admin-dark-mode">
-        <label for="admin-dark-mode__radio--light" class="admin-dark-mode__label admin-dark-mode__label--dark"
-               title="{{ .DarkMode.DarkTitle }}"></label>
-        <label for="admin-dark-mode__radio--auto" class="admin-dark-mode__label admin-dark-mode__label--light"
-               title="{{ .DarkMode.LightTitle }}"></label>
-        <label for="admin-dark-mode__radio--dark" class="admin-dark-mode__label admin-dark-mode__label--auto"
-               title="{{ .DarkMode.AutoTitle }}"></label>
+        <label for="admin-dark-mode__radio--light" class="admin-dark-mode__label admin-dark-mode__label--dark"></label>
+        <label for="admin-dark-mode__radio--auto" class="admin-dark-mode__label admin-dark-mode__label--light"></label>
+        <label for="admin-dark-mode__radio--dark" class="admin-dark-mode__label admin-dark-mode__label--auto"></label>
         <svg class="admin-icon--svg admin-dark-mode__icon admin-dark-mode__icon--dark"
              xmlns="http://www.w3.org/2000/svg"
              width="24" height="24"

@@ -8,7 +8,7 @@ import (
 )
 
 func webRegister(r *gin.Engine) {
-	r.GET("/", web.Index)
+	r.GET("/", web.Home)
 	r.GET("/login", auth.Login)
 
 	g := r.Group("/users")

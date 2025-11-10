@@ -1,8 +1,10 @@
 package path
 
 import (
+	"io/fs"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 //https://github.com/golang/go/blob/master/src/cmd/go/internal/base/path.go
@@ -35,4 +37,30 @@ func FindModuleRoot(dir string) (roots string) {
 		dir = d
 	}
 	return ""
+}
+
+func CollectFilepathBySuffix(dir, suffix string) ([]string, error) {
+	suffix = strings.ToLower(suffix)
+	var paths []string
+	err := filepath.WalkDir(dir, func(fullPath string, d fs.DirEntry, walkErr error) error {
+		if walkErr != nil {
+			return walkErr
+		}
+		if d.IsDir() {
+			return nil
+		}
+		if strings.HasSuffix(strings.ToLower(d.Name()), suffix) {
+			paths = append(paths, fullPath)
+		}
+		return nil
+	})
+	return paths, err
+}
+
+func MustCollectFilepathBySuffix(dir, suffix string) []string {
+	paths, err := CollectFilepathBySuffix(dir, suffix)
+	if err != nil {
+		panic(err)
+	}
+	return paths
 }

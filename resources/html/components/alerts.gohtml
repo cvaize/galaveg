@@ -1,11 +1,9 @@
 {{ define "components/alerts" }}
-    {{if .Alerts}}
-        {{range $index, $alert := .Alerts}}
-            {{template "components/alert.html" dict
-            "Index" $index
-            "Style" $alert.Style
-            "Content" $alert.Content
-            }}
-        {{end}}
+    {{range $index, $alert := .Alerts}}
+        {{template "components/alert.html" dict
+        "Index" $index
+        "Style" $alert.Style
+        "Content" $alert.Content
+        }}
     {{end}}
 {{end}}

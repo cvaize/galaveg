@@ -5,8 +5,14 @@ import (
 	"galaveg/bootstrap/singleton"
 	"galaveg/routes"
 	"galaveg/utils/logger"
+	"galaveg/utils/path"
 	"github.com/gin-gonic/gin"
 	"strings"
+	"sync"
+)
+
+var (
+	mu sync.Mutex
 )
 
 func Http() *gin.Engine {
@@ -19,8 +25,10 @@ func Http() *gin.Engine {
 
 	router := gin.New()
 
-	router.FuncMap["eq"] = func(a, b string) bool { return a == b }
+	router.FuncMap["eq"] = func(a, b any) bool { return a == b }
+	router.FuncMap["eqInt"] = func(a, b int) bool { return a == b }
 	router.FuncMap["ne"] = func(a, b string) bool { return a != b }
+	router.FuncMap["neInt"] = func(a, b string) bool { return a != b }
 	router.FuncMap["replace"] = strings.ReplaceAll
 	router.FuncMap["unless"] = func(v any) bool {
 		return v == nil || v == "" || v == false
@@ -38,8 +46,19 @@ func Http() *gin.Engine {
 	router.FuncMap["startsWith"] = func(s, prefix string) bool {
 		return strings.HasPrefix(s, prefix)
 	}
-	// TODO: Проверить LoadHTMLGlob, возможно он не читает resources/html/*.gohtml . Если так, то создать отдельную функцию из filepath.WalkDir.
-	router.LoadHTMLGlob("resources/html/**/*.gohtml")
+
+	templates := path.MustCollectFilepathBySuffix(singleton.C.GetFolder("resources/html"), ".gohtml")
+	router.LoadHTMLFiles(templates...)
+	if singleton.C.App.Debug {
+		// middleware, which updates templates with each request in dev mode
+		router.Use(func(c *gin.Context) {
+			mu.Lock()
+			templates := path.MustCollectFilepathBySuffix(singleton.C.GetFolder("resources/html"), ".gohtml")
+			router.LoadHTMLFiles(templates...)
+			mu.Unlock()
+			c.Next()
+		})
+	}
 
 	if err := router.SetTrustedProxies(singleton.C.App.AllowedHosts); err != nil {
 		panic(err)

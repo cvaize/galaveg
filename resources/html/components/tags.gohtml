@@ -1,7 +1,7 @@
 {{ define "components/tags" }}
     <div class="admin-tags"{{ if .Style }} style="{{ .Style }}"{{ end }}>
         {{ range .Items }}
-            {{ template "components/tag" (dict "Label" .Label "Values" .Values) }}
+            {{ template "components/tag" . }}
         {{ end }}
     </div>
 {{ end }}
