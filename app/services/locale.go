@@ -3,6 +3,8 @@ package services
 import (
 	"errors"
 	"galaveg/app/dto"
+	"github.com/gin-gonic/gin"
+	"strings"
 )
 
 type LocaleService struct {
@@ -65,7 +67,11 @@ func (s *LocaleService) GetLocales() []dto.Locale {
 	return s.locales
 }
 
-func (s *LocaleService) existsCode(code string) string {
+func (s *LocaleService) GetLocalesCodes() []string {
+	return s.localesCodes
+}
+
+func (s *LocaleService) getExistsOrDefaultCode(code string) string {
 	_, ok := s.localesMap[code]
 	if ok {
 		return code
@@ -73,38 +79,34 @@ func (s *LocaleService) existsCode(code string) string {
 	return s.defaultLocale.Code
 }
 
-func (s *LocaleService) GetLocalesCodes() []string {
-	return s.localesCodes
+func (s *LocaleService) GetLocaleCodeFromGinContext(c *gin.Context, user *dto.User) string {
+	var val string
+	if c != nil {
+		// manually selected by the user in the browser
+		val, _ = c.Cookie(s.localeCookieKey)
+		if val != "" {
+			return s.getExistsOrDefaultCode(val)
+		}
+	}
+	if user != nil {
+		// the locale is selected from the database
+		if user.Locale != "" {
+			return s.getExistsOrDefaultCode(user.Locale)
+		}
+	}
+	if c != nil {
+		// Accept-Language: *
+		// Accept-Language: fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5
+		val = c.GetHeader("Accept-Language")
+		if val != "" {
+			if index := strings.IndexAny(val, "-,;"); index != -1 {
+				return s.getExistsOrDefaultCode(val[:index])
+			}
+		}
+	}
+	return s.defaultLocale.Code
 }
 
-//pub fn get_locale_code(&self, req: Option<&HttpRequest>, user: Option<&User>) -> String {
-//if let Some(req) = req {
-//if let Some(locale) = req.cookie(&self.config.app.locale_cookie_key) {
-//let locale = locale.value().to_string();
-//if StrMinMaxLength::apply(&locale, 1, 6) {
-//return self.exists_locale_code_or_default(locale);
-//}
-//}
-//}
-//if let Some(user) = user {
-//if let Some(locale) = &user.locale {
-//if StrMinMaxLength::apply(&locale, 1, 6) {
-//return self.exists_locale_code_or_default(locale.to_string());
-//}
-//}
-//}
-//if let Some(req) = req {
-//if let Some(header) = req.headers().get(ACCEPT_LANGUAGE) {
-//let languages = accept_language::intersection(
-//header.to_str().unwrap_or(&self.config.app.locale),
-//&self.get_locales_codes_ref(),
-//);
-//
-//if let Some(locale) = languages.first() {
-//return self.exists_locale_code_or_default(locale.to_string());
-//}
-//}
-//}
-//
-//self.config.app.locale.to_string()
-//}
+func (s *LocaleService) G(c *gin.Context, user *dto.User) string {
+	return s.GetLocaleCodeFromGinContext(c, user)
+}
