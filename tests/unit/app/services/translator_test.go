@@ -41,7 +41,7 @@ func TestNewTranslatorService(t *testing.T) {
 
 func TestNewTranslatorServiceFromFiles(t *testing.T) {
 	c := tests.GetConfig()
-	f := c.GetFolder("resources/lang/")
+	f := c.GetFolder("resources/translates/")
 
 	_, err := services.NewTranslatorServiceFromFiles(f, c.App.Locale)
 	assert.NoError(t, err)

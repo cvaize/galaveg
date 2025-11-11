@@ -8,7 +8,7 @@ import (
 
 func Login(c *gin.Context) {
 	c.HTML(http.StatusOK, "layouts/auth", gin.H{
-		"Lang":     "ru",
+		"Locale":   "ru",
 		"Title":    "Вход - Galaveg",
 		"Heading":  "Вход",
 		"DarkMode": "auto",

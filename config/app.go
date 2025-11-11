@@ -17,18 +17,20 @@ func init() {
 	viper.SetDefault("APP_FOLDER", path.FindModuleRoot(path.Cwd()))
 	viper.SetDefault("APP_LOCALE", "en")
 	viper.SetDefault("APP_LOCALE_COOKIE_KEY", "locale")
+	viper.SetDefault("APP_DARK_MODE_COOKIE_KEY", "dark_mode")
 }
 
 type AppConfig struct {
-	Debug           bool
-	Host            string
-	Port            uint
-	Timezone        string
-	LogLevel        string
-	AllowedHosts    []string
-	Folder          string
-	Locale          string
-	LocaleCookieKey string
+	Debug             bool
+	Host              string
+	Port              uint
+	Timezone          string
+	LogLevel          string
+	AllowedHosts      []string
+	Folder            string
+	Locale            string
+	LocaleCookieKey   string
+	DarkModeCookieKey string
 }
 
 func NewAppConfig() AppConfig {
@@ -43,8 +45,9 @@ func NewAppConfig() AppConfig {
 		}), func(s string, _ int) bool {
 			return s != ""
 		}),
-		Folder:          viper.GetString("APP_FOLDER"),
-		Locale:          viper.GetString("APP_LOCALE"),
-		LocaleCookieKey: viper.GetString("APP_LOCALE_COOKIE_KEY"),
+		Folder:            viper.GetString("APP_FOLDER"),
+		Locale:            viper.GetString("APP_LOCALE"),
+		LocaleCookieKey:   viper.GetString("APP_LOCALE_COOKIE_KEY"),
+		DarkModeCookieKey: viper.GetString("APP_DARK_MODE_COOKIE_KEY"),
 	}
 }
