@@ -28,7 +28,7 @@ func NewTranslatorServiceFromFiles(dir, locale string) (*TranslatorService, erro
 		return nil, fmt.Errorf("NewTranslatorServiceFromFiles: translates folder not found: %s", dir)
 	}
 
-	var fullKey, lang, prefixKey, key, value string
+	var fullKey, locale1, prefixKey, key, value string
 	var dotIndex int
 	var valueAny interface{}
 	err = filepath.WalkDir(dir, func(fullPath string, d fs.DirEntry, walkErr error) error {
@@ -61,25 +61,25 @@ func NewTranslatorServiceFromFiles(dir, locale string) (*TranslatorService, erro
 
 			if len(flat) != 0 {
 				dotIndex = strings.Index(fullKey, ".")
-				lang = ""
+				locale1 = ""
 				prefixKey = ""
 
 				if dotIndex == -1 {
-					lang = fullKey
+					locale1 = fullKey
 				} else {
-					lang = fullKey[:dotIndex]
+					locale1 = fullKey[:dotIndex]
 					prefixKey = fullKey[dotIndex+1:]
 				}
 
-				lang = strings.TrimSpace(lang)
+				locale1 = strings.TrimSpace(locale1)
 				prefixKey = strings.TrimSpace(prefixKey)
 
-				if lang == "" {
+				if locale1 == "" {
 					return fmt.Errorf("the language is not defined by the path: %s", fullPath)
 				}
 
-				if _, ok := translates[lang]; !ok {
-					translates[lang] = map[string]string{}
+				if _, ok := translates[locale1]; !ok {
+					translates[locale1] = map[string]string{}
 				}
 
 				for key, valueAny = range flat {
@@ -87,7 +87,7 @@ func NewTranslatorServiceFromFiles(dir, locale string) (*TranslatorService, erro
 					key = strings.TrimLeft(key, ".")
 					key = strings.TrimSpace(key)
 					value = strings.TrimSpace(fmt.Sprintf("%s", valueAny))
-					translates[lang][key] = value
+					translates[locale1][key] = value
 				}
 			}
 		}
@@ -100,8 +100,8 @@ func NewTranslatorServiceFromFiles(dir, locale string) (*TranslatorService, erro
 	var variables, sp1, sp2 []string
 	var varSt, v string
 	var ok bool
-	for lang, _ = range translates {
-		for key, value = range translates[lang] {
+	for locale1, _ = range translates {
+		for key, value = range translates[locale1] {
 			variables = []string{}
 
 			sp1 = strings.Split(value, "{{")
@@ -115,12 +115,12 @@ func NewTranslatorServiceFromFiles(dir, locale string) (*TranslatorService, erro
 
 			if len(variables) > 0 {
 				for _, varSt = range variables {
-					v, ok = translates[lang][strings.TrimSpace(varSt)]
+					v, ok = translates[locale1][strings.TrimSpace(varSt)]
 					if !ok {
-						v, ok = translates[locale][strings.TrimSpace(varSt)]
+						v, ok = translates[locale1][strings.TrimSpace(varSt)]
 					}
 					if ok {
-						translates[lang][key] = strings.ReplaceAll(translates[lang][key], "{{"+varSt+"}}", v)
+						translates[locale1][key] = strings.ReplaceAll(translates[locale1][key], "{{"+varSt+"}}", v)
 					}
 				}
 			}
@@ -146,13 +146,13 @@ func (s *TranslatorService) GetTranslates() map[string]map[string]string {
 	return s.translates
 }
 
-func (s *TranslatorService) Get(lang, key string) string {
-	v, _ := s.translates[lang][key]
+func (s *TranslatorService) Get(locale, key string) string {
+	v, _ := s.translates[locale][key]
 	return v
 }
 
-func (s *TranslatorService) Is(lang, key string) bool {
-	_, ok := s.translates[lang][key]
+func (s *TranslatorService) Is(locale, key string) bool {
+	_, ok := s.translates[locale][key]
 	return ok
 }
 
@@ -160,11 +160,11 @@ func (s *TranslatorService) vKey(key string) string {
 	return ":" + key
 }
 
-func (s *TranslatorService) Translate(lang, key string) string {
-	if v, ok := s.translates[lang][key]; ok {
+func (s *TranslatorService) Translate(locale, key string) string {
+	if v, ok := s.translates[locale][key]; ok {
 		return v
 	}
-	if lang != s.locale {
+	if locale != s.locale {
 		if v, ok := s.translates[s.locale][key]; ok {
 			return v
 		}
@@ -172,15 +172,15 @@ func (s *TranslatorService) Translate(lang, key string) string {
 	return key
 }
 
-func (s *TranslatorService) T(lang, key string) string {
-	return s.Translate(lang, key)
+func (s *TranslatorService) T(locale, key string) string {
+	return s.Translate(locale, key)
 }
 
-func (s *TranslatorService) Contains(lang, key string) bool {
-	if _, ok := s.translates[lang][key]; ok {
+func (s *TranslatorService) Contains(locale, key string) bool {
+	if _, ok := s.translates[locale][key]; ok {
 		return true
 	}
-	if lang != s.locale {
+	if locale != s.locale {
 		if _, ok := s.translates[s.locale][key]; ok {
 			return true
 		}
@@ -195,16 +195,16 @@ func (s *TranslatorService) applyVariables(value string, vars map[string]string)
 	return value
 }
 
-func (s *TranslatorService) Variables(lang, key string, vars map[string]string) string {
-	return s.applyVariables(s.Translate(lang, key), vars)
+func (s *TranslatorService) Variables(locale, key string, vars map[string]string) string {
+	return s.applyVariables(s.Translate(locale, key), vars)
 }
 
-func (s *TranslatorService) V(lang, key string, vars map[string]string) string {
-	return s.Variables(lang, key, vars)
+func (s *TranslatorService) V(locale, key string, vars map[string]string) string {
+	return s.Variables(locale, key, vars)
 }
 
-func (s *TranslatorService) Choices(lang, key string, value int, vars map[string]string) string {
-	result := s.Translate(lang, key)
+func (s *TranslatorService) Choices(locale, key string, value int, vars map[string]string) string {
+	result := s.Translate(locale, key)
 	resultSplit := strings.Split(result, "|")
 	resultSplitLen := len(resultSplit)
 
@@ -217,9 +217,9 @@ func (s *TranslatorService) Choices(lang, key string, value int, vars map[string
 	}
 
 	index := 0
-	if lang == "ru" {
+	if locale == "ru" {
 		index = s.choicesRuleRu(value, resultSplitLen)
-	} else if lang == "en" {
+	} else if locale == "en" {
 		index = s.choicesRuleEn(value)
 	}
 
@@ -235,8 +235,8 @@ func (s *TranslatorService) Choices(lang, key string, value int, vars map[string
 	return result
 }
 
-func (s *TranslatorService) C(lang, key string, value int, vars map[string]string) string {
-	return s.Choices(lang, key, value, vars)
+func (s *TranslatorService) C(locale, key string, value int, vars map[string]string) string {
+	return s.Choices(locale, key, value, vars)
 }
 
 func (s *TranslatorService) choicesRuleEn(value int) int {

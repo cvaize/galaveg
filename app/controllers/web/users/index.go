@@ -9,7 +9,7 @@ import (
 func Index(c *gin.Context) {
 	//page.users.index.header
 	c.HTML(http.StatusOK, "layouts/list", gin.H{
-		"Locale":   "ru",
+		"Lang":     "ru",
 		"Title":    "Главная - Galaveg",
 		"Heading":  singleton.TS.T("en", "page.users.index.header"),
 		"DarkMode": "auto",

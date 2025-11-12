@@ -7,19 +7,21 @@ import (
 )
 
 func Home(c *gin.Context) {
-	darkMode := singleton.AS.DarkMode(c)
-	locale := singleton.AS.Locale(c, nil)
-
-	c.HTML(http.StatusOK, "layouts/home", gin.H{
-		"Locale":   locale,
-		"Title":    "Главная - Galaveg",
-		"Heading":  "Компоненты",
-		"DarkMode": darkMode,
-		"Breadcrumbs": []map[string]string{
-			{
-				"Label": "Главная",
-				"Href":  "/",
-			},
+	ctx, err := singleton.AS.NewWebDataCtx(c)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	d := singleton.AS.GetWebData(&ctx)
+	l := ctx.Locale.Code
+	d["Title"] = singleton.TS.T(l, "page.home.title")
+	d["Heading"] = singleton.TS.T(l, "page.home.header")
+	d["Breadcrumbs"] = []map[string]string{
+		{
+			"Label": singleton.TS.T(l, "page.home.breadcrumbs.home"),
+			"Href":  "/",
 		},
-	})
+	}
+
+	c.HTML(http.StatusOK, "layouts/home", d)
 }
