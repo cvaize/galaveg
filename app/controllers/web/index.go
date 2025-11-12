@@ -1,24 +1,41 @@
 package web
 
 import (
-	"galaveg/bootstrap/singleton"
+	"galaveg/app/services"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
-func Home(c *gin.Context) {
-	ctx, err := singleton.AS.NewWebDataCtx(c)
+type WebController struct {
+	AS *services.AppService
+	TS *services.TranslatorService
+}
+
+func NewWebController(AS *services.AppService, TS *services.TranslatorService) (*WebController, error) {
+	return &WebController{AS, TS}, nil
+}
+
+func MustNewWebController(AS *services.AppService, TS *services.TranslatorService) *WebController {
+	ctr, err := NewWebController(AS, TS)
+	if err != nil {
+		panic(err)
+	}
+	return ctr
+}
+
+func (ctr *WebController) Home(c *gin.Context) {
+	ctx, err := ctr.AS.NewWebDataCtx(c)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	d := singleton.AS.GetWebData(&ctx)
+	d := ctr.AS.GetWebData(&ctx)
 	l := ctx.Locale.Code
-	d["Title"] = singleton.TS.T(l, "page.home.title")
-	d["Heading"] = singleton.TS.T(l, "page.home.header")
+	d["Title"] = ctr.TS.T(l, "page.home.title")
+	d["Heading"] = ctr.TS.T(l, "page.home.header")
 	d["Breadcrumbs"] = []map[string]string{
 		{
-			"Label": singleton.TS.T(l, "page.home.breadcrumbs.home"),
+			"Label": ctr.TS.T(l, "page.home.breadcrumbs.home"),
 			"Href":  "/",
 		},
 	}
