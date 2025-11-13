@@ -1,9 +1,12 @@
 {{ define "components/sidebar/panel" }}
+    <form id="logout" action="/logout" method="post" style="display: none;"></form>
+    <form id="switch_locale" action="/locale/switch" method="post" style="display: none;"></form>
+
     <div class="admin-sidebar">
         <a href="/public" class="admin-sidebar__brand">
             Admin front
             <img style="display: none" class="admin-sidebar__brand__logo" src="https://placehold.co/600x400"
-                 alt="Admin front">
+                 alt="">
         </a>
         <nav class="admin-sidebar__nav">
             <div class="admin-accordion admin-sidebar__menu">
