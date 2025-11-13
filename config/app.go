@@ -10,6 +10,7 @@ import (
 func init() {
 	viper.SetDefault("APP_DEBUG", false)
 	viper.SetDefault("APP_HOST", "0.0.0.0")
+	viper.SetDefault("APP_URL", "http://localhost/")
 	viper.SetDefault("APP_PORT", uint(8080))
 	viper.SetDefault("APP_TIMEZONE", "UTC")
 	viper.SetDefault("APP_LOG_LEVEL", "info")
@@ -23,6 +24,7 @@ func init() {
 type AppConfig struct {
 	Debug             bool
 	Host              string
+	Url               string
 	Port              uint
 	Timezone          string
 	LogLevel          string
@@ -37,6 +39,7 @@ func NewAppConfig() AppConfig {
 	return AppConfig{
 		Debug:    viper.GetBool("APP_DEBUG"),
 		Host:     viper.GetString("APP_HOST"),
+		Url:      viper.GetString("APP_URL"),
 		Port:     viper.GetUint("APP_PORT"),
 		Timezone: viper.GetString("APP_TIMEZONE"),
 		LogLevel: viper.GetString("APP_LOG_LEVEL"),
