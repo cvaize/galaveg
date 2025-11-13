@@ -1,6 +1,7 @@
 package home
 
 import (
+	"fmt"
 	"galaveg/app/dto"
 	"galaveg/app/services"
 	"galaveg/app/view/components/breadcrumbs/item"
@@ -91,6 +92,7 @@ func New(as *services.AppService, ls *services.LocaleService, ts *services.Trans
 		Text:              locale.FullName,
 		DropdownMaxHeight: strconv.Itoa(len(locales)*2) + "rem",
 	}
+
 	for _, v := range locales {
 		if v.Code != locale.Code {
 			localesMenuItem.Dropdown = append(localesMenuItem.Dropdown, menu_item.View{
@@ -100,7 +102,9 @@ func New(as *services.AppService, ls *services.LocaleService, ts *services.Trans
 			})
 		}
 	}
+	fmt.Println(localesMenuItem)
 	menu = append(menu, localesMenuItem)
+
 	return View{
 		Lang:     locale.Code,
 		DarkMode: as.DarkMode(c),
