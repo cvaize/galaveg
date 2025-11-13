@@ -1,7 +1,6 @@
 package home
 
 import (
-	"fmt"
 	"galaveg/app/dto"
 	"galaveg/app/services"
 	"galaveg/app/view/components/breadcrumbs/item"
@@ -102,7 +101,6 @@ func New(as *services.AppService, ls *services.LocaleService, ts *services.Trans
 			})
 		}
 	}
-	fmt.Println(localesMenuItem)
 	menu = append(menu, localesMenuItem)
 
 	return View{
