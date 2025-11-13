@@ -1,0 +1,16 @@
+{{ define "components/sidebar/dropdown-item-menu-item" }}
+    <li class="admin-sidebar__menu__item">
+        {{ if .Href }}
+            <a class="admin-sidebar__menu__item__link{{if .IsActive}} admin-active{{end}}" href="{{.Href}}">
+                {{ template "components/sidebar/icon-dropdown-item-menu-item" . }}
+                {{.Text}}
+            </a>
+        {{else }}
+            <button form="switch_locale" type="submit" name="{{.Name}}" value="{{.Value}}"
+                    class="admin-sidebar__menu__item__link{{if .IsActive}} admin-active{{end}}">
+                {{ template "components/sidebar/icon-dropdown-item-menu-item" . }}
+                {{.Text}}
+            </button>
+        {{ end }}
+    </li>
+{{ end }}

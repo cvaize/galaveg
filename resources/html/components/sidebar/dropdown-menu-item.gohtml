@@ -1,0 +1,21 @@
+{{ define "components/sidebar/dropdown-menu-item" }}
+    <div class="admin-accordion admin-sidebar__menu">
+        <input id="admin-sidebar__accordion-{{.Name}}"
+               class="admin-accordion__checkbox admin-sidebar__menu__checkbox"
+               type="checkbox"
+               name="admin-accordion__checkbox"
+               hidden{{ if .IsActive}} checked{{end}}>
+        <label class="admin-accordion__header admin-sidebar__menu__header"
+               for="admin-sidebar__accordion-{{.Name}}">
+                <span class="admin-sidebar__menu__header__content">
+                    {{ template "components/sidebar/icon-dropdown-menu-item" . }}
+                    <span class="admin-sidebar__menu__header__text">{{.Text}}</span>
+                </span>
+        </label>
+        <div class="admin-accordion__body" style="--admin-accordion-max-height: {{ .DropdownMaxHeight }};">
+            <ul class="admin-sidebar__menu__items">
+                {{ template "components/sidebar/dropdown-item-menu-item" . }}
+            </ul>
+        </div>
+    </div>
+{{ end }}

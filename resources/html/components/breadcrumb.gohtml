@@ -5,11 +5,11 @@
                 {{range $i, $crumb := .Breadcrumbs}}
                     {{if eq $i (sub1 (len $.Breadcrumbs))}}
                         <li class="admin-breadcrumb__item admin-breadcrumb__item--active" aria-current="page">
-                            {{$crumb.Label}}
+                            {{$crumb.Text}}
                         </li>
                     {{else}}
                         <li class="admin-breadcrumb__item">
-                            <a href="{{$crumb.Href}}" class="admin-breadcrumb__link">{{$crumb.Label}}</a>
+                            <a href="{{$crumb.Href}}" class="admin-breadcrumb__link">{{$crumb.Text}}</a>
                         </li>
                     {{end}}
                 {{end}}

@@ -4,11 +4,11 @@
     {{ template "components/head" . }}
     <body class="admin-body">
     {{ template "components/admin-dark-mode/inputs" . }}
-    {{ template "components/sidebar/inputs" . }}
+    {{ template "components/sidebar/inputs" .Sidebar }}
     <main class="admin-app">
         {{ template "components/admin-dark-mode/btn" . }}
-        {{ template "components/sidebar/btn" . }}
-        {{ template "components/sidebar/panel" . }}
+        {{ template "components/sidebar/btn" .Sidebar }}
+        {{ template "components/sidebar/panel" .Sidebar }}
 
         <div class="admin-content">
             {{ template "components/breadcrumb" . }}

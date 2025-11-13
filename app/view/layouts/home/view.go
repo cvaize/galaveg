@@ -8,6 +8,7 @@ import (
 	"galaveg/app/view/components/sidebar/brand"
 	"galaveg/app/view/components/sidebar/menu_item"
 	"github.com/gin-gonic/gin"
+	"strconv"
 	"strings"
 )
 
@@ -29,6 +30,10 @@ func New(as *services.AppService, ls *services.LocaleService, ts *services.Trans
 	isProfileActive := strings.HasPrefix(path, "/profile")
 	isUsersActive := strings.HasPrefix(path, "/users")
 	isRolesActive := strings.HasPrefix(path, "/roles")
+	profileText := "Профиль"
+	if user != nil {
+		profileText = user.Email
+	}
 	menu := []menu_item.View{
 		{
 			Name: "home",
@@ -36,8 +41,8 @@ func New(as *services.AppService, ls *services.LocaleService, ts *services.Trans
 			Text: ts.T(locale.Code, "layout.sidebar.home"),
 		},
 		{
-			Name:     "profile",
-			Text:     user.Email,
+			Name:     "profile_dropdown",
+			Text:     profileText,
 			IsActive: isProfileActive,
 			Dropdown: []menu_item.View{
 				{
@@ -51,9 +56,10 @@ func New(as *services.AppService, ls *services.LocaleService, ts *services.Trans
 					Text: ts.T(locale.Code, "layout.sidebar.logout"),
 				},
 			},
+			DropdownMaxHeight: "4rem",
 		},
 		{
-			Name:     "users",
+			Name:     "users_dropdown",
 			Text:     ts.T(locale.Code, "layout.sidebar.users.index"),
 			IsActive: isUsersActive && isRolesActive,
 			Dropdown: []menu_item.View{
@@ -70,6 +76,7 @@ func New(as *services.AppService, ls *services.LocaleService, ts *services.Trans
 					IsActive: isRolesActive,
 				},
 			},
+			DropdownMaxHeight: "4rem",
 		},
 		{
 			Name:     "files",
@@ -80,12 +87,14 @@ func New(as *services.AppService, ls *services.LocaleService, ts *services.Trans
 	}
 
 	localesMenuItem := menu_item.View{
-		Name: "locales",
-		Text: locale.FullName,
+		Name:              "locales_dropdown",
+		Text:              locale.FullName,
+		DropdownMaxHeight: strconv.Itoa(len(locales)*2) + "rem",
 	}
 	for _, v := range locales {
 		if v.Code != locale.Code {
 			localesMenuItem.Dropdown = append(localesMenuItem.Dropdown, menu_item.View{
+				Name:  "locale",
 				Text:  v.FullName,
 				Value: v.Code,
 			})
@@ -107,7 +116,7 @@ func New(as *services.AppService, ls *services.LocaleService, ts *services.Trans
 			Brand: brand.View{
 				Text:  ts.T(locale.Code, "layout.brand"),
 				Href:  "/",
-				Image: "/svg/logo.svg",
+				Image: "",
 			},
 			Menu: menu,
 		},

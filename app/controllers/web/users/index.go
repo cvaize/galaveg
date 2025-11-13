@@ -17,12 +17,12 @@ func Index(c *gin.Context) {
 		"DarkMode": "auto",
 		"Breadcrumbs": []map[string]string{
 			{
-				"Label": "Главная",
-				"Href":  "/",
+				"Text": "Главная",
+				"Href": "/",
 			},
 			{
-				"Label": "Пользователи",
-				"Href":  "/users",
+				"Text": "Пользователи",
+				"Href": "/users",
 			},
 		},
 	})
