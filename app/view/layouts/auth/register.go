@@ -15,17 +15,17 @@ func NewRegister(c *gin.Context) (*View, error) {
 	return &View{
 		Lang:     locale.Code,
 		DarkMode: singleton.AS.DarkMode(c),
-		Title:    singleton.TS.T(locale.Code, "page.login.title"),
-		Heading:  singleton.TS.T(locale.Code, "page.login.header"),
+		Title:    singleton.TS.T(locale.Code, "page.register.title"),
+		Heading:  singleton.TS.T(locale.Code, "page.register.header"),
 		Alerts:   singleton.AS.Alerts(c),
 		Locale:   locale,
 		Locales:  locales,
 		Form: form.View{
-			Action: "/login",
+			Action: "/register",
 			Method: "post",
 			Fields: []field.View{
 				{
-					Label:      singleton.TS.T(locale.Code, "page.login.fields.email"),
+					Label:      singleton.TS.T(locale.Code, "page.register.fields.email"),
 					Type:       "email",
 					Name:       "email",
 					Value:      "",
@@ -34,7 +34,7 @@ func NewRegister(c *gin.Context) (*View, error) {
 					InputClass: "admin-login__field__input",
 				},
 				{
-					Label:      singleton.TS.T(locale.Code, "page.login.fields.password"),
+					Label:      singleton.TS.T(locale.Code, "page.register.fields.password"),
 					Type:       "password",
 					Name:       "password",
 					Value:      "",
@@ -42,21 +42,30 @@ func NewRegister(c *gin.Context) (*View, error) {
 					FieldClass: "admin-login__field",
 					InputClass: "admin-login__field__input",
 				},
+				{
+					Label:      singleton.TS.T(locale.Code, "page.register.fields.confirm_password"),
+					Type:       "password",
+					Name:       "confirm_password",
+					Value:      "",
+					Errors:     []string{},
+					FieldClass: "admin-login__field",
+					InputClass: "admin-login__field__input",
+				},
 			},
 			Submit: &btn.View{
-				Text: singleton.TS.T(locale.Code, "page.login.submit"),
+				Text: singleton.TS.T(locale.Code, "page.register.submit"),
 			},
 			ResetPassword: &btn.View{
 				Href: "/reset-password",
-				Text: singleton.TS.T(locale.Code, "page.login.reset_password"),
+				Text: singleton.TS.T(locale.Code, "page.register.reset_password"),
 			},
-			Register: &btn.View{
-				Href: "/register",
-				Text: singleton.TS.T(locale.Code, "page.login.register"),
+			Login: &btn.View{
+				Href: "/login",
+				Text: singleton.TS.T(locale.Code, "page.register.login"),
 			},
 			Errors: []string{},
 			//Text: "",
 		},
-		//Back:     btn.View{Text: "Назад", Href: "/login"},
+		Back: &btn.View{Text: singleton.TS.T(locale.Code, "page.register.back"), Href: "/login"},
 	}, nil
 }

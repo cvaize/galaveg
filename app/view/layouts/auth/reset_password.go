@@ -15,17 +15,17 @@ func NewResetPassword(c *gin.Context) (*View, error) {
 	return &View{
 		Lang:     locale.Code,
 		DarkMode: singleton.AS.DarkMode(c),
-		Title:    singleton.TS.T(locale.Code, "page.login.title"),
-		Heading:  singleton.TS.T(locale.Code, "page.login.header"),
+		Title:    singleton.TS.T(locale.Code, "page.reset_password.title"),
+		Heading:  singleton.TS.T(locale.Code, "page.reset_password.header"),
 		Alerts:   singleton.AS.Alerts(c),
 		Locale:   locale,
 		Locales:  locales,
 		Form: form.View{
-			Action: "/login",
+			Action: "/reset-password",
 			Method: "post",
 			Fields: []field.View{
 				{
-					Label:      singleton.TS.T(locale.Code, "page.login.fields.email"),
+					Label:      singleton.TS.T(locale.Code, "page.reset_password.fields.email"),
 					Type:       "email",
 					Name:       "email",
 					Value:      "",
@@ -33,30 +33,13 @@ func NewResetPassword(c *gin.Context) (*View, error) {
 					FieldClass: "admin-login__field",
 					InputClass: "admin-login__field__input",
 				},
-				{
-					Label:      singleton.TS.T(locale.Code, "page.login.fields.password"),
-					Type:       "password",
-					Name:       "password",
-					Value:      "",
-					Errors:     []string{},
-					FieldClass: "admin-login__field",
-					InputClass: "admin-login__field__input",
-				},
 			},
 			Submit: &btn.View{
-				Text: singleton.TS.T(locale.Code, "page.login.submit"),
-			},
-			ResetPassword: &btn.View{
-				Href: "/reset-password",
-				Text: singleton.TS.T(locale.Code, "page.login.reset_password"),
-			},
-			Register: &btn.View{
-				Href: "/register",
-				Text: singleton.TS.T(locale.Code, "page.login.register"),
+				Text: singleton.TS.T(locale.Code, "page.reset_password.submit"),
 			},
 			Errors: []string{},
-			//Text: "",
+			Text:   singleton.TS.T(locale.Code, "page.reset_password.text"),
 		},
-		//Back:     btn.View{Text: "Назад", Href: "/login"},
+		Back: &btn.View{Text: singleton.TS.T(locale.Code, "page.reset_password.back"), Href: "/login"},
 	}, nil
 }
