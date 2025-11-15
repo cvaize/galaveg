@@ -13,5 +13,5 @@ func Index(c *gin.Context) {
 		return
 	}
 
-	c.HTML(http.StatusOK, "layouts/list", d)
+	c.HTML(http.StatusOK, list.TEMPLATE, d)
 }

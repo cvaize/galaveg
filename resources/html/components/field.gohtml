@@ -38,10 +38,8 @@
                 {{end}}
 
                 {{if .Options}}
-                    {{range $Option := .Options}}
-                        <option value="{{index $Option $.OptionValueKey}}"
-                                {{if eq $.Value (index $Option $.OptionValueKey)}} selected{{end}}
-                        >{{index $Option $.OptionLabelKey}}</option>
+                    {{range $key, $option := .Options}}
+                        <option value="{{$key}}" {{if eq $.Value $key}} selected{{end}}>{{$option}}</option>
                     {{end}}
                 {{end}}
             </select>

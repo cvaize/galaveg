@@ -6,6 +6,7 @@
     {{ template "components/admin-dark-mode/inputs" . }}
     <main class="admin-app">
         {{ template "components/admin-dark-mode/btn" . }}
+        <form id="switch_locale" action="/locale/switch" method="post" style="display: none;"></form>
 
         <div class="admin-content">
             <div class="admin-login">
@@ -26,11 +27,13 @@
                                 </button>
                                 <ul class="admin-dropdown__menu" style="min-width: 3.5rem;">
                                     {{ range .Locales }}
+                                        {{ if ne .Code $.Locale.Code }}
                                         <li>
                                             <button form="switch_locale" type="submit" name="locale" value="{{.Code}}"
                                                     class="admin-dropdown__item"
                                                     style="text-transform: uppercase">{{ .ShortName }}</button>
                                         </li>
+                                        {{end}}
                                     {{end}}
                                 </ul>
                             </div>
@@ -43,39 +46,31 @@
                                          viewBox="0 0 24 24">
                                         <path d="M16.62 2.99a1.25 1.25 0 0 0-1.77 0L6.54 11.3a.996.996 0 0 0 0 1.41l8.31 8.31c.49.49 1.28.49 1.77 0s.49-1.28 0-1.77L9.38 12l7.25-7.25c.48-.48.48-1.28-.01-1.76z"/>
                                     </svg>
-                                    {{.Back.Label}}
+                                    {{.Back.Text}}
                                 </a>
                             </div>
                         {{end}}
                         <h1 class="admin-login__header">{{.Heading}}</h1>
                         {{ if .Form.Fields }}
-                            {{ range $index, $field := .Form.Fields }}
-                                {{ template "components/field" dict
-                                "Label" $field.Label
-                                "Type" $field.Type
-                                "Name" $field.Name
-                                "Value" $field.Value
-                                "Errors" $field.Errors
-                                "FieldClass" "admin-login__field"
-                                "InputClass" "admin-login__field__input"
-                                }}
+                            {{ range .Form.Fields }}
+                                {{ template "components/field" . }}
                             {{end}}
                         {{end}}
                         {{if or .Form.ResetPassword .Form.Register .Form.Login}}
                             <div class="admin-login__nav">
                                 {{if .Form.ResetPassword}}
                                     <a href="{{.Form.ResetPassword.Href}}" class="admin-login__reset-link">
-                                        {{.Form.ResetPassword.Label}}
+                                        {{.Form.ResetPassword.Text}}
                                     </a>
                                 {{end}}
                                 {{if .Form.Register}}
                                     <a href="{{.Form.Register.Href}}" class="admin-login__register-link">
-                                        {{.Form.Register.Label}}
+                                        {{.Form.Register.Text}}
                                     </a>
                                 {{end}}
                                 {{if .Form.Login}}
                                     <a href="{{.Form.Login.Href}}" class="admin-login__register-link">
-                                        {{.Form.Login.Label}}
+                                        {{.Form.Login.Text}}
                                     </a>
                                 {{end}}
                             </div>
@@ -87,12 +82,12 @@
                             {{end}}
                         {{end}}
 
-                        {{if .Form.Submit.Label}}
-                            <button type="submit" class="admin-btn admin-login__submit">{{.Form.Submit.Label}}</button>
+                        {{if .Form.Submit.Text}}
+                            <button type="submit" class="admin-btn admin-login__submit">{{.Form.Submit.Text}}</button>
                         {{end}}
 
-                        {{if .Form.Submit.Text}}
-                            <div class="admin-text">{{.Form.Submit.Text}}</div>
+                        {{if .Form.Text}}
+                            <div class="admin-text">{{.Form.Text}}</div>
                         {{end}}
 
                     </form>

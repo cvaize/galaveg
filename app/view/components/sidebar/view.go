@@ -16,7 +16,7 @@ type View struct {
 }
 
 func New(c *gin.Context, user *dto.User) (*View, error) {
-	locale := singleton.LS.GetLocale(singleton.AS.Locale(c, nil))
+	locale := singleton.LS.GetLocale(singleton.AS.Locale(c, user))
 	locales := singleton.LS.GetLocales()
 	path := c.FullPath()
 

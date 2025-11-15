@@ -13,5 +13,5 @@ func Home(c *gin.Context) {
 		return
 	}
 
-	c.HTML(http.StatusOK, "layouts/home", d)
+	c.HTML(http.StatusOK, home.TEMPLATE, d)
 }

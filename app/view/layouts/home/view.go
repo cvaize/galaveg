@@ -8,6 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const TEMPLATE = "layouts/home"
+
 type View struct {
 	Lang        string
 	DarkMode    string
@@ -19,7 +21,7 @@ type View struct {
 }
 
 func New(c *gin.Context, user *dto.User) (*View, error) {
-	locale := singleton.LS.GetLocale(singleton.AS.Locale(c, nil))
+	locale := singleton.LS.GetLocale(singleton.AS.Locale(c, user))
 
 	sidebarObject, err := sidebar.New(c, user)
 

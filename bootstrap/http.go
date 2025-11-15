@@ -25,10 +25,10 @@ func Http() *gin.Engine {
 
 	router := gin.New()
 
-	router.FuncMap["eq"] = func(a, b any) bool { return a == b }
+	router.FuncMap["eq"] = func(a, b string) bool { return a == b }
 	router.FuncMap["eqInt"] = func(a, b int) bool { return a == b }
 	router.FuncMap["ne"] = func(a, b string) bool { return a != b }
-	router.FuncMap["neInt"] = func(a, b string) bool { return a != b }
+	router.FuncMap["neInt"] = func(a, b int) bool { return a != b }
 	router.FuncMap["replace"] = strings.ReplaceAll
 	router.FuncMap["unless"] = func(v any) bool {
 		return v == nil || v == "" || v == false
