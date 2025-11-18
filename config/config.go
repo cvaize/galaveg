@@ -7,8 +7,11 @@ import (
 )
 
 type Config struct {
-	App AppConfig
-	Db  DbConfig
+	App   AppConfig
+	Db    DbConfig
+	Mail  MailConfig
+	Redis RedisDbConfig
+	Auth  AuthConfig
 }
 
 func New(envPath string) *Config {
@@ -25,8 +28,11 @@ func New(envPath string) *Config {
 	time.Local = loc
 
 	return &Config{
-		App: NewAppConfig(),
-		Db:  NewDbConfig(),
+		App:   NewAppConfig(),
+		Db:    NewDbConfig(),
+		Mail:  NewMailConfig(),
+		Redis: NewRedisDbConfig(),
+		Auth:  NewAuthConfig(),
 	}
 }
 

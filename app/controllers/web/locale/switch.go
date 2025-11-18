@@ -1,16 +1,24 @@
 package locale
 
 import (
-	"galaveg/bootstrap/singleton"
+	"galaveg/bootstrap/providers"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
-func Switch(c *gin.Context) {
+type Controller struct {
+	ctx *providers.Context
+}
+
+func NewController(ctx *providers.Context) Controller {
+	return Controller{ctx}
+}
+
+func (ctr *Controller) Switch(c *gin.Context) {
 	v := c.PostForm("locale")
 
 	if v == "" {
-		v = singleton.C.App.Locale
+		v = ctr.ctx.C.App.Locale
 	}
 
 	lenLocale := len(v)
@@ -19,7 +27,7 @@ func Switch(c *gin.Context) {
 		return
 	}
 
-	k := singleton.C.App.LocaleCookieKey
+	k := ctr.ctx.C.App.LocaleCookieKey
 	c.SetCookie(k, v, 0, "/", "", false, true)
 
 	location := c.GetHeader("Referer")

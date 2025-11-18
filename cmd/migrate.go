@@ -3,11 +3,13 @@ package cmd
 import (
 	"database/sql"
 	"fmt"
-	"galaveg/bootstrap/singleton"
 	"galaveg/config"
+	"galaveg/connections/db"
 	"galaveg/database/migrations"
 	"galaveg/utils/logger"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"path/filepath"
 )
 
 // migrateCmd represents the migrate command
@@ -16,7 +18,9 @@ var migrateCmd = &cobra.Command{
 	Short: "Start database migrations.",
 	Long:  `Start database migrations.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		err := UpMigration(singleton.C, singleton.DB)
+		C := config.New(filepath.Join(viper.GetString("APP_FOLDER"), ".env"))
+		DB := db.New(C.Db)
+		err := UpMigration(C, DB)
 		logger.Infof("The migration was successful!")
 		return err
 	},

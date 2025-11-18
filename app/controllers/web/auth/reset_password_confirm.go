@@ -6,8 +6,8 @@ import (
 	"net/http"
 )
 
-func ResetPasswordConfirm(c *gin.Context) {
-	d, err := auth.NewResetPasswordConfirm(c)
+func (ctr *Controller) ResetPasswordConfirm(c *gin.Context) {
+	d, err := auth.NewResetPasswordConfirm(c, ctr.ctx)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return

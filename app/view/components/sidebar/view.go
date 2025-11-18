@@ -4,7 +4,7 @@ import (
 	"galaveg/app/dto"
 	"galaveg/app/view/components/sidebar/brand"
 	"galaveg/app/view/components/sidebar/menu_item"
-	"galaveg/bootstrap/singleton"
+	"galaveg/bootstrap/providers"
 	"github.com/gin-gonic/gin"
 	"strconv"
 	"strings"
@@ -15,9 +15,9 @@ type View struct {
 	Menu  []menu_item.View
 }
 
-func New(c *gin.Context, user *dto.User) (*View, error) {
-	locale := singleton.LS.GetLocale(singleton.AS.Locale(c, user))
-	locales := singleton.LS.GetLocales()
+func New(c *gin.Context, ctx *providers.Context, user *dto.User) (*View, error) {
+	locale := ctx.LS.GetLocale(ctx.AS.Locale(c, user))
+	locales := ctx.LS.GetLocales()
 	path := c.FullPath()
 
 	isProfileActive := strings.HasPrefix(path, "/profile")
@@ -31,7 +31,7 @@ func New(c *gin.Context, user *dto.User) (*View, error) {
 		{
 			Name: "home",
 			Href: "/",
-			Text: singleton.TS.T(locale.Code, "layout.sidebar.home"),
+			Text: ctx.TS.T(locale.Code, "layout.sidebar.home"),
 		},
 		{
 			Name:     "profile_dropdown",
@@ -41,31 +41,31 @@ func New(c *gin.Context, user *dto.User) (*View, error) {
 				{
 					Name:     "profile",
 					Href:     "/profile",
-					Text:     singleton.TS.T(locale.Code, "layout.sidebar.profile"),
+					Text:     ctx.TS.T(locale.Code, "layout.sidebar.profile"),
 					IsActive: isProfileActive,
 				},
 				{
 					Name: "logout",
-					Text: singleton.TS.T(locale.Code, "layout.sidebar.logout"),
+					Text: ctx.TS.T(locale.Code, "layout.sidebar.logout"),
 				},
 			},
 			DropdownMaxHeight: "4rem",
 		},
 		{
 			Name:     "users_dropdown",
-			Text:     singleton.TS.T(locale.Code, "layout.sidebar.users.index"),
+			Text:     ctx.TS.T(locale.Code, "layout.sidebar.users.index"),
 			IsActive: isUsersActive && isRolesActive,
 			Dropdown: []menu_item.View{
 				{
 					Name:     "users",
 					Href:     "/users",
-					Text:     singleton.TS.T(locale.Code, "layout.sidebar.users.index"),
+					Text:     ctx.TS.T(locale.Code, "layout.sidebar.users.index"),
 					IsActive: isUsersActive,
 				},
 				{
 					Name:     "roles",
 					Href:     "/roles",
-					Text:     singleton.TS.T(locale.Code, "layout.sidebar.users.roles"),
+					Text:     ctx.TS.T(locale.Code, "layout.sidebar.users.roles"),
 					IsActive: isRolesActive,
 				},
 			},
@@ -74,7 +74,7 @@ func New(c *gin.Context, user *dto.User) (*View, error) {
 		{
 			Name:     "files",
 			Href:     "/files",
-			Text:     singleton.TS.T(locale.Code, "layout.sidebar.files"),
+			Text:     ctx.TS.T(locale.Code, "layout.sidebar.files"),
 			IsActive: strings.HasPrefix(path, "/files"),
 		},
 	}
@@ -98,7 +98,7 @@ func New(c *gin.Context, user *dto.User) (*View, error) {
 
 	return &View{
 		Brand: brand.View{
-			Text:  singleton.TS.T(locale.Code, "layout.brand"),
+			Text:  ctx.TS.T(locale.Code, "layout.brand"),
 			Href:  "/",
 			Image: "",
 		},

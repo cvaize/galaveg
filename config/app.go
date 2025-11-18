@@ -8,6 +8,7 @@ import (
 )
 
 func init() {
+	viper.SetDefault("APP_KEY", "")
 	viper.SetDefault("APP_DEBUG", false)
 	viper.SetDefault("APP_HOST", "0.0.0.0")
 	viper.SetDefault("APP_URL", "http://localhost/")
@@ -22,6 +23,7 @@ func init() {
 }
 
 type AppConfig struct {
+	Key               string
 	Debug             bool
 	Host              string
 	Url               string
@@ -37,6 +39,7 @@ type AppConfig struct {
 
 func NewAppConfig() AppConfig {
 	return AppConfig{
+		Key:      viper.GetString("APP_KEY"),
 		Debug:    viper.GetBool("APP_DEBUG"),
 		Host:     viper.GetString("APP_HOST"),
 		Url:      viper.GetString("APP_URL"),

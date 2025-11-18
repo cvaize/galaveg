@@ -3,11 +3,13 @@ package cmd
 import (
 	"database/sql"
 	"fmt"
-	"galaveg/bootstrap/singleton"
 	"galaveg/config"
+	"galaveg/connections/db"
 	"galaveg/database/migrations"
 	"galaveg/utils/logger"
 	"github.com/samber/lo"
+	"github.com/spf13/viper"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 )
@@ -18,7 +20,9 @@ var migrateRollbackCmd = &cobra.Command{
 	Short: "Rollback the database migration.",
 	Long:  `Rollback the database migration.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		err := RollbackMigration(singleton.C, singleton.DB)
+		C := config.New(filepath.Join(viper.GetString("APP_FOLDER"), ".env"))
+		DB := db.New(C.Db)
+		err := RollbackMigration(C, DB)
 		logger.Infof("The rollback migration was successful!")
 		return err
 	},

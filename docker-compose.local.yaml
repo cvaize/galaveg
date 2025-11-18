@@ -8,7 +8,7 @@ services:
       dockerfile: ./deploy/local/app.Dockerfile
     links:
       - mysql
-      - valkey
+      - redis
     volumes:
       - './:/app'
     ports:
@@ -63,21 +63,32 @@ services:
     networks:
       - local_galaveg_network
 
-  valkey:
-    container_name: local_galaveg_valkey
-    image: valkey/valkey:9
+#  valkey:
+#    container_name: local_galaveg_valkey
+#    image: valkey/valkey:9
+#    restart: always
+#    ports:
+#      - '${FORWARD_REDIS_PORT:-6379}:6379'
+#    volumes:
+#      - 'local_galaveg_valkey_volume:/data'
+#    networks:
+#      - local_galaveg_network
+
+  redis:
+    container_name: local_galaveg_redis
+    image: redis:latest
     restart: always
     ports:
-      - '${FORWARD_VALKEY_PORT:-6379}:6379'
+      - '${FORWARD_REDIS_PORT:-6379}:6379'
     volumes:
-      - 'local_galaveg_valkey_volume:/data'
+      - 'local_galaveg_redis_volume:/data'
     networks:
       - local_galaveg_network
 
 volumes:
   local_galaveg_mysql_volume:
     driver: local
-  local_galaveg_valkey_volume:
+  local_galaveg_redis_volume:
     driver: local
 
 networks:

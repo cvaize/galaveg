@@ -4,20 +4,20 @@ import (
 	"galaveg/app/view/components/btn"
 	"galaveg/app/view/components/field"
 	"galaveg/app/view/layouts/auth/form"
-	"galaveg/bootstrap/singleton"
+	"galaveg/bootstrap/providers"
 	"github.com/gin-gonic/gin"
 )
 
-func NewRegister(c *gin.Context) (*View, error) {
-	locale := singleton.LS.GetLocale(singleton.AS.Locale(c, nil))
-	locales := singleton.LS.GetLocales()
+func NewRegister(c *gin.Context, ctx *providers.Context) (*View, error) {
+	locale := ctx.LS.GetLocale(ctx.AS.Locale(c, nil))
+	locales := ctx.LS.GetLocales()
 
 	return &View{
 		Lang:     locale.Code,
-		DarkMode: singleton.AS.DarkMode(c),
-		Title:    singleton.TS.T(locale.Code, "page.register.title"),
-		Heading:  singleton.TS.T(locale.Code, "page.register.header"),
-		Alerts:   singleton.AS.Alerts(c),
+		DarkMode: ctx.AS.DarkMode(c),
+		Title:    ctx.TS.T(locale.Code, "page.register.title"),
+		Heading:  ctx.TS.T(locale.Code, "page.register.header"),
+		Alerts:   ctx.AS.Alerts(c),
 		Locale:   locale,
 		Locales:  locales,
 		Form: form.View{
@@ -25,7 +25,7 @@ func NewRegister(c *gin.Context) (*View, error) {
 			Method: "post",
 			Fields: []field.View{
 				{
-					Label:      singleton.TS.T(locale.Code, "page.register.fields.email"),
+					Label:      ctx.TS.T(locale.Code, "page.register.fields.email"),
 					Type:       "email",
 					Name:       "email",
 					Value:      "",
@@ -34,7 +34,7 @@ func NewRegister(c *gin.Context) (*View, error) {
 					InputClass: "admin-login__field__input",
 				},
 				{
-					Label:      singleton.TS.T(locale.Code, "page.register.fields.password"),
+					Label:      ctx.TS.T(locale.Code, "page.register.fields.password"),
 					Type:       "password",
 					Name:       "password",
 					Value:      "",
@@ -43,7 +43,7 @@ func NewRegister(c *gin.Context) (*View, error) {
 					InputClass: "admin-login__field__input",
 				},
 				{
-					Label:      singleton.TS.T(locale.Code, "page.register.fields.confirm_password"),
+					Label:      ctx.TS.T(locale.Code, "page.register.fields.confirm_password"),
 					Type:       "password",
 					Name:       "confirm_password",
 					Value:      "",
@@ -53,19 +53,19 @@ func NewRegister(c *gin.Context) (*View, error) {
 				},
 			},
 			Submit: &btn.View{
-				Text: singleton.TS.T(locale.Code, "page.register.submit"),
+				Text: ctx.TS.T(locale.Code, "page.register.submit"),
 			},
 			ResetPassword: &btn.View{
 				Href: "/reset-password",
-				Text: singleton.TS.T(locale.Code, "page.register.reset_password"),
+				Text: ctx.TS.T(locale.Code, "page.register.reset_password"),
 			},
 			Login: &btn.View{
 				Href: "/login",
-				Text: singleton.TS.T(locale.Code, "page.register.login"),
+				Text: ctx.TS.T(locale.Code, "page.register.login"),
 			},
 			Errors: []string{},
 			//Text: "",
 		},
-		Back: &btn.View{Text: singleton.TS.T(locale.Code, "page.register.back"), Href: "/login"},
+		Back: &btn.View{Text: ctx.TS.T(locale.Code, "page.register.back"), Href: "/login"},
 	}, nil
 }

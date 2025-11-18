@@ -1,23 +1,47 @@
 package bootstrap
 
 import (
+	"database/sql"
 	"fmt"
-	"galaveg/bootstrap/singleton"
+	"galaveg/app/dto"
+	"galaveg/app/services"
+	"galaveg/bootstrap/providers"
+	"galaveg/config"
+	"galaveg/connections/db"
 	"galaveg/routes"
 	"galaveg/utils/logger"
 	"galaveg/utils/path"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
+	"path/filepath"
+
 	"strings"
-	"sync"
 )
 
-var (
-	mu sync.Mutex
-)
+func httpProvideContext(C *config.Config, DB *sql.DB) *providers.Context {
+	TS := services.MustTranslatorServiceFromFiles(C.GetFolder("resources/translates/"), C.App.Locale)
+	LS := services.MustLocaleService([]dto.Locale{
+		{Code: "en", ShortName: "en", FullName: "English"},
+		{Code: "ru", ShortName: "ru", FullName: "Русский"},
+	})
+	RS := services.MustRoleService()
+	AS := services.MustAppService(C.App, LS, RS, TS)
+	return &providers.Context{
+		C:  C,
+		TS: TS,
+		LS: LS,
+		RS: RS,
+		AS: AS,
+	}
+}
 
 func Http() *gin.Engine {
-	defer singleton.DB.Close()
-	if singleton.C.App.Debug {
+	C := config.New(filepath.Join(viper.GetString("APP_FOLDER"), ".env"))
+	DB := db.New(C.Db)
+	ctx := httpProvideContext(C, DB)
+
+	defer DB.Close()
+	if C.App.Debug {
 		gin.SetMode(gin.DebugMode)
 	} else {
 		gin.SetMode(gin.ReleaseMode)
@@ -47,20 +71,10 @@ func Http() *gin.Engine {
 		return strings.HasPrefix(s, prefix)
 	}
 
-	templates := path.MustCollectFilepathBySuffix(singleton.C.GetFolder("resources/html"), ".gohtml")
+	templates := path.MustCollectFilepathBySuffix(C.GetFolder("resources/html"), ".gohtml")
 	router.LoadHTMLFiles(templates...)
-	if singleton.C.App.Debug {
-		// middleware, which updates templates with each request in dev mode
-		router.Use(func(c *gin.Context) {
-			mu.Lock()
-			templates := path.MustCollectFilepathBySuffix(singleton.C.GetFolder("resources/html"), ".gohtml")
-			router.LoadHTMLFiles(templates...)
-			mu.Unlock()
-			c.Next()
-		})
-	}
 
-	if err := router.SetTrustedProxies(singleton.C.App.AllowedHosts); err != nil {
+	if err := router.SetTrustedProxies(C.App.AllowedHosts); err != nil {
 		panic(err)
 	}
 
@@ -68,11 +82,11 @@ func Http() *gin.Engine {
 	router.Use(gin.Recovery())
 	//router.Use(middleware.CORSMiddleware())
 
-	routes.Http(router)
+	routes.Http(router, ctx)
 
 	protocol := "http"
-	host := singleton.C.App.Host
-	port := singleton.C.App.Port
+	host := C.App.Host
+	port := C.App.Port
 	url := fmt.Sprintf("%s:%d", host, port)
 	logger.Infof(fmt.Sprintf("Starting HTTP server at %s://%s", protocol, url))
 	if err := router.Run(url); err != nil {

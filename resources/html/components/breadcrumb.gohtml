@@ -3,15 +3,18 @@
         <nav aria-label="breadcrumb">
             <ol class="admin-breadcrumb">
                 {{range $i, $crumb := .Breadcrumbs}}
-                    {{if eq $i (sub1 (len $.Breadcrumbs))}}
-                        <li class="admin-breadcrumb__item admin-breadcrumb__item--active" aria-current="page">
-                            {{$crumb.Text}}
-                        </li>
-                    {{else}}
-                        <li class="admin-breadcrumb__item">
-                            <a href="{{$crumb.Href}}" class="admin-breadcrumb__link">{{$crumb.Text}}</a>
-                        </li>
-                    {{end}}
+                    <li class="admin-breadcrumb__item">
+                        <a href="{{$crumb.Href}}" class="admin-breadcrumb__link">{{$crumb.Text}}</a>
+                    </li>
+{{/*                    {{if eq $i (sub1 (len $.Breadcrumbs))}}*/}}
+{{/*                        <li class="admin-breadcrumb__item admin-breadcrumb__item--active" aria-current="page">*/}}
+{{/*                            {{$crumb.Text}}*/}}
+{{/*                        </li>*/}}
+{{/*                    {{else}}*/}}
+{{/*                        <li class="admin-breadcrumb__item">*/}}
+{{/*                            <a href="{{$crumb.Href}}" class="admin-breadcrumb__link">{{$crumb.Text}}</a>*/}}
+{{/*                        </li>*/}}
+{{/*                    {{end}}*/}}
                 {{end}}
             </ol>
         </nav>

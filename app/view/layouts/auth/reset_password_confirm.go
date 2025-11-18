@@ -4,20 +4,20 @@ import (
 	"galaveg/app/view/components/btn"
 	"galaveg/app/view/components/field"
 	"galaveg/app/view/layouts/auth/form"
-	"galaveg/bootstrap/singleton"
+	"galaveg/bootstrap/providers"
 	"github.com/gin-gonic/gin"
 )
 
-func NewResetPasswordConfirm(c *gin.Context) (*View, error) {
-	locale := singleton.LS.GetLocale(singleton.AS.Locale(c, nil))
-	locales := singleton.LS.GetLocales()
+func NewResetPasswordConfirm(c *gin.Context, ctx *providers.Context) (*View, error) {
+	locale := ctx.LS.GetLocale(ctx.AS.Locale(c, nil))
+	locales := ctx.LS.GetLocales()
 
 	return &View{
 		Lang:     locale.Code,
-		DarkMode: singleton.AS.DarkMode(c),
-		Title:    singleton.TS.T(locale.Code, "page.reset_password_confirm.title"),
-		Heading:  singleton.TS.T(locale.Code, "page.reset_password_confirm.header"),
-		Alerts:   singleton.AS.Alerts(c),
+		DarkMode: ctx.AS.DarkMode(c),
+		Title:    ctx.TS.T(locale.Code, "page.reset_password_confirm.title"),
+		Heading:  ctx.TS.T(locale.Code, "page.reset_password_confirm.header"),
+		Alerts:   ctx.AS.Alerts(c),
 		Locale:   locale,
 		Locales:  locales,
 		Form: form.View{
@@ -33,7 +33,7 @@ func NewResetPasswordConfirm(c *gin.Context) (*View, error) {
 					InputClass: "admin-login__field__input",
 				},
 				{
-					Label:      singleton.TS.T(locale.Code, "page.reset_password_confirm.fields.email"),
+					Label:      ctx.TS.T(locale.Code, "page.reset_password_confirm.fields.email"),
 					Type:       "email",
 					Name:       "email",
 					Value:      "",
@@ -43,7 +43,7 @@ func NewResetPasswordConfirm(c *gin.Context) (*View, error) {
 					InputClass: "admin-login__field__input",
 				},
 				{
-					Label:      singleton.TS.T(locale.Code, "page.reset_password_confirm.fields.password"),
+					Label:      ctx.TS.T(locale.Code, "page.reset_password_confirm.fields.password"),
 					Type:       "password",
 					Name:       "password",
 					Value:      "",
@@ -52,7 +52,7 @@ func NewResetPasswordConfirm(c *gin.Context) (*View, error) {
 					InputClass: "admin-login__field__input",
 				},
 				{
-					Label:      singleton.TS.T(locale.Code, "page.reset_password_confirm.fields.confirm_password"),
+					Label:      ctx.TS.T(locale.Code, "page.reset_password_confirm.fields.confirm_password"),
 					Type:       "password",
 					Name:       "confirm_password",
 					Value:      "",
@@ -62,10 +62,10 @@ func NewResetPasswordConfirm(c *gin.Context) (*View, error) {
 				},
 			},
 			Submit: &btn.View{
-				Text: singleton.TS.T(locale.Code, "page.reset_password_confirm.submit"),
+				Text: ctx.TS.T(locale.Code, "page.reset_password_confirm.submit"),
 			},
 			Errors: []string{},
 		},
-		Back: &btn.View{Text: singleton.TS.T(locale.Code, "page.reset_password_confirm.back"), Href: "/reset-password"},
+		Back: &btn.View{Text: ctx.TS.T(locale.Code, "page.reset_password_confirm.back"), Href: "/reset-password"},
 	}, nil
 }

@@ -2,11 +2,13 @@ package routes
 
 import (
 	"galaveg/app/controllers/static_files"
+	"galaveg/bootstrap/providers"
+
 	//"galaveg/app/middlewares"
 	"github.com/gin-gonic/gin"
 )
 
-func staticFilesRegister(r *gin.Engine) {
+func staticFilesRegister(r *gin.Engine, ctx *providers.Context) {
 	g := r.Group("/static")
 	//g.Use(middlewares.GzipStaticMiddleware())
 	g.Static("/", "./public")

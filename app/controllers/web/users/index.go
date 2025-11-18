@@ -2,12 +2,21 @@ package users
 
 import (
 	"galaveg/app/view/layouts/list"
+	"galaveg/bootstrap/providers"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
-func Index(c *gin.Context) {
-	d, err := list.New(c, nil)
+type Controller struct {
+	ctx *providers.Context
+}
+
+func NewController(ctx *providers.Context) Controller {
+	return Controller{ctx}
+}
+
+func (ctr *Controller) Index(c *gin.Context) {
+	d, err := list.New(c, ctr.ctx, nil)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return

@@ -4,7 +4,7 @@ import (
 	"galaveg/app/dto"
 	"galaveg/app/view/components/breadcrumbs/item"
 	"galaveg/app/view/components/sidebar"
-	"galaveg/bootstrap/singleton"
+	"galaveg/bootstrap/providers"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,10 +20,10 @@ type View struct {
 	Alerts      []dto.Alert
 }
 
-func New(c *gin.Context, user *dto.User) (*View, error) {
-	locale := singleton.LS.GetLocale(singleton.AS.Locale(c, user))
+func New(c *gin.Context, ctx *providers.Context, user *dto.User) (*View, error) {
+	locale := ctx.LS.GetLocale(ctx.AS.Locale(c, user))
 
-	sidebarObject, err := sidebar.New(c, user)
+	sidebarObject, err := sidebar.New(c, ctx, user)
 
 	if err != nil {
 		return nil, err
@@ -31,16 +31,16 @@ func New(c *gin.Context, user *dto.User) (*View, error) {
 
 	return &View{
 		Lang:     locale.Code,
-		DarkMode: singleton.AS.DarkMode(c),
-		Title:    singleton.TS.T(locale.Code, "page.home.title"),
-		Heading:  singleton.TS.T(locale.Code, "page.home.header"),
+		DarkMode: ctx.AS.DarkMode(c),
+		Title:    ctx.TS.T(locale.Code, "page.home.title"),
+		Heading:  ctx.TS.T(locale.Code, "page.home.header"),
 		Breadcrumbs: []item.View{
 			{
-				Text: singleton.TS.T(locale.Code, "page.home.breadcrumbs.home"),
+				Text: ctx.TS.T(locale.Code, "page.home.breadcrumbs.home"),
 				Href: "/",
 			},
 		},
 		Sidebar: sidebarObject,
-		Alerts:  singleton.AS.Alerts(c),
+		Alerts:  ctx.AS.Alerts(c),
 	}, nil
 }
