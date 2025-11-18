@@ -1,17 +1,20 @@
 package config
 
 import (
+	"galaveg/config/app"
+	"galaveg/config/auth"
+	"galaveg/config/db"
+	"galaveg/config/mail"
 	"github.com/spf13/viper"
 	"path/filepath"
 	"time"
 )
 
 type Config struct {
-	App   AppConfig
-	Db    DbConfig
-	Mail  MailConfig
-	Redis RedisDbConfig
-	Auth  AuthConfig
+	App  app.Config
+	Db   db.Config
+	Mail mail.Config
+	Auth auth.Config
 }
 
 func New(envPath string) *Config {
@@ -28,11 +31,10 @@ func New(envPath string) *Config {
 	time.Local = loc
 
 	return &Config{
-		App:   NewAppConfig(),
-		Db:    NewDbConfig(),
-		Mail:  NewMailConfig(),
-		Redis: NewRedisDbConfig(),
-		Auth:  NewAuthConfig(),
+		App:  app.NewConfig(),
+		Db:   db.NewConfig(),
+		Mail: mail.NewConfig(),
+		Auth: auth.NewConfig(),
 	}
 }
 

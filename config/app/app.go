@@ -1,4 +1,4 @@
-package config
+package app
 
 import (
 	"galaveg/utils/path"
@@ -10,9 +10,9 @@ import (
 func init() {
 	viper.SetDefault("APP_KEY", "")
 	viper.SetDefault("APP_DEBUG", false)
-	viper.SetDefault("APP_HOST", "0.0.0.0")
+	viper.SetDefault("APP_HOST", "localhost")
 	viper.SetDefault("APP_URL", "http://localhost/")
-	viper.SetDefault("APP_PORT", uint(8080))
+	viper.SetDefault("APP_PORT", 8080)
 	viper.SetDefault("APP_TIMEZONE", "UTC")
 	viper.SetDefault("APP_LOG_LEVEL", "info")
 	viper.SetDefault("APP_ALLOWED_HOSTS", "")
@@ -22,12 +22,12 @@ func init() {
 	viper.SetDefault("APP_DARK_MODE_COOKIE_KEY", "dark_mode")
 }
 
-type AppConfig struct {
+type Config struct {
 	Key               string
 	Debug             bool
 	Host              string
 	Url               string
-	Port              uint
+	Port              int
 	Timezone          string
 	LogLevel          string
 	AllowedHosts      []string
@@ -37,13 +37,13 @@ type AppConfig struct {
 	DarkModeCookieKey string
 }
 
-func NewAppConfig() AppConfig {
-	return AppConfig{
+func NewConfig() Config {
+	return Config{
 		Key:      viper.GetString("APP_KEY"),
 		Debug:    viper.GetBool("APP_DEBUG"),
 		Host:     viper.GetString("APP_HOST"),
 		Url:      viper.GetString("APP_URL"),
-		Port:     viper.GetUint("APP_PORT"),
+		Port:     viper.GetInt("APP_PORT"),
 		Timezone: viper.GetString("APP_TIMEZONE"),
 		LogLevel: viper.GetString("APP_LOG_LEVEL"),
 		AllowedHosts: lo.Filter(lo.Map(strings.Split(viper.GetString("APP_ALLOWED_HOSTS"), ","), func(s string, _ int) string {

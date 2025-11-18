@@ -1,4 +1,4 @@
-package config
+package mail
 
 import (
 	"github.com/spf13/viper"
@@ -17,7 +17,7 @@ func init() {
 
 // Add in the future transports: "sendmail", "mailgun", "ses", "ses-v2", "postmark", "resend", "log", "array", "failover", "roundrobin"
 
-type SmtpMailerMailConfig struct {
+type SmtpMailerConfig struct {
 	Transport  string
 	Host       string
 	Port       string
@@ -26,26 +26,26 @@ type SmtpMailerMailConfig struct {
 	Password   string
 }
 
-type MailersMailConfig struct {
-	Smtp SmtpMailerMailConfig
+type MailersConfig struct {
+	Smtp SmtpMailerConfig
 }
 
-type FromMailConfig struct {
+type FromConfig struct {
 	Address string
 	Name    string
 }
 
-type MailConfig struct {
+type Config struct {
 	Default string
-	Mailers MailersMailConfig
-	From    FromMailConfig
+	Mailers MailersConfig
+	From    FromConfig
 }
 
-func NewMailConfig() MailConfig {
-	return MailConfig{
+func NewConfig() Config {
+	return Config{
 		Default: viper.GetString("MAIL_DEFAULT_MAILER"),
-		Mailers: MailersMailConfig{
-			Smtp: SmtpMailerMailConfig{
+		Mailers: MailersConfig{
+			Smtp: SmtpMailerConfig{
 				Transport:  "smtp",
 				Host:       viper.GetString("MAIL_HOST"),
 				Port:       viper.GetString("MAIL_PORT"),
@@ -54,7 +54,7 @@ func NewMailConfig() MailConfig {
 				Password:   viper.GetString("MAIL_PASSWORD"),
 			},
 		},
-		From: FromMailConfig{
+		From: FromConfig{
 			Address: viper.GetString("MAIL_FROM_NAME"),
 			Name:    viper.GetString("MAIL_FROM_ADDRESS"),
 		},
