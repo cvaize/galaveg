@@ -14,6 +14,7 @@ func init() {
 	viper.SetDefault("APP_URL", "http://localhost/")
 	viper.SetDefault("APP_DEBUG", false)
 	viper.SetDefault("APP_TIMEZONE", "UTC")
+	// panic, fatal, error, warn, info, debug, trace
 	viper.SetDefault("APP_LOG_LEVEL", "info")
 	viper.SetDefault("APP_FOLDER", path.FindModuleRoot(path.Cwd()))
 	viper.SetDefault("APP_LOCALE", "en")

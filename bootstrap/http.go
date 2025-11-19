@@ -24,6 +24,7 @@ func Http() *gin.Engine {
 
 	router := gin.New()
 
+	// TODO: Функции FuncMap вынести отдельно
 	router.FuncMap["eq"] = func(a, b string) bool { return a == b }
 	router.FuncMap["eqInt"] = func(a, b int) bool { return a == b }
 	router.FuncMap["ne"] = func(a, b string) bool { return a != b }
@@ -46,6 +47,7 @@ func Http() *gin.Engine {
 		return strings.HasPrefix(s, prefix)
 	}
 
+	// TODO: Поместить "resources/html" конфигурацию
 	templates := path.MustCollectFilepathBySuffix(C.GetFolder("resources/html"), ".gohtml")
 	router.LoadHTMLFiles(templates...)
 
@@ -59,12 +61,8 @@ func Http() *gin.Engine {
 
 	routes.Http(router, ctx)
 
-	protocol := C.Http.Schema
-	host := C.Http.Host
-	port := C.Http.Port
-	url := fmt.Sprintf("%s:%d", host, port)
-	logger.Infof(fmt.Sprintf("Starting HTTP server at %s://%s", protocol, url))
-	if err := router.Run(url); err != nil {
+	logger.Infof(fmt.Sprintf("Starting HTTP server at %s", C.App.Url))
+	if err := router.Run(fmt.Sprintf("%s:%d", C.Http.Host, C.Http.Port)); err != nil {
 		logger.Fatalf("Router Run() error: %s", err)
 		panic(err)
 	}

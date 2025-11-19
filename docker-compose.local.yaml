@@ -42,9 +42,9 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASSWORD}'
       MYSQL_ROOT_HOST: '%'
-      MYSQL_DATABASE: '${DB_DATABASE}'
-      MYSQL_USER: '${DB_USERNAME}'
-      MYSQL_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_DATABASE: '${MYSQL_DATABASE}'
+      MYSQL_USER: '${MYSQL_USERNAME}'
+      MYSQL_PASSWORD: '${MYSQL_PASSWORD}'
       MYSQL_ALLOW_EMPTY_PASSWORD: 1
     volumes:
       - 'local_galaveg_mysql_volume:/var/lib/mysql'

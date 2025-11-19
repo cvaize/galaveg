@@ -5,12 +5,14 @@ import (
 )
 
 func init() {
+	viper.SetDefault("SESSION_STORE", "redis")
 	viper.SetDefault("SESSION_STORE_CONNECTION", "redis")
 	viper.SetDefault("SESSION_STORE_USER_KEY", "user_id")
 	viper.SetDefault("SESSION_COOKIE", "session_id")
 }
 
 type Config struct {
+	Store           string
 	StoreConnection string
 	StoreUserKey    string
 	Cookie          string
@@ -18,6 +20,7 @@ type Config struct {
 
 func NewConfig() (*Config, error) {
 	return &Config{
+		Store:           viper.GetString("SESSION_STORE"),
 		StoreConnection: viper.GetString("SESSION_STORE_CONNECTION"),
 		StoreUserKey:    viper.GetString("SESSION_STORE_USER_KEY"),
 		Cookie:          viper.GetString("SESSION_COOKIE"),

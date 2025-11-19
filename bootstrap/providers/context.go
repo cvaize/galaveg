@@ -39,6 +39,7 @@ func NewContext(C *config.Config) (*Context, error) {
 		return nil, err
 	}
 
+	// TODO: Добавить в конфигурацию "resources/translates/" и локали
 	TS := services.MustTranslatorServiceFromFiles(C.GetFolder("resources/translates/"), C.App.Locale)
 	LS := services.MustLocaleService([]dto.Locale{
 		{Code: "en", ShortName: "en", FullName: "English"},
@@ -65,7 +66,7 @@ func MustContext(C *config.Config) *Context {
 }
 
 func (ctx *Context) NewSessionStore() (sessions.Store, error) {
-	if ctx.C.Session.StoreConnection == "redis" {
+	if ctx.C.Session.Store == "redis" && ctx.C.Session.StoreConnection == "redis" {
 		c := ctx.C.Connections.Redis
 		// TODO: Добавить в конфиг настроек отдельно ctx.C.App.Key и настройки подключения к базе данных
 		return redis.NewStore(100, "tcp", c.Host, c.Username, c.Password, []byte(ctx.C.App.Key))

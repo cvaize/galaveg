@@ -5,7 +5,6 @@ import (
 )
 
 func init() {
-	viper.SetDefault("REDIS_URL", "")
 	viper.SetDefault("REDIS_HOST", "localhost")
 	viper.SetDefault("REDIS_PORT", 6379)
 	viper.SetDefault("REDIS_USERNAME", "")
@@ -15,7 +14,6 @@ func init() {
 }
 
 type RedisConfig struct {
-	Url        string
 	Host       string
 	Port       int
 	Username   string
@@ -26,7 +24,6 @@ type RedisConfig struct {
 
 func NewRedisConfig() *RedisConfig {
 	return &RedisConfig{
-		Url:        viper.GetString("REDIS_URL"),
 		Host:       viper.GetString("REDIS_HOST"),
 		Port:       viper.GetInt("REDIS_PORT"),
 		Username:   viper.GetString("REDIS_USERNAME"),
