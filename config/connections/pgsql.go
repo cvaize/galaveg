@@ -1,4 +1,4 @@
-package db
+package connections
 
 import (
 	"fmt"
@@ -6,7 +6,6 @@ import (
 )
 
 func init() {
-	viper.SetDefault("PGSQL_DRIVER", "postgres")
 	viper.SetDefault("PGSQL_HOST", "localhost")
 	viper.SetDefault("PGSQL_PORT", 5432)
 	viper.SetDefault("PGSQL_DATABASE", "database")
@@ -16,7 +15,6 @@ func init() {
 }
 
 type PgsqlConfig struct {
-	Driver   string
 	Host     string
 	Port     int
 	Database string
@@ -32,9 +30,8 @@ func (c *PgsqlConfig) DSN() string {
 	)
 }
 
-func NewPgsqlConfig() PgsqlConfig {
-	return PgsqlConfig{
-		Driver:   viper.GetString("PGSQL_DRIVER"),
+func NewPgsqlConfig() *PgsqlConfig {
+	return &PgsqlConfig{
 		Host:     viper.GetString("PGSQL_HOST"),
 		Port:     viper.GetInt("PGSQL_PORT"),
 		Database: viper.GetString("PGSQL_DATABASE"),

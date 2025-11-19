@@ -1,16 +1,12 @@
 package cmd
 
 import (
-	"database/sql"
 	"fmt"
+	"galaveg/bootstrap/providers"
 	"galaveg/config"
-	"galaveg/connections/db"
 	"galaveg/database/migrations"
 	"galaveg/utils/logger"
 	"github.com/samber/lo"
-	"github.com/spf13/viper"
-	"path/filepath"
-
 	"github.com/spf13/cobra"
 )
 
@@ -20,9 +16,9 @@ var migrateRollbackCmd = &cobra.Command{
 	Short: "Rollback the database migration.",
 	Long:  `Rollback the database migration.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		C := config.New(filepath.Join(viper.GetString("APP_FOLDER"), ".env"))
-		DB := db.New(C.Db)
-		err := RollbackMigration(C, DB)
+		C := config.MustDefaultConfig()
+		ctx := providers.MustContext(C)
+		err := RollbackMigration(ctx)
 		logger.Infof("The rollback migration was successful!")
 		return err
 	},
@@ -32,10 +28,10 @@ func init() {
 	rootCmd.AddCommand(migrateRollbackCmd)
 }
 
-func DeleteMigration(c *config.Config, db *sql.DB, name string) error {
+func DeleteMigration(ctx *providers.Context, name string) error {
 	//goland:noinspection ALL
-	query := "DELETE FROM " + c.Db.Prefix + "_migrations WHERE name=?"
-	_, err := db.Exec(query, name)
+	query := "DELETE FROM " + ctx.C.Db.Prefix + "_migrations WHERE name=?"
+	_, err := ctx.DB.Exec(query, name)
 	if err != nil {
 		return err
 	}
@@ -43,13 +39,13 @@ func DeleteMigration(c *config.Config, db *sql.DB, name string) error {
 	return nil
 }
 
-func RollbackMigration(c *config.Config, db *sql.DB) error {
-	err := createMigrationsTable(c, db)
+func RollbackMigration(ctx *providers.Context) error {
+	err := createMigrationsTable(ctx)
 	if err != nil {
 		return err
 	}
 
-	migrationRows, err := LoadMigrations(c, db)
+	migrationRows, err := LoadMigrations(ctx)
 	if err != nil {
 		return err
 	}
@@ -65,11 +61,11 @@ func RollbackMigration(c *config.Config, db *sql.DB) error {
 	for _, m := range ms {
 		if lastMigrationRow.name == m.Uuid {
 			logger.Infof(fmt.Sprintf("Rollback migrating - %s", m.Uuid))
-			err1 := m.Down(c, db)
+			err1 := m.Down(ctx)
 			if err1 != nil {
 				return err1
 			}
-			err2 := DeleteMigration(c, db, m.Uuid)
+			err2 := DeleteMigration(ctx, m.Uuid)
 			if err2 != nil {
 				return err2
 			}

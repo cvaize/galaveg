@@ -98,16 +98,13 @@ func init() {
 func getMakeMigrationTemplate() string {
 	return `package migrations
 
-import (
-	"database/sql"
-	"galaveg/config"
-)
+import "galaveg/bootstrap/providers"
 
-func {{ upName }}(c *config.Config, db *sql.DB) error {
+func {{ upName }}(ctx *providers.Context) error {
 	return nil
 }
 
-func {{ downName }}(c *config.Config, db *sql.DB) error {
+func {{ downName }}(ctx *providers.Context) error {
 	return nil
 }
 `

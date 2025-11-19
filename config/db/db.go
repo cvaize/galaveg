@@ -3,29 +3,23 @@ package db
 import "github.com/spf13/viper"
 
 func init() {
-	viper.SetDefault("DB_CONNECTION", "mysql")
+	viper.SetDefault("DB_PREFIX", "")
 }
 
 type Config struct {
-	Default     string
-	Connections ConnectionsDbConfig
+	Prefix string
 }
 
-type ConnectionsDbConfig struct {
-	Mysql   MysqlConfig
-	Mariadb MariadbConfig
-	Redis   RedisConfig
-	Valkey  ValkeyConfig
+func NewConfig() (*Config, error) {
+	return &Config{
+		Prefix: viper.GetString("DB_PREFIX"),
+	}, nil
 }
 
-func NewConfig() Config {
-	return Config{
-		Default: viper.GetString("DB_CONNECTION"),
-		Connections: ConnectionsDbConfig{
-			Mysql:   NewMysqlConfig(),
-			Mariadb: NewMariadbConfig(),
-			Redis:   NewRedisConfig(),
-			Valkey:  NewValkeyConfig(),
-		},
+func MustConfig() *Config {
+	c, e := NewConfig()
+	if e != nil {
+		panic(e)
 	}
+	return c
 }

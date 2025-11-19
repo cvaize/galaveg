@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"galaveg/config"
 	"github.com/gin-gonic/gin"
 	"mime"
 	"os"
@@ -8,10 +9,10 @@ import (
 	"strings"
 )
 
-func GzipStaticMiddleware() gin.HandlerFunc {
+func GzipStaticMiddleware(C *config.Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if strings.Contains(c.GetHeader("Accept-Encoding"), "gzip") {
-			filePath := filepath.Join("./", c.Request.URL.Path)
+			filePath := C.GetFolder(filepath.Join("public", c.Request.URL.Path))
 
 			gzipPath := filePath + ".gz"
 			if _, err := os.Stat(gzipPath); err == nil {

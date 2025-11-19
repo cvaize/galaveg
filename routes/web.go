@@ -10,17 +10,16 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/redis"
 )
 
 func webRegister(router *gin.Engine, ctx *providers.Context) {
-	store, err := redis.NewStore(100, "tcp", ctx.C.Redis.Host, ctx.C.Redis.Username, ctx.C.Redis.Password, []byte(ctx.C.App.Key))
+	store, err := ctx.NewSessionStore()
 	if err != nil {
 		panic(err)
 	}
 
 	r := router.Group("/")
-	r.Use(sessions.Sessions(ctx.C.Auth.CookieKey, store))
+	r.Use(sessions.Sessions(ctx.C.Session.Cookie, store))
 	wCtr := web.NewController(ctx)
 	r.GET("/", wCtr.Index)
 

@@ -1,14 +1,11 @@
 package migrations
 
-import (
-	"database/sql"
-	"galaveg/config"
-)
+import "galaveg/bootstrap/providers"
 
 type Migration struct {
 	Uuid string
-	Up   func(c *config.Config, db *sql.DB) error
-	Down func(c *config.Config, db *sql.DB) error
+	Up   func(ctx *providers.Context) error
+	Down func(ctx *providers.Context) error
 }
 
 func GetMigrations() []Migration {
@@ -33,7 +30,7 @@ func GetMigrations() []Migration {
 			Up:   CreateUsersFilesTable00010101000030Up,
 			Down: CreateUsersFilesTable00010101000030Down,
 		},
-		// NEW_MIGRATIONS_TAG: New migrations are added here automatically by the "make:migration" command.
+		// NEW_MIGRATIONS_TAG: MustConfig migrations are added here automatically by the "make:migration" command.
 	}
 
 	return migrations

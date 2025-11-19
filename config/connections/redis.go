@@ -1,4 +1,4 @@
-package db
+package connections
 
 import (
 	"github.com/spf13/viper"
@@ -24,8 +24,8 @@ type RedisConfig struct {
 	MaxRetries int
 }
 
-func NewRedisConfig() RedisConfig {
-	return RedisConfig{
+func NewRedisConfig() *RedisConfig {
+	return &RedisConfig{
 		Url:        viper.GetString("REDIS_URL"),
 		Host:       viper.GetString("REDIS_HOST"),
 		Port:       viper.GetInt("REDIS_PORT"),

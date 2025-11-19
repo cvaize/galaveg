@@ -1,15 +1,12 @@
 package cmd
 
 import (
-	"database/sql"
 	"fmt"
+	"galaveg/bootstrap/providers"
 	"galaveg/config"
-	"galaveg/connections/db"
 	"galaveg/database/migrations"
 	"galaveg/utils/logger"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-	"path/filepath"
 )
 
 // migrateCmd represents the migrate command
@@ -18,9 +15,9 @@ var migrateCmd = &cobra.Command{
 	Short: "Start database migrations.",
 	Long:  `Start database migrations.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		C := config.New(filepath.Join(viper.GetString("APP_FOLDER"), ".env"))
-		DB := db.New(C.Db)
-		err := UpMigration(C, DB)
+		C := config.MustDefaultConfig()
+		ctx := providers.MustContext(C)
+		err := UpMigration(ctx)
 		logger.Infof("The migration was successful!")
 		return err
 	},
@@ -30,13 +27,13 @@ func init() {
 	rootCmd.AddCommand(migrateCmd)
 }
 
-func createMigrationsTable(c *config.Config, db *sql.DB) error {
+func createMigrationsTable(ctx *providers.Context) error {
 	//goland:noinspection ALL
-	query := `CREATE TABLE IF NOT EXISTS ` + c.Db.Prefix + `_migrations (
+	query := `CREATE TABLE IF NOT EXISTS ` + ctx.C.Db.Prefix + `_migrations (
 		id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
 		name VARCHAR(255) NOT NULL UNIQUE
 	);`
-	_, err := db.Exec(query)
+	_, err := ctx.DB.Exec(query)
 	if err != nil {
 		return err
 	}
@@ -49,10 +46,10 @@ type migrationRow struct {
 	name string
 }
 
-func LoadMigrations(c *config.Config, db *sql.DB) ([]migrationRow, error) {
+func LoadMigrations(ctx *providers.Context) ([]migrationRow, error) {
 	//goland:noinspection ALL
-	query := "SELECT * FROM " + c.Db.Prefix + "_migrations ORDER BY id ASC;"
-	rows, err := db.Query(query)
+	query := "SELECT * FROM " + ctx.C.Db.Prefix + "_migrations ORDER BY id ASC;"
+	rows, err := ctx.DB.Query(query)
 	if err != nil {
 		return nil, err
 	}
@@ -72,10 +69,10 @@ func LoadMigrations(c *config.Config, db *sql.DB) ([]migrationRow, error) {
 	return migrationRows, err
 }
 
-func InsertMigration(c *config.Config, db *sql.DB, name string) error {
+func InsertMigration(ctx *providers.Context, name string) error {
 	//goland:noinspection ALL
-	query := "INSERT INTO " + c.Db.Prefix + "_migrations (name) VALUES (?);"
-	_, err := db.Exec(query, name)
+	query := "INSERT INTO " + ctx.C.Db.Prefix + "_migrations (name) VALUES (?);"
+	_, err := ctx.DB.Exec(query, name)
 	if err != nil {
 		return err
 	}
@@ -83,13 +80,13 @@ func InsertMigration(c *config.Config, db *sql.DB, name string) error {
 	return nil
 }
 
-func UpMigration(c *config.Config, db *sql.DB) error {
-	err := createMigrationsTable(c, db)
+func UpMigration(ctx *providers.Context) error {
+	err := createMigrationsTable(ctx)
 	if err != nil {
 		return err
 	}
 
-	migrationRows, err := LoadMigrations(c, db)
+	migrationRows, err := LoadMigrations(ctx)
 	if err != nil {
 		return err
 	}
@@ -105,11 +102,11 @@ func UpMigration(c *config.Config, db *sql.DB) error {
 	for _, m := range ms {
 		if _, ok := index[m.Uuid]; !ok {
 			logger.Infof(fmt.Sprintf("Migrating - %s", m.Uuid))
-			err1 := m.Up(c, db)
+			err1 := m.Up(ctx)
 			if err1 != nil {
 				return err1
 			}
-			err2 := InsertMigration(c, db, m.Uuid)
+			err2 := InsertMigration(ctx, m.Uuid)
 			if err2 != nil {
 				return err2
 			}

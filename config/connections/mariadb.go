@@ -1,4 +1,4 @@
-package db
+package connections
 
 import (
 	"fmt"
@@ -6,7 +6,6 @@ import (
 )
 
 func init() {
-	viper.SetDefault("MARIADB_DRIVER", "mysql")
 	viper.SetDefault("MARIADB_HOST", "localhost")
 	viper.SetDefault("MARIADB_PORT", 3306)
 	viper.SetDefault("MARIADB_DATABASE", "database")
@@ -16,7 +15,6 @@ func init() {
 }
 
 type MariadbConfig struct {
-	Driver   string
 	Host     string
 	Port     int
 	Database string
@@ -34,9 +32,8 @@ func (c *MariadbConfig) DSN() string {
 	)
 }
 
-func NewMariadbConfig() MariadbConfig {
-	return MariadbConfig{
-		Driver:   viper.GetString("MARIADB_DRIVER"),
+func NewMariadbConfig() *MariadbConfig {
+	return &MariadbConfig{
 		Host:     viper.GetString("MARIADB_HOST"),
 		Port:     viper.GetInt("MARIADB_PORT"),
 		Database: viper.GetString("MARIADB_DATABASE"),

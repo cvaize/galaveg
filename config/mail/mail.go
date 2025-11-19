@@ -15,8 +15,6 @@ func init() {
 	viper.SetDefault("MAIL_FROM_ADDRESS", "fake@fake.com")
 }
 
-// Add in the future transports: "sendmail", "mailgun", "ses", "ses-v2", "postmark", "resend", "log", "array", "failover", "roundrobin"
-
 type SmtpMailerConfig struct {
 	Transport  string
 	Host       string
@@ -41,8 +39,8 @@ type Config struct {
 	From    FromConfig
 }
 
-func NewConfig() Config {
-	return Config{
+func NewConfig() (*Config, error) {
+	return &Config{
 		Default: viper.GetString("MAIL_DEFAULT_MAILER"),
 		Mailers: MailersConfig{
 			Smtp: SmtpMailerConfig{
@@ -58,5 +56,13 @@ func NewConfig() Config {
 			Address: viper.GetString("MAIL_FROM_NAME"),
 			Name:    viper.GetString("MAIL_FROM_ADDRESS"),
 		},
+	}, nil
+}
+
+func MustConfig() *Config {
+	c, e := NewConfig()
+	if e != nil {
+		panic(e)
 	}
+	return c
 }

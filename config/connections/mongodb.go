@@ -1,4 +1,4 @@
-package db
+package connections
 
 import (
 	"github.com/spf13/viper"
@@ -18,8 +18,8 @@ type MongodbConfig struct {
 	Database string
 }
 
-func NewMongodbConfig() MongodbConfig {
-	return MongodbConfig{
+func NewMongodbConfig() *MongodbConfig {
+	return &MongodbConfig{
 		Uri:      viper.GetString("MONGODB_URI"),
 		Host:     viper.GetString("MONGODB_HOST"),
 		Port:     viper.GetInt("MONGODB_PORT"),

@@ -1,12 +1,9 @@
 package migrations
 
-import (
-	"database/sql"
-	"galaveg/config"
-)
+import "galaveg/bootstrap/providers"
 
-func CreateFilesTable00010101000020Up(c *config.Config, db *sql.DB) error {
-	query := `CREATE TABLE ` + c.Db.Prefix + `files (
+func CreateFilesTable00010101000020Up(ctx *providers.Context) error {
+	query := `CREATE TABLE ` + ctx.C.Db.Prefix + `files (
    id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
    filename VARCHAR(2048) CHARACTER SET ascii COLLATE ascii_bin NOT NULL COMMENT 'The file name is made up of the hash, size, and extensions obtained when uploading the file, by mask: [hash]-[size].[extensions].',
    path VARCHAR(2048) CHARACTER SET ascii COLLATE ascii_bin NOT NULL COMMENT 'The path where the file is saved on disk.',
@@ -22,31 +19,31 @@ func CreateFilesTable00010101000020Up(c *config.Config, db *sql.DB) error {
    is_deleted BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Label: whether the file has been deleted.',
    disk VARCHAR(255) CHARACTER SET ascii COLLATE ascii_bin NOT NULL COMMENT 'The disk where the file is stored.'
 ) COMMENT 'The file table.';`
-	_, err := db.Exec(query)
+	_, err := ctx.DB.Exec(query)
 	if err != nil {
 		return err
 	}
 
-	query = `ALTER TABLE ` + c.Db.Prefix + `files ADD UNIQUE disk_path_udx (disk, path);`
-	_, err = db.Exec(query)
+	query = `ALTER TABLE ` + ctx.C.Db.Prefix + `files ADD UNIQUE disk_path_udx (disk, path);`
+	_, err = ctx.DB.Exec(query)
 	if err != nil {
 		return err
 	}
 
-	query = `ALTER TABLE ` + c.Db.Prefix + `files ADD INDEX creator_user_idx (creator_user_id);`
-	_, err = db.Exec(query)
+	query = `ALTER TABLE ` + ctx.C.Db.Prefix + `files ADD INDEX creator_user_idx (creator_user_id);`
+	_, err = ctx.DB.Exec(query)
 	if err != nil {
 		return err
 	}
 
-	query = `ALTER TABLE ` + c.Db.Prefix + `files ADD INDEX path_idx (path);`
-	_, err = db.Exec(query)
+	query = `ALTER TABLE ` + ctx.C.Db.Prefix + `files ADD INDEX path_idx (path);`
+	_, err = ctx.DB.Exec(query)
 	if err != nil {
 		return err
 	}
 
-	query = `ALTER TABLE ` + c.Db.Prefix + `files ADD INDEX filename_idx (filename);`
-	_, err = db.Exec(query)
+	query = `ALTER TABLE ` + ctx.C.Db.Prefix + `files ADD INDEX filename_idx (filename);`
+	_, err = ctx.DB.Exec(query)
 	if err != nil {
 		return err
 	}
@@ -54,9 +51,9 @@ func CreateFilesTable00010101000020Up(c *config.Config, db *sql.DB) error {
 	return nil
 }
 
-func CreateFilesTable00010101000020Down(c *config.Config, db *sql.DB) error {
-	query := `DROP TABLE ` + c.Db.Prefix + `files;`
-	_, err := db.Exec(query)
+func CreateFilesTable00010101000020Down(ctx *providers.Context) error {
+	query := `DROP TABLE ` + ctx.C.Db.Prefix + `files;`
+	_, err := ctx.DB.Exec(query)
 	if err != nil {
 		return err
 	}

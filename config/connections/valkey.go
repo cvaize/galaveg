@@ -1,4 +1,4 @@
-package db
+package connections
 
 import (
 	"github.com/spf13/viper"
@@ -24,8 +24,8 @@ type ValkeyConfig struct {
 	MaxRetries int
 }
 
-func NewValkeyConfig() ValkeyConfig {
-	return ValkeyConfig{
+func NewValkeyConfig() *ValkeyConfig {
+	return &ValkeyConfig{
 		Url:        viper.GetString("VALKEY_URL"),
 		Host:       viper.GetString("VALKEY_HOST"),
 		Port:       viper.GetInt("VALKEY_PORT"),

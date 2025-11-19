@@ -1,46 +1,21 @@
 package bootstrap
 
 import (
-	"database/sql"
 	"fmt"
-	"galaveg/app/dto"
-	"galaveg/app/services"
 	"galaveg/bootstrap/providers"
 	"galaveg/config"
-	"galaveg/connections/db"
 	"galaveg/routes"
 	"galaveg/utils/logger"
 	"galaveg/utils/path"
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
-	"path/filepath"
-
 	"strings"
 )
 
-func httpProvideContext(C *config.Config, DB *sql.DB) *providers.Context {
-	TS := services.MustTranslatorServiceFromFiles(C.GetFolder("resources/translates/"), C.App.Locale)
-	LS := services.MustLocaleService([]dto.Locale{
-		{Code: "en", ShortName: "en", FullName: "English"},
-		{Code: "ru", ShortName: "ru", FullName: "Русский"},
-	})
-	RS := services.MustRoleService()
-	AS := services.MustAppService(C.App, LS, RS, TS)
-	return &providers.Context{
-		C:  C,
-		TS: TS,
-		LS: LS,
-		RS: RS,
-		AS: AS,
-	}
-}
-
 func Http() *gin.Engine {
-	C := config.New(filepath.Join(viper.GetString("APP_FOLDER"), ".env"))
-	DB := db.New(C.Db)
-	ctx := httpProvideContext(C, DB)
+	C := config.MustDefaultConfig()
+	ctx := providers.MustContext(C)
 
-	defer DB.Close()
+	defer ctx.Close()
 	if C.App.Debug {
 		gin.SetMode(gin.DebugMode)
 	} else {
@@ -74,7 +49,7 @@ func Http() *gin.Engine {
 	templates := path.MustCollectFilepathBySuffix(C.GetFolder("resources/html"), ".gohtml")
 	router.LoadHTMLFiles(templates...)
 
-	if err := router.SetTrustedProxies(C.App.AllowedHosts); err != nil {
+	if err := router.SetTrustedProxies(C.Http.AllowedHosts); err != nil {
 		panic(err)
 	}
 
@@ -84,9 +59,9 @@ func Http() *gin.Engine {
 
 	routes.Http(router, ctx)
 
-	protocol := "http"
-	host := C.App.Host
-	port := C.App.Port
+	protocol := C.Http.Schema
+	host := C.Http.Host
+	port := C.Http.Port
 	url := fmt.Sprintf("%s:%d", host, port)
 	logger.Infof(fmt.Sprintf("Starting HTTP server at %s://%s", protocol, url))
 	if err := router.Run(url); err != nil {

@@ -8,7 +8,7 @@ import (
 
 func (ctr *Controller) Logout(c *gin.Context) {
 	session := sessions.Default(c)
-	user := session.Get(ctr.ctx.C.Auth.SessionStoreUserKey)
+	user := session.Get(ctr.ctx.C.Session.StoreUserKey)
 	if user == nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid session token"})
 		return

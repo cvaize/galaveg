@@ -5,17 +5,16 @@ import (
 	"github.com/samber/lo"
 	"github.com/spf13/viper"
 	"strings"
+	"time"
 )
 
 func init() {
 	viper.SetDefault("APP_KEY", "")
-	viper.SetDefault("APP_DEBUG", false)
-	viper.SetDefault("APP_HOST", "localhost")
+	viper.SetDefault("APP_PREVIOUS_KEYS", "")
 	viper.SetDefault("APP_URL", "http://localhost/")
-	viper.SetDefault("APP_PORT", 8080)
+	viper.SetDefault("APP_DEBUG", false)
 	viper.SetDefault("APP_TIMEZONE", "UTC")
 	viper.SetDefault("APP_LOG_LEVEL", "info")
-	viper.SetDefault("APP_ALLOWED_HOSTS", "")
 	viper.SetDefault("APP_FOLDER", path.FindModuleRoot(path.Cwd()))
 	viper.SetDefault("APP_LOCALE", "en")
 	viper.SetDefault("APP_LOCALE_COOKIE_KEY", "locale")
@@ -24,36 +23,47 @@ func init() {
 
 type Config struct {
 	Key               string
-	Debug             bool
-	Host              string
+	PreviousKeys      []string
 	Url               string
-	Port              int
+	Debug             bool
 	Timezone          string
 	LogLevel          string
-	AllowedHosts      []string
 	Folder            string
 	Locale            string
 	LocaleCookieKey   string
 	DarkModeCookieKey string
 }
 
-func NewConfig() Config {
-	return Config{
-		Key:      viper.GetString("APP_KEY"),
-		Debug:    viper.GetBool("APP_DEBUG"),
-		Host:     viper.GetString("APP_HOST"),
-		Url:      viper.GetString("APP_URL"),
-		Port:     viper.GetInt("APP_PORT"),
-		Timezone: viper.GetString("APP_TIMEZONE"),
-		LogLevel: viper.GetString("APP_LOG_LEVEL"),
-		AllowedHosts: lo.Filter(lo.Map(strings.Split(viper.GetString("APP_ALLOWED_HOSTS"), ","), func(s string, _ int) string {
+func NewConfig() (*Config, error) {
+	//set timezone
+	loc, err := time.LoadLocation(viper.GetString("APP_TIMEZONE"))
+	if err != nil {
+		return nil, err
+	}
+	time.Local = loc
+
+	return &Config{
+		Key: viper.GetString("APP_KEY"),
+		PreviousKeys: lo.Filter(lo.Map(strings.Split(viper.GetString("APP_PREVIOUS_KEYS"), ","), func(s string, _ int) string {
 			return strings.TrimSpace(s)
 		}), func(s string, _ int) bool {
 			return s != ""
 		}),
+		Url:               viper.GetString("APP_URL"),
+		Debug:             viper.GetBool("APP_DEBUG"),
+		Timezone:          viper.GetString("APP_TIMEZONE"),
+		LogLevel:          viper.GetString("APP_LOG_LEVEL"),
 		Folder:            viper.GetString("APP_FOLDER"),
 		Locale:            viper.GetString("APP_LOCALE"),
 		LocaleCookieKey:   viper.GetString("APP_LOCALE_COOKIE_KEY"),
 		DarkModeCookieKey: viper.GetString("APP_DARK_MODE_COOKIE_KEY"),
+	}, nil
+}
+
+func MustConfig() *Config {
+	c, e := NewConfig()
+	if e != nil {
+		panic(e)
 	}
+	return c
 }

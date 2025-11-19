@@ -2,21 +2,21 @@ package services
 
 import (
 	"galaveg/app/dto"
-	"galaveg/config"
+	"galaveg/config/app"
 	"github.com/gin-gonic/gin"
 	"net/url"
 	"strings"
 )
 
 type AppService struct {
-	config config.AppConfig
+	config *app.Config
 	ls     *LocaleService
 	rs     *RoleService
 	ts     *TranslatorService
 	url    *url.URL
 }
 
-func NewAppService(config config.AppConfig, ls *LocaleService, rs *RoleService, ts *TranslatorService) (*AppService, error) {
+func NewAppService(config *app.Config, ls *LocaleService, rs *RoleService, ts *TranslatorService) (*AppService, error) {
 	u, err := url.Parse(config.Url)
 	if err != nil {
 		panic(err)
@@ -24,7 +24,7 @@ func NewAppService(config config.AppConfig, ls *LocaleService, rs *RoleService, 
 	return &AppService{config, ls, rs, ts, u}, nil
 }
 
-func MustAppService(config config.AppConfig, ls *LocaleService, rs *RoleService, ts *TranslatorService) *AppService {
+func MustAppService(config *app.Config, ls *LocaleService, rs *RoleService, ts *TranslatorService) *AppService {
 	s, e := NewAppService(config, ls, rs, ts)
 	if e != nil {
 		panic(e)
