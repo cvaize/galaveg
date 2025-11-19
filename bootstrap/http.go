@@ -61,8 +61,14 @@ func Http() *gin.Engine {
 
 	routes.Http(router, ctx)
 
-	logger.Infof(fmt.Sprintf("Starting HTTP server at %s", C.App.Url))
-	if err := router.Run(fmt.Sprintf("%s:%d", C.Http.Host, C.Http.Port)); err != nil {
+	protocol := C.Http.Schema
+	host := C.Http.Host
+	port := C.Http.Port
+	url := fmt.Sprintf("%s:%d", host, port)
+
+	logger.Infof(fmt.Sprintf("Starting HTTP server at %s://%s", protocol, url))
+	logger.Infof(fmt.Sprintf("Open HTTP website at %s", C.App.Url))
+	if err := router.Run(url); err != nil {
 		logger.Fatalf("Router Run() error: %s", err)
 		panic(err)
 	}

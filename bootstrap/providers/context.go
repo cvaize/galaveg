@@ -69,7 +69,7 @@ func (ctx *Context) NewSessionStore() (sessions.Store, error) {
 	if ctx.C.Session.Store == "redis" && ctx.C.Session.StoreConnection == "redis" {
 		c := ctx.C.Connections.Redis
 		// TODO: Добавить в конфиг настроек отдельно ctx.C.App.Key и настройки подключения к базе данных
-		return redis.NewStore(100, "tcp", c.Host, c.Username, c.Password, []byte(ctx.C.App.Key))
+		return redis.NewStore(100, "tcp", fmt.Sprintf("%s:%d", c.Host, c.Port), c.Username, c.Password, []byte(ctx.C.App.Key))
 	}
 
 	return nil, fmt.Errorf("session store settings should have the values: \"redis\"")
