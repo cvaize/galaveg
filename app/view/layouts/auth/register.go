@@ -8,7 +8,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func NewRegister(c *gin.Context, ctx *providers.Context) (*View, error) {
+type RegisterViewData struct {
+	EmailValue            string
+	EmailErrors           []string
+	PasswordValue         string
+	PasswordErrors        []string
+	ConfirmPasswordValue  string
+	ConfirmPasswordErrors []string
+	Errors                []string
+}
+
+func NewRegister(c *gin.Context, ctx *providers.Context, data *RegisterViewData) (*View, error) {
 	locale := ctx.LS.GetLocale(ctx.AS.Locale(c, nil))
 	locales := ctx.LS.GetLocales()
 
@@ -25,11 +35,18 @@ func NewRegister(c *gin.Context, ctx *providers.Context) (*View, error) {
 			Method: "post",
 			Fields: []field.View{
 				{
+					Type:       "hidden",
+					Name:       "csrf",
+					Value:      "",
+					FieldClass: "admin-login__field",
+					InputClass: "admin-login__field__input",
+				},
+				{
 					Label:      ctx.TS.T(locale.Code, "page.register.fields.email"),
 					Type:       "email",
 					Name:       "email",
-					Value:      "",
-					Errors:     []string{},
+					Value:      data.EmailValue,
+					Errors:     data.EmailErrors,
 					FieldClass: "admin-login__field",
 					InputClass: "admin-login__field__input",
 				},
@@ -37,8 +54,8 @@ func NewRegister(c *gin.Context, ctx *providers.Context) (*View, error) {
 					Label:      ctx.TS.T(locale.Code, "page.register.fields.password"),
 					Type:       "password",
 					Name:       "password",
-					Value:      "",
-					Errors:     []string{},
+					Value:      data.PasswordValue,
+					Errors:     data.PasswordErrors,
 					FieldClass: "admin-login__field",
 					InputClass: "admin-login__field__input",
 				},
@@ -46,8 +63,8 @@ func NewRegister(c *gin.Context, ctx *providers.Context) (*View, error) {
 					Label:      ctx.TS.T(locale.Code, "page.register.fields.confirm_password"),
 					Type:       "password",
 					Name:       "confirm_password",
-					Value:      "",
-					Errors:     []string{},
+					Value:      data.ConfirmPasswordValue,
+					Errors:     data.ConfirmPasswordErrors,
 					FieldClass: "admin-login__field",
 					InputClass: "admin-login__field__input",
 				},
@@ -63,8 +80,7 @@ func NewRegister(c *gin.Context, ctx *providers.Context) (*View, error) {
 				Href: "/login",
 				Text: ctx.TS.T(locale.Code, "page.register.login"),
 			},
-			Errors: []string{},
-			//Text: "",
+			Errors: data.Errors,
 		},
 		Back: &btn.View{Text: ctx.TS.T(locale.Code, "page.register.back"), Href: "/login"},
 	}, nil

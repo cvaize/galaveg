@@ -76,7 +76,6 @@ github.com/gabriel-vasile/mimetype/internal/scan
 # github.com/gin-contrib/sessions v1.0.4
 ## explicit; go 1.23.0
 github.com/gin-contrib/sessions
-github.com/gin-contrib/sessions/cookie
 github.com/gin-contrib/sessions/redis
 # github.com/gin-contrib/sse v1.1.0
 ## explicit; go 1.23

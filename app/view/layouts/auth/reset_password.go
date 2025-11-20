@@ -25,6 +25,13 @@ func NewResetPassword(c *gin.Context, ctx *providers.Context) (*View, error) {
 			Method: "post",
 			Fields: []field.View{
 				{
+					Type:       "hidden",
+					Name:       "csrf",
+					Value:      "",
+					FieldClass: "admin-login__field",
+					InputClass: "admin-login__field__input",
+				},
+				{
 					Label:      ctx.TS.T(locale.Code, "page.reset_password.fields.email"),
 					Type:       "email",
 					Name:       "email",

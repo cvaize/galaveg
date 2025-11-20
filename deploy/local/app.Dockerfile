@@ -28,5 +28,5 @@ RUN groupadd --force -g $WWWGROUP web
 RUN useradd -ms /bin/bash --no-user-group -g $WWWGROUP -u $WWWUSER web
 USER web
 
-#CMD ["sleep", "infinity"]
-CMD ["watchexec", "-r", "-e", "go,gohtml,html", "go", "run", ".", "serve"]
+CMD ["sleep", "infinity"]
+#CMD ["watchexec", "-r", "-e", "go,gohtml,html", "go", "run", ".", "serve"]

@@ -3,6 +3,12 @@ package services
 type AuthService struct {
 }
 
-func (as AuthService) LoginByPassword(email, password string) (UserID, error) {
+func (s AuthService) Login(email, password string) (UserID, error) {
+
+	return 0, nil
+}
+
+func (s AuthService) Register(email, password string) (UserID, error) {
+
 	return 0, nil
 }

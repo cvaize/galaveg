@@ -1,11 +1,18 @@
 package auth
 
 import (
-	"galaveg/app/view/layouts/auth"
+	"fmt"
+	viewAuth "galaveg/app/view/layouts/auth"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
+
+type RegisterRequest struct {
+	Email           string `form:"email" binding:"required,email"`
+	Password        string `form:"password" binding:"required,min=6"`
+	ConfirmPassword string `form:"confirm_password" binding:"required,min=6"`
+}
 
 func (ctr *Controller) Register(c *gin.Context) {
 	session := sessions.Default(c)
@@ -14,11 +21,23 @@ func (ctr *Controller) Register(c *gin.Context) {
 		return
 	}
 
-	d, err := auth.NewRegister(c, ctr.ctx)
+	viewData := viewAuth.RegisterViewData{}
+	reqData := RegisterRequest{}
+	if c.Request.Method == "POST" {
+		// TODO: Сделать валидацию
+		if err := c.ShouldBind(&reqData); err != nil {
+			viewData.Errors = []string{err.Error()}
+			fmt.Println(err)
+		}
+
+		fmt.Println(reqData)
+	}
+
+	d, err := viewAuth.NewRegister(c, ctr.ctx, &viewData)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
-	c.HTML(http.StatusOK, auth.TEMPLATE, d)
+	c.HTML(http.StatusOK, viewAuth.TEMPLATE, d)
 }

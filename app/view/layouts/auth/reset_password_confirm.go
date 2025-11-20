@@ -27,6 +27,13 @@ func NewResetPasswordConfirm(c *gin.Context, ctx *providers.Context) (*View, err
 			Fields: []field.View{
 				{
 					Type:       "hidden",
+					Name:       "csrf",
+					Value:      "",
+					FieldClass: "admin-login__field",
+					InputClass: "admin-login__field__input",
+				},
+				{
+					Type:       "hidden",
 					Name:       "code",
 					Value:      "",
 					FieldClass: "admin-login__field",
