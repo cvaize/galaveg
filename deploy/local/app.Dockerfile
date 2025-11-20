@@ -1,3 +1,7 @@
+FROM rustlang/rust:nightly as build_rust
+
+RUN cargo install watchexec-cli
+
 FROM golang:1.25.3 as build
 
 ARG WWWGROUP=1000
@@ -5,12 +9,12 @@ ARG WWWUSER=1000
 
 RUN mkdir -p /app
 WORKDIR /app
-#COPY . /app
+COPY --from=build_rust "/usr/local/cargo/bin/watchexec" /bin/watchexec
 
 # Install Node.js
-ENV NODE_VERSION=22.21.0
+ENV NODE_VERSION=24.11.1
 RUN apt install -y curl
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 ENV NVM_DIR=/root/.nvm
 RUN . "$NVM_DIR/nvm.sh" && nvm install ${NODE_VERSION}
 RUN . "$NVM_DIR/nvm.sh" && nvm use v${NODE_VERSION}
@@ -24,4 +28,5 @@ RUN groupadd --force -g $WWWGROUP web
 RUN useradd -ms /bin/bash --no-user-group -g $WWWGROUP -u $WWWUSER web
 USER web
 
-CMD ["sleep", "infinity"]
+#CMD ["sleep", "infinity"]
+CMD ["watchexec", "-r", "-e", "go,gohtml,html", "go", "run", ".", "serve"]

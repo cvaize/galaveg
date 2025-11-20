@@ -66,6 +66,7 @@ func MustContext(C *config.Config) *Context {
 }
 
 func (ctx *Context) NewSessionStore() (sessions.Store, error) {
+	// TODO: Сделать команду генерации ключей приложения
 	if ctx.C.Session.Store == "redis" && ctx.C.Session.StoreConnection == "redis" {
 		c := ctx.C.Connections.Redis
 		// TODO: Добавить в конфиг настроек отдельно ctx.C.App.Key и настройки подключения к базе данных
