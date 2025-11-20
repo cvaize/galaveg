@@ -4,8 +4,8 @@ import (
 	"galaveg/app/controllers/web"
 	"galaveg/app/controllers/web/auth"
 	"galaveg/app/controllers/web/locale"
-	"galaveg/app/controllers/web/users"
-	"galaveg/app/middlewares"
+	"galaveg/app/controllers/web/panel/users"
+	mWeb "galaveg/app/middlewares/web"
 	"galaveg/bootstrap/providers"
 	"github.com/gin-gonic/gin"
 
@@ -39,7 +39,7 @@ func webRegister(router *gin.Engine, ctx *providers.Context) {
 	// Private
 	uCtr := users.NewController(ctx)
 	p := r.Group("/panel")
-	p.Use(middlewares.AuthRequired(ctx))
+	p.Use(mWeb.AuthRequired(ctx))
 	p.GET("/", wCtr.Index)
 	p.GET("/users", uCtr.Index)
 }

@@ -17,18 +17,23 @@ func NewController(ctx *providers.Context) Controller {
 }
 
 func (ctr *Controller) Login(c *gin.Context) {
+	session := sessions.Default(c)
+	if user := session.Get(ctr.ctx.C.Session.StoreUserKey); user != nil {
+		c.Redirect(http.StatusFound, "/panel")
+		return
+	}
+
 	//email := c.PostForm("email")
 	//password := c.PostForm("password")
 
-	session := sessions.Default(c)
-	userId := "123"
-
-	// Save the username in the session
-	session.Set(ctr.ctx.C.Session.StoreUserKey, userId) // In real world usage you'd set this to the users ID
-	if err := session.Save(); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save session"})
-		return
-	}
+	//userId := "123"
+	//
+	//// Save the username in the session
+	//session.Set(ctr.ctx.C.Session.StoreUserKey, userId) // In real world usage you'd set this to the users ID
+	//if err := session.Save(); err != nil {
+	//	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save session"})
+	//	return
+	//}
 
 	d, err := auth.NewLogin(c, ctr.ctx)
 	if err != nil {

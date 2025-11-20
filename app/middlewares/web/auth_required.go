@@ -1,4 +1,4 @@
-package middlewares
+package web
 
 import (
 	"galaveg/bootstrap/providers"
@@ -18,7 +18,7 @@ func AuthRequired(ctx *providers.Context) gin.HandlerFunc {
 		// Try to get the user from the session
 		if user := session.Get(ctx.C.Session.StoreUserKey); user == nil {
 			// No user in session, abort the request
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+			c.Redirect(http.StatusFound, "/login")
 			return
 		}
 
