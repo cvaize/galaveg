@@ -4,8 +4,10 @@ import (
 	"time"
 )
 
+type UserID uint64
+
 type User struct {
-	ID           uint64
+	ID           UserID
 	Email        string
 	Locale       string
 	Surname      string

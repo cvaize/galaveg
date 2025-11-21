@@ -34,6 +34,7 @@ func (ctx *Context) Close() {
 }
 
 func NewContext(C *config.Config) (*Context, error) {
+	// TODO: Вместо множества подключений уже написанных, оставить только нужные, а ненужные переименовать в .stub
 	DB, err := mysql.New(C.Connections.Mysql)
 	if err != nil {
 		return nil, err
