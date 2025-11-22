@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"galaveg/config"
+	_ "github.com/go-sql-driver/mysql"
 	"time"
 )
 
