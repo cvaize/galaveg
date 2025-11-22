@@ -18,7 +18,7 @@ func (ctr *Controller) Switch(c *gin.Context) {
 	v := c.PostForm("locale")
 
 	if v == "" {
-		v = ctr.ctx.C.App.Locale
+		v = ctr.ctx.Cfg.App.Locale
 	}
 
 	lenLocale := len(v)
@@ -27,7 +27,7 @@ func (ctr *Controller) Switch(c *gin.Context) {
 		return
 	}
 
-	k := ctr.ctx.C.App.LocaleCookieKey
+	k := ctr.ctx.Cfg.App.LocaleCookieKey
 	c.SetCookie(k, v, 0, "/", "", false, true)
 
 	location := c.GetHeader("Referer")

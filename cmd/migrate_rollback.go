@@ -16,8 +16,8 @@ var migrateRollbackCmd = &cobra.Command{
 	Short: "Rollback the database migration.",
 	Long:  `Rollback the database migration.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		C := config.MustDefaultConfig()
-		ctx := providers.MustContext(C)
+		cfg := config.MustDefault()
+		ctx := providers.MustContext(cfg)
 		err := RollbackMigration(ctx)
 		logger.Infof("The rollback migration was successful!")
 		return err
@@ -30,8 +30,8 @@ func init() {
 
 func DeleteMigration(ctx *providers.Context, name string) error {
 	//goland:noinspection ALL
-	query := "DELETE FROM " + ctx.C.Db.Prefix + "_migrations WHERE name=?"
-	_, err := ctx.DB.Exec(query, name)
+	query := "DELETE FROM " + ctx.Cfg.Db.Prefix + "_migrations WHERE name=?"
+	_, err := ctx.Db.Exec(query, name)
 	if err != nil {
 		return err
 	}

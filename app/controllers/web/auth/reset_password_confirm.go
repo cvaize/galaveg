@@ -9,7 +9,7 @@ import (
 
 func (ctr *Controller) ResetPasswordConfirm(c *gin.Context) {
 	session := sessions.Default(c)
-	if user := session.Get(ctr.ctx.C.Session.StoreUserKey); user != nil {
+	if user := session.Get(ctr.ctx.Cfg.Session.StoreUserKey); user != nil {
 		c.Redirect(http.StatusFound, "/panel")
 		return
 	}

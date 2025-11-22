@@ -10,7 +10,7 @@ import (
 func WithoutAuth(ctx *providers.Context) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session := sessions.Default(c)
-		if user := session.Get(ctx.C.Session.StoreUserKey); user != nil {
+		if user := session.Get(ctx.Cfg.Session.StoreUserKey); user != nil {
 			c.Redirect(http.StatusFound, "/panel")
 			return
 		}

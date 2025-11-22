@@ -13,9 +13,9 @@ import (
 )
 
 func GetAppService(t *testing.T) *services.AppService {
-	C := tests.GetConfig()
+	cfg := tests.GetConfig()
 
-	TS, e := services.NewTranslatorServiceFromFiles(C.GetFolder("resources/translates/"), C.App.Locale)
+	TS, e := services.NewTranslatorServiceFromFiles(cfg.GetFolder("resources/translates/"), cfg.App.Locale)
 	assert.NoError(t, e)
 
 	LS, e := services.NewLocaleService([]dto.Locale{
@@ -28,7 +28,7 @@ func GetAppService(t *testing.T) *services.AppService {
 	RS, e := services.NewRoleService()
 	assert.NoError(t, e)
 
-	AS, e := services.NewAppService(C.App, LS, RS, TS)
+	AS, e := services.NewAppService(cfg, LS, RS, TS)
 	assert.NoError(t, e)
 
 	return AS

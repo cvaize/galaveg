@@ -13,13 +13,10 @@ import (
 )
 
 func webRegister(router *gin.Engine, ctx *providers.Context) {
-	store, err := ctx.NewSessionStore()
-	if err != nil {
-		panic(err)
-	}
+	store := providers.MustSessionStore(ctx.Cfg)
 
 	r := router.Group("/")
-	r.Use(sessions.Sessions(ctx.C.Session.Cookie, store))
+	r.Use(sessions.Sessions(ctx.Cfg.Session.CookieKey, store))
 	wCtr := web.NewController(ctx)
 	r.GET("/", wCtr.Index)
 

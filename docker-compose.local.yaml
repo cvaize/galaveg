@@ -10,7 +10,7 @@ services:
     volumes:
       - './:/app'
     ports:
-      - '${FORWARD_APP_PORT:-8080}:${APP_PORT:-8080}'
+      - '${FORWARD_HTTP_PORT:-8080}:${HTTP_PORT:-8080}'
     environment:
       WWWUSER: '${WWWUSER:-1000}'
       WWWGROUP: '${WWWGROUP:-1000}'
@@ -38,11 +38,11 @@ services:
     ports:
       - '${FORWARD_MYSQL_PORT:-3306}:3306'
     environment:
-      MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASSWORD}'
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
       MYSQL_ROOT_HOST: '%'
-      MYSQL_DATABASE: '${MYSQL_DATABASE}'
-      MYSQL_USER: '${MYSQL_USERNAME}'
-      MYSQL_PASSWORD: '${MYSQL_PASSWORD}'
+      MYSQL_DATABASE: '${DB_DATABASE}'
+      MYSQL_USER: '${DB_USERNAME}'
+      MYSQL_PASSWORD: '${DB_PASSWORD}'
       MYSQL_ALLOW_EMPTY_PASSWORD: 1
     volumes:
       - 'local_galaveg_mysql_volume:/var/lib/mysql'
@@ -60,17 +60,6 @@ services:
       - PMA_ARBITRARY=1
     networks:
       - local_galaveg_network
-
-#  valkey:
-#    container_name: local_galaveg_valkey
-#    image: valkey/valkey:9
-#    restart: always
-#    ports:
-#      - '${FORWARD_REDIS_PORT:-6379}:6379'
-#    volumes:
-#      - 'local_galaveg_valkey_volume:/data'
-#    networks:
-#      - local_galaveg_network
 
   redis:
     container_name: local_galaveg_redis

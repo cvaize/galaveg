@@ -1,0 +1,40 @@
+APP:
+  KEY: "123"
+  URL: "http://localhost/"
+  DEBUG: false
+  TIMEZONE: "UTC"
+  LOG_LEVEL: "info"
+  LOCALE: "en"
+  LOCALE_COOKIE_KEY: "locale"
+  DARK_MODE_COOKIE_KEY: "dark_mode"
+DB:
+  HOST: "localhost"
+  PORT: 3306
+  DATABASE: "database"
+  USERNAME: "database_user"
+  PASSWORD: "database_password"
+  TLS: "false"
+  CHARSET: "utf8mb4"
+  MAX_OPEN_CONNS: 25
+  MAX_IDLE_CONNS: 25
+  # Example: int64(time.Hour)
+  CONN_MAX_LIFETIME: 3600000000000
+  # Example: int64(5*time.Minute)
+  CONN_MAX_IDLE_TIME: 300000000000
+HTTP:
+  HOST: "localhost"
+  PORT: 80
+  SCHEMA: "http"
+MAIL:
+  HOST: "localhost"
+  PORT: 8025
+  USERNAME: "test"
+  PASSWORD: "test"
+  FROM_ADDRESS: "fake@fake.com"
+  FROM_NAME: "test"
+SESSION:
+  STORE_USER_KEY: "user_id"
+  COOKIE_KEY: "session_id"
+  REDIS_HOST: "localhost"
+  REDIS_PORT: 6379
+  REDIS_MAX_IDLE_CONNECTIONS: 100

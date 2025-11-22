@@ -12,11 +12,11 @@ import (
 )
 
 func Http() *gin.Engine {
-	C := config.MustDefaultConfig()
-	ctx := providers.MustContext(C)
+	cfg := config.MustDefault()
+	ctx := providers.MustContext(cfg)
 
 	defer ctx.Close()
-	if C.App.Debug {
+	if cfg.App.Debug {
 		gin.SetMode(gin.DebugMode)
 	} else {
 		gin.SetMode(gin.ReleaseMode)
@@ -48,10 +48,10 @@ func Http() *gin.Engine {
 	}
 
 	// TODO: Поместить "resources/html" конфигурацию
-	templates := path.MustCollectFilepathBySuffix(C.GetFolder("resources/html"), ".gohtml")
+	templates := path.MustCollectFilepathBySuffix(cfg.GetFolder("resources/html"), ".gohtml")
 	router.LoadHTMLFiles(templates...)
 
-	if err := router.SetTrustedProxies(C.Http.AllowedHosts); err != nil {
+	if err := router.SetTrustedProxies(cfg.Http.AllowedHosts); err != nil {
 		panic(err)
 	}
 
@@ -61,13 +61,13 @@ func Http() *gin.Engine {
 
 	routes.Http(router, ctx)
 
-	protocol := C.Http.Schema
-	host := C.Http.Host
-	port := C.Http.Port
+	protocol := cfg.Http.Schema
+	host := cfg.Http.Host
+	port := cfg.Http.Port
 	url := fmt.Sprintf("%s:%d", host, port)
 
 	logger.Infof(fmt.Sprintf("Starting HTTP server at %s://%s", protocol, url))
-	logger.Infof(fmt.Sprintf("Open HTTP website at %s", C.App.Url))
+	logger.Infof(fmt.Sprintf("Open HTTP website at %s", cfg.App.Url))
 	if err := router.Run(url); err != nil {
 		logger.Fatalf("Router Run() error: %s", err)
 		panic(err)

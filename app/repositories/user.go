@@ -6,13 +6,13 @@ import (
 )
 
 type UserRepo struct {
-	C  *config.Config
-	DB *sql.DB
+	cfg *config.Config
+	db  *sql.DB
 }
 
 func (r *UserRepo) CreateByEmail(email string) error {
-	query := `INSERT INTO ` + r.C.Db.Prefix + `users (email) VALUES (?);`
-	_, err := r.DB.Exec(query, email)
+	query := `INSERT INTO ` + r.cfg.Db.Prefix + `users (email) VALUES (?);`
+	_, err := r.db.Exec(query, email)
 	if err != nil {
 		return err
 	}

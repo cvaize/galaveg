@@ -2,30 +2,30 @@ package services
 
 import (
 	"galaveg/app/dto"
-	"galaveg/config/app"
+	"galaveg/config"
 	"github.com/gin-gonic/gin"
 	"net/url"
 	"strings"
 )
 
 type AppService struct {
-	config *app.Config
-	ls     *LocaleService
-	rs     *RoleService
-	ts     *TranslatorService
-	url    *url.URL
+	cfg *config.Config
+	ls  *LocaleService
+	rs  *RoleService
+	ts  *TranslatorService
+	url *url.URL
 }
 
-func NewAppService(config *app.Config, ls *LocaleService, rs *RoleService, ts *TranslatorService) (*AppService, error) {
-	u, err := url.Parse(config.Url)
+func NewAppService(c *config.Config, ls *LocaleService, rs *RoleService, ts *TranslatorService) (*AppService, error) {
+	u, err := url.Parse(c.App.Url)
 	if err != nil {
 		panic(err)
 	}
-	return &AppService{config, ls, rs, ts, u}, nil
+	return &AppService{c, ls, rs, ts, u}, nil
 }
 
-func MustAppService(config *app.Config, ls *LocaleService, rs *RoleService, ts *TranslatorService) *AppService {
-	s, e := NewAppService(config, ls, rs, ts)
+func MustAppService(c *config.Config, ls *LocaleService, rs *RoleService, ts *TranslatorService) *AppService {
+	s, e := NewAppService(c, ls, rs, ts)
 	if e != nil {
 		panic(e)
 	}
@@ -35,7 +35,7 @@ func MustAppService(config *app.Config, ls *LocaleService, rs *RoleService, ts *
 func (s *AppService) DarkMode(c *gin.Context) string {
 	var val string
 	if c != nil {
-		val, _ = c.Cookie(s.config.DarkModeCookieKey)
+		val, _ = c.Cookie(s.cfg.App.DarkModeCookieKey)
 	}
 	if val != "auto" && val != "dark" && val != "light" {
 		val = "auto"
@@ -48,12 +48,12 @@ func (s *AppService) Locale(c *gin.Context, user *dto.User) string {
 	var val string
 	if c != nil {
 		// manually selected by the user in the browser
-		val, _ = c.Cookie(s.config.LocaleCookieKey)
+		val, _ = c.Cookie(s.cfg.App.LocaleCookieKey)
 		if val != "" {
 			if s.ls.Exists(val) {
 				return val
 			} else {
-				return s.config.Locale
+				return s.cfg.App.Locale
 			}
 		}
 	}
@@ -62,7 +62,7 @@ func (s *AppService) Locale(c *gin.Context, user *dto.User) string {
 		if s.ls.Exists(user.Locale) {
 			return user.Locale
 		} else {
-			return s.config.Locale
+			return s.cfg.App.Locale
 		}
 	}
 	if c != nil {
@@ -74,12 +74,12 @@ func (s *AppService) Locale(c *gin.Context, user *dto.User) string {
 				if s.ls.Exists(val[:index]) {
 					return val[:index]
 				} else {
-					return s.config.Locale
+					return s.cfg.App.Locale
 				}
 			}
 		}
 	}
-	return s.config.Locale
+	return s.cfg.App.Locale
 }
 
 func (s *AppService) Csrf(c *gin.Context) string {

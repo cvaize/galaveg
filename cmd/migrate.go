@@ -15,8 +15,8 @@ var migrateCmd = &cobra.Command{
 	Short: "Start database migrations.",
 	Long:  `Start database migrations.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		C := config.MustDefaultConfig()
-		ctx := providers.MustContext(C)
+		cfg := config.MustDefault()
+		ctx := providers.MustContext(cfg)
 		err := UpMigration(ctx)
 		logger.Infof("The migration was successful!")
 		return err
@@ -29,11 +29,11 @@ func init() {
 
 func createMigrationsTable(ctx *providers.Context) error {
 	//goland:noinspection ALL
-	query := `CREATE TABLE IF NOT EXISTS ` + ctx.C.Db.Prefix + `_migrations (
+	query := `CREATE TABLE IF NOT EXISTS ` + ctx.Cfg.Db.Prefix + `_migrations (
 		id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
 		name VARCHAR(255) NOT NULL UNIQUE
 	);`
-	_, err := ctx.DB.Exec(query)
+	_, err := ctx.Db.Exec(query)
 	if err != nil {
 		return err
 	}
@@ -48,8 +48,8 @@ type migrationRow struct {
 
 func LoadMigrations(ctx *providers.Context) ([]migrationRow, error) {
 	//goland:noinspection ALL
-	query := "SELECT * FROM " + ctx.C.Db.Prefix + "_migrations ORDER BY id ASC;"
-	rows, err := ctx.DB.Query(query)
+	query := "SELECT * FROM " + ctx.Cfg.Db.Prefix + "_migrations ORDER BY id ASC;"
+	rows, err := ctx.Db.Query(query)
 	if err != nil {
 		return nil, err
 	}
@@ -71,8 +71,8 @@ func LoadMigrations(ctx *providers.Context) ([]migrationRow, error) {
 
 func InsertMigration(ctx *providers.Context, name string) error {
 	//goland:noinspection ALL
-	query := "INSERT INTO " + ctx.C.Db.Prefix + "_migrations (name) VALUES (?);"
-	_, err := ctx.DB.Exec(query, name)
+	query := "INSERT INTO " + ctx.Cfg.Db.Prefix + "_migrations (name) VALUES (?);"
+	_, err := ctx.Db.Exec(query, name)
 	if err != nil {
 		return err
 	}

@@ -5,5 +5,5 @@ import (
 )
 
 func GetConfig() *config.Config {
-	return config.MustConfig("tests.env")
+	return config.Must("tests.env")
 }
