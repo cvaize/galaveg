@@ -1,6 +1,7 @@
 {
   "UserServiceError": {
     "DbConnectionFail":  "Ошибка подключения к базе данных UserService.",
+    "Duplicate": "Такой пользователь уже зарегистрирован.",
     "DuplicateEmail": "Пользователь с таким E-mail уже зарегистрирован.",
     "PasswordHashFail":  "Пароль не удалось хэшировать.",
     "NotFound":  "Пользователь не найден.",
@@ -9,6 +10,7 @@
   "AuthServiceError": {
     "CredentialsInvalid":  "Неверные учетные данные.",
     "DbConnectionFail":  "Ошибка подключения к базе данных AuthService.",
+    "Duplicate": "{{error.UserServiceError.Duplicate}}",
     "DuplicateEmail": "{{error.UserServiceError.DuplicateEmail}}",
     "PasswordHashFail":  "{{error.UserServiceError.PasswordHashFail}}",
     "InsertNewUserFail":  "Регистрация нового пользователя не удалась.",

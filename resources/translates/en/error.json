@@ -1,6 +1,7 @@
 {
   "UserServiceError": {
     "DbConnectionFail":  "Error connecting to the UserService database.",
+    "Duplicate": "Such a user has already been registered.",
     "DuplicateEmail": "A user with this E-mail is already registered.",
     "PasswordHashFail":  "Password could not be hashed.",
     "NotFound":  "User not found.",
@@ -9,6 +10,7 @@
   "AuthServiceError": {
     "CredentialsInvalid":  "Invalid credentials.",
     "DbConnectionFail":  "Error connecting to the AuthService database.",
+    "Duplicate": "{{error.UserServiceError.Duplicate}}",
     "DuplicateEmail": "{{error.UserServiceError.DuplicateEmail}}",
     "PasswordHashFail":  "{{error.UserServiceError.PasswordHashFail}}",
     "InsertNewUserFail":  "New user registration failed.",

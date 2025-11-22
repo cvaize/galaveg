@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"fmt"
 	view "galaveg/app/view/layouts/auth"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -26,15 +25,17 @@ func (ctr *Controller) Register(c *gin.Context) {
 	if c.Request.Method == "POST" {
 		// TODO: Сделать валидацию
 		if err := c.ShouldBind(&reqData); err != nil {
-			viewData.Errors = []string{err.Error()}
-			fmt.Println(err)
+			viewData.Errors = append(viewData.Errors, err.Error())
+		} else {
+			_, e := ctr.ctx.Auth.Register(reqData.Email, reqData.Password)
+			if e != nil {
+				viewData.Errors = append(viewData.Errors, e.Error())
+			}
 		}
 
 		viewData.EmailValue = reqData.Email
 		viewData.PasswordValue = reqData.Password
 		viewData.ConfirmPasswordValue = reqData.ConfirmPassword
-
-		fmt.Println(reqData)
 	}
 
 	d, err := view.NewRegister(c, ctr.ctx, &viewData)

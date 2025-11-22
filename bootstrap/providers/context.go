@@ -15,6 +15,7 @@ type Context struct {
 	TS    *services.TranslatorService
 	LS    *services.LocaleService
 	AS    *services.AppService
+	Auth  *services.AuthService
 	RS    *services.RoleService
 }
 
