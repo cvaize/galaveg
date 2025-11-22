@@ -2,7 +2,7 @@ package auth
 
 import (
 	"fmt"
-	viewAuth "galaveg/app/view/layouts/auth"
+	view "galaveg/app/view/layouts/auth"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -21,7 +21,7 @@ func (ctr *Controller) Register(c *gin.Context) {
 		return
 	}
 
-	viewData := viewAuth.RegisterViewData{}
+	viewData := view.RegisterViewData{}
 	reqData := RegisterRequest{}
 	if c.Request.Method == "POST" {
 		// TODO: Сделать валидацию
@@ -30,14 +30,18 @@ func (ctr *Controller) Register(c *gin.Context) {
 			fmt.Println(err)
 		}
 
+		viewData.EmailValue = reqData.Email
+		viewData.PasswordValue = reqData.Password
+		viewData.ConfirmPasswordValue = reqData.ConfirmPassword
+
 		fmt.Println(reqData)
 	}
 
-	d, err := viewAuth.NewRegister(c, ctr.ctx, &viewData)
+	d, err := view.NewRegister(c, ctr.ctx, &viewData)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
-	c.HTML(http.StatusOK, viewAuth.TEMPLATE, d)
+	c.HTML(http.StatusOK, view.TEMPLATE, d)
 }

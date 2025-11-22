@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"fmt"
 	"galaveg/app/view/components/btn"
 	"galaveg/app/view/components/field"
 	"galaveg/app/view/layouts/auth/form"
@@ -22,6 +23,7 @@ func NewRegister(c *gin.Context, ctx *providers.Context, data *RegisterViewData)
 	locale := ctx.LS.GetLocale(ctx.AS.Locale(c, nil))
 	locales := ctx.LS.GetLocales()
 
+	fmt.Println(data.PasswordValue)
 	return &View{
 		Lang:     locale.Code,
 		DarkMode: ctx.AS.DarkMode(c),
