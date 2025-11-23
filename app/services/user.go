@@ -5,6 +5,10 @@ import "galaveg/app/dto"
 type UserService struct {
 }
 
+func (s *UserService) FirstByEmail(email string) (*dto.User, error) {
+	return nil, nil
+}
+
 func (s *UserService) ExistsByEmail(email string) (bool, error) {
 	return false, nil
 }

@@ -17,6 +17,8 @@ type Context struct {
 	AS    *services.AppService
 	Auth  *services.AuthService
 	RS    *services.RoleService
+	ES    *services.ErrorService
+	SS    *services.SessionService
 }
 
 func (ctx *Context) Close() {

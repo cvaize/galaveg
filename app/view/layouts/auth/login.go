@@ -8,7 +8,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func NewLogin(c *gin.Context, ctx *providers.Context) (*View, error) {
+type LoginViewData struct {
+	EmailValue     string
+	EmailErrors    []string
+	PasswordValue  string
+	PasswordErrors []string
+	Errors         []string
+}
+
+func NewLogin(c *gin.Context, ctx *providers.Context, data *LoginViewData) (*View, error) {
 	locale := ctx.LS.GetLocale(ctx.AS.Locale(c, nil))
 	locales := ctx.LS.GetLocales()
 
@@ -35,8 +43,8 @@ func NewLogin(c *gin.Context, ctx *providers.Context) (*View, error) {
 					Label:      ctx.TS.T(locale.Code, "page.login.fields.email"),
 					Type:       "email",
 					Name:       "email",
-					Value:      "",
-					Errors:     []string{},
+					Value:      data.EmailValue,
+					Errors:     data.EmailErrors,
 					FieldClass: "admin-login__field",
 					InputClass: "admin-login__field__input",
 				},
@@ -44,8 +52,8 @@ func NewLogin(c *gin.Context, ctx *providers.Context) (*View, error) {
 					Label:      ctx.TS.T(locale.Code, "page.login.fields.password"),
 					Type:       "password",
 					Name:       "password",
-					Value:      "",
-					Errors:     []string{},
+					Value:      data.PasswordValue,
+					Errors:     data.PasswordErrors,
 					FieldClass: "admin-login__field",
 					InputClass: "admin-login__field__input",
 				},
@@ -61,9 +69,7 @@ func NewLogin(c *gin.Context, ctx *providers.Context) (*View, error) {
 				Href: "/register",
 				Text: ctx.TS.T(locale.Code, "page.login.register"),
 			},
-			Errors: []string{},
-			//Text: "",
+			Errors: data.Errors,
 		},
-		//Back:     btn.View{Text: "Назад", Href: "/login"},
 	}, nil
 }

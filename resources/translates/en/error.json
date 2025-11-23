@@ -1,36 +1,8 @@
 {
-  "UserServiceError": {
-    "DbConnectionFail":  "Error connecting to the UserService database.",
-    "Duplicate": "Such a user has already been registered.",
-    "DuplicateEmail": "A user with this E-mail is already registered.",
-    "PasswordHashFail":  "Password could not be hashed.",
-    "NotFound":  "User not found.",
-    "Fail": "UserService error."
-  },
-  "AuthServiceError": {
-    "CredentialsInvalid":  "Invalid credentials.",
-    "DbConnectionFail":  "Error connecting to the AuthService database.",
-    "Duplicate": "{{error.UserServiceError.Duplicate}}",
-    "DuplicateEmail": "{{error.UserServiceError.DuplicateEmail}}",
-    "PasswordHashFail":  "{{error.UserServiceError.PasswordHashFail}}",
-    "InsertNewUserFail":  "New user registration failed.",
-    "Fail": "AuthService error."
-  },
-  "RoleServiceError": {
-    "DbConnectionFail":  "Error connecting to the RoleService database.",
-    "DuplicateCode": "A role with this code is already exists.",
-    "NotFound":  "Role not found.",
-    "Fail": "RoleService error."
-  },
-  "FileServiceError": {
-    "DbConnectionFail":  "Error connecting to the FileService database.",
-    "DuplicateFile": "Such a file has already been created.",
-    "NotFound":  "File not found.",
-    "Fail": "FileService error."
-  },
-  "UserFileServiceError": {
-    "DbConnectionFail":  "Error connecting to the UserFileService database.",
-    "NotFound":  "User file not found.",
-    "Fail": "UserFileService error."
+  "500": "Server error",
+  "Auth": {
+    "CredentialsInvalid": "Invalid credentials.",
+    "UserHasNotYetRegistered":  "This user has not yet registered.",
+    "UserIsAlreadyRegistered": "This user is already registered."
   }
 }
