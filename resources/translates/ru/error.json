@@ -1,8 +1,9 @@
 {
   "500": "Ошибка сервера",
   "Auth": {
-    "CredentialsInvalid":  "Неверные учетные данные.",
+    "CredentialsInvalid":  "Неверный E-mail или пароль.",
     "UserHasNotYetRegistered":  "Такой пользователь ещё не зарегистрирован.",
-    "UserIsAlreadyRegistered":  "Такой пользователь уже зарегистрирован."
+    "UserIsAlreadyRegistered":  "Такой пользователь уже зарегистрирован.",
+    "Throttle": "Слишком много попыток входа. Пожалуйста, попробуйте еще раз через :seconds :unit."
   }
 }

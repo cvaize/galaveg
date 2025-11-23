@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"galaveg/app/dto"
 	view "galaveg/app/view/layouts/auth"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -39,11 +40,16 @@ func (ctr *Controller) Register(c *gin.Context) {
 					viewData.Errors = append(viewData.Errors, ctr.ctx.TS.T(locale, "error.500"))
 				}
 			} else {
-				// TODO: Сделать Alert "Вы успешно зарегистрировались на сайте."
 				e = ctr.ctx.SS.Login(session, userId)
 				if e != nil {
 					status = e.Status
 					viewData.Errors = append(viewData.Errors, ctr.ctx.TS.T(locale, "error.500"))
+				} else {
+					alert := dto.NewSuccessAlert(ctr.ctx.TS.T(locale, "alert.register.success"))
+					//goland:noinspection GoUnhandledErrorResult
+					ctr.ctx.AlS.AddFlash(session, []dto.Alert{alert})
+					c.Redirect(http.StatusFound, "/login")
+					return
 				}
 			}
 		}

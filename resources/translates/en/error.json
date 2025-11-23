@@ -1,8 +1,9 @@
 {
   "500": "Server error",
   "Auth": {
-    "CredentialsInvalid": "Invalid credentials.",
+    "CredentialsInvalid": "Invalid E-mail or password.",
     "UserHasNotYetRegistered":  "This user has not yet registered.",
-    "UserIsAlreadyRegistered": "This user is already registered."
+    "UserIsAlreadyRegistered": "This user is already registered.",
+    "Throttle": "Too many login attempts. Please try again in :seconds :unit."
   }
 }
