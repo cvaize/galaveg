@@ -1,6 +1,6 @@
 {
   "login": {
-    "success": "Authorization completed successfully.",
+    "success": "You have successfully logged into the site.",
     "fail": "Invalid E-mail or password.",
     "error": "An internal application error has occurred. Please try logging in later.",
     "throttle": "Too many login attempts. Please try again in :seconds :unit."

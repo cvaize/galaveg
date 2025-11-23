@@ -20,16 +20,31 @@ func (ctr *Controller) Register(c *gin.Context) {
 		return
 	}
 
+	locale := ctr.ctx.AS.Locale(c, nil)
 	viewData := view.RegisterViewData{}
 	reqData := RegisterRequest{}
+	status := http.StatusOK
 	if c.Request.Method == "POST" {
 		// TODO: Сделать валидацию
 		if err := c.ShouldBind(&reqData); err != nil {
 			viewData.Errors = append(viewData.Errors, err.Error())
 		} else {
-			_, e := ctr.ctx.Auth.Register(reqData.Email, reqData.Password)
+			userId, e := ctr.ctx.Auth.Register(reqData.Email, reqData.Password)
 			if e != nil {
-				viewData.Errors = append(viewData.Errors, e.Error())
+				if e.Code == "AuthService.Register.DuplicateUser" {
+					status = http.StatusBadRequest
+					viewData.Errors = append(viewData.Errors, ctr.ctx.TS.T(locale, "error.Auth.UserIsAlreadyRegistered"))
+				} else {
+					status = e.Status
+					viewData.Errors = append(viewData.Errors, ctr.ctx.TS.T(locale, "error.500"))
+				}
+			} else {
+				// TODO: Сделать Alert "Вы успешно зарегистрировались на сайте."
+				e = ctr.ctx.SS.Login(session, userId)
+				if e != nil {
+					status = e.Status
+					viewData.Errors = append(viewData.Errors, ctr.ctx.TS.T(locale, "error.500"))
+				}
 			}
 		}
 
@@ -44,5 +59,5 @@ func (ctr *Controller) Register(c *gin.Context) {
 		return
 	}
 
-	c.HTML(http.StatusOK, view.TEMPLATE, d)
+	c.HTML(status, view.TEMPLATE, d)
 }

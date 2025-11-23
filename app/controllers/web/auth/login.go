@@ -41,6 +41,7 @@ func (ctr *Controller) Login(c *gin.Context) {
 					}
 				}
 			} else {
+				// TODO: Сделать Alert "Вы успешно вошли на сайт."
 				e = ctr.ctx.SS.Login(session, userId)
 				if e != nil {
 					status = e.Status
