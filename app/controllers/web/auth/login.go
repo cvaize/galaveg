@@ -45,6 +45,9 @@ func (ctr *Controller) Login(c *gin.Context) {
 				if e != nil {
 					status = e.Status
 					viewData.Errors = append(viewData.Errors, ctr.ctx.TS.T(locale, "error.500"))
+				} else {
+					c.Redirect(http.StatusFound, "/")
+					return
 				}
 			}
 		}
