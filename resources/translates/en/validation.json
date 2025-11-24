@@ -144,19 +144,6 @@
         }
     },
     "attributes": {
-        "email": "E-mail",
-        "password": "Password",
-        "confirm_password": "Repeat password",
-        "locale": "Locale",
-        "surname": "Surname",
-        "user_name": "Name",
-        "name": "Name",
-        "patronymic": "Patronymic",
-        "permissions": "Permissions",
-        "roles_ids": "Roles",
-        "avatar_id": "Avatar ID",
-        "avatar": "Avatar",
-        "description": "Description",
-        "code": "Code"
+        "email": "E-mail"
     }
 }

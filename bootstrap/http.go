@@ -14,6 +14,7 @@ import (
 func Http() *gin.Engine {
 	cfg := config.MustDefault()
 	ctx := providers.MustContext(cfg)
+	ctx.TS.SetupValidator()
 
 	defer ctx.Close()
 	if cfg.App.Debug {

@@ -26,10 +26,33 @@ func (ctr *Controller) Register(c *gin.Context) {
 	reqData := RegisterRequest{}
 	status := http.StatusOK
 	if c.Request.Method == "POST" {
-		// TODO: Сделать валидацию
+		valid := false
+
 		if err := c.ShouldBind(&reqData); err != nil {
-			viewData.Errors = append(viewData.Errors, err.Error())
+			errs := ctr.ctx.TS.TVE(locale, err)
+
+			for _, e := range errs {
+				if e.Name == "Email" {
+					viewData.EmailErrors = append(viewData.EmailErrors, e.GetMessage(ctr.ctx.TS.T(locale, "page.register.fields.email")))
+				} else if e.Name == "Password" {
+					viewData.PasswordErrors = append(viewData.PasswordErrors, e.GetMessage(ctr.ctx.TS.T(locale, "page.register.fields.password")))
+				} else if e.Name == "ConfirmPassword" {
+					viewData.ConfirmPasswordErrors = append(viewData.ConfirmPasswordErrors, e.GetMessage(ctr.ctx.TS.T(locale, "page.register.fields.confirm_password")))
+				}
+			}
+
 		} else {
+			if reqData.Password != reqData.ConfirmPassword {
+				a := ctr.ctx.TS.T(locale, "page.register.fields.password")
+				attributes := map[string]string{"attribute": a}
+				viewData.PasswordErrors = append(viewData.PasswordErrors, "")
+				viewData.ConfirmPasswordErrors = append(viewData.ConfirmPasswordErrors, ctr.ctx.TS.V(locale, "validation.confirmed", attributes))
+			} else {
+				valid = true
+			}
+		}
+
+		if valid {
 			userId, e := ctr.ctx.Auth.Register(reqData.Email, reqData.Password)
 			if e != nil {
 				if e.Code == "AuthService.Register.DuplicateUser" {

@@ -2,21 +2,33 @@ package services
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"galaveg/app/dto"
 	"galaveg/utils/flatten"
+	"galaveg/utils/logger"
+	"github.com/gin-gonic/gin/binding"
 	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/go-playground/locales/en"
+	"github.com/go-playground/locales/ru"
+	ut "github.com/go-playground/universal-translator"
+	"github.com/go-playground/validator/v10"
+	enTranslations "github.com/go-playground/validator/v10/translations/en"
+	ruTranslations "github.com/go-playground/validator/v10/translations/ru"
 )
 
 type TranslatorService struct {
 	locale     string
 	translates map[string]map[string]string
+	u          *ut.UniversalTranslator
 }
 
 func NewTranslatorService(locale string, translates map[string]map[string]string) *TranslatorService {
-	return &TranslatorService{locale, translates}
+	return &TranslatorService{locale, translates, nil}
 }
 
 func NewTranslatorServiceFromFiles(dir, locale string) (*TranslatorService, error) {
@@ -138,6 +150,21 @@ func MustTranslatorServiceFromFiles(dir, locale string) *TranslatorService {
 	return s
 }
 
+func (s *TranslatorService) SetupValidator() {
+	enLocale := en.New()
+	ruLocale := ru.New()
+
+	s.u = ut.New(enLocale, enLocale, ruLocale)
+
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		transEN, _ := s.u.GetTranslator("en")
+		_ = enTranslations.RegisterDefaultTranslations(v, transEN)
+
+		transRU, _ := s.u.GetTranslator("ru")
+		_ = ruTranslations.RegisterDefaultTranslations(v, transRU)
+	}
+}
+
 func (s *TranslatorService) GetLocale() string {
 	return s.locale
 }
@@ -255,4 +282,24 @@ func (s *TranslatorService) choicesRuleRu(value, choices int) int {
 		return 1
 	}
 	return 2
+}
+
+func (s *TranslatorService) TranslateValidationErrors(locale string, e error) []dto.FieldError {
+	trans, _ := s.u.GetTranslator(locale)
+
+	var validationErrors validator.ValidationErrors
+	if errors.As(e, &validationErrors) {
+		response := make([]dto.FieldError, 0, len(validationErrors))
+		for _, err := range validationErrors {
+			response = append(response, dto.FieldError{Name: err.Field(), Message: err.Translate(trans)})
+		}
+		return response
+	} else {
+		logger.Errorf("(500) TranslatorService.TranslateValidationErrors: %v", e)
+	}
+	return nil
+}
+
+func (s *TranslatorService) TVE(locale string, e error) []dto.FieldError {
+	return s.TranslateValidationErrors(locale, e)
 }

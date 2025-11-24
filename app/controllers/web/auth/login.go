@@ -25,9 +25,17 @@ func (ctr *Controller) Login(c *gin.Context) {
 	status := http.StatusOK
 	if c.Request.Method == "POST" {
 		if err := c.ShouldBind(&reqData); err != nil {
-			// TODO: Сделать валидацию
-			viewData.Errors = append(viewData.Errors, err.Error())
+			errs := ctr.ctx.TS.TVE(locale, err)
+
+			for _, e := range errs {
+				if e.Name == "Email" {
+					viewData.EmailErrors = append(viewData.EmailErrors, e.GetMessage(ctr.ctx.TS.T(locale, "page.login.fields.email")))
+				} else if e.Name == "Password" {
+					viewData.PasswordErrors = append(viewData.PasswordErrors, e.GetMessage(ctr.ctx.TS.T(locale, "page.login.fields.password")))
+				}
+			}
 		} else {
+
 			userId, e := ctr.ctx.Auth.Login(reqData.Email, reqData.Password)
 			if e != nil {
 				status = e.Status

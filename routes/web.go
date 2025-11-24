@@ -24,6 +24,7 @@ func webRegister(router *gin.Engine, ctx *providers.Context) {
 	aCtr := auth.NewController(ctx)
 	lCtr := locale.NewController(ctx)
 	r.GET("/login", aCtr.Login)
+	r.POST("/login", aCtr.Login)
 	r.POST("/locale/switch", lCtr.Switch)
 	r.POST("/logout", aCtr.Logout)
 	r.GET("/register", aCtr.Register)

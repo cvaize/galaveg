@@ -92,12 +92,16 @@ github.com/gin-gonic/gin/render
 ## explicit; go 1.17
 github.com/go-playground/locales
 github.com/go-playground/locales/currency
+github.com/go-playground/locales/en
+github.com/go-playground/locales/ru
 # github.com/go-playground/universal-translator v0.18.1
 ## explicit; go 1.18
 github.com/go-playground/universal-translator
 # github.com/go-playground/validator/v10 v10.28.0
 ## explicit; go 1.24.0
 github.com/go-playground/validator/v10
+github.com/go-playground/validator/v10/translations/en
+github.com/go-playground/validator/v10/translations/ru
 # github.com/go-sql-driver/mysql v1.9.3
 ## explicit; go 1.21.0
 github.com/go-sql-driver/mysql
@@ -127,6 +131,9 @@ github.com/goccy/go-yaml/parser
 github.com/goccy/go-yaml/printer
 github.com/goccy/go-yaml/scanner
 github.com/goccy/go-yaml/token
+# github.com/goforj/godump v1.6.0
+## explicit; go 1.18
+github.com/goforj/godump
 # github.com/gomodule/redigo v1.9.2
 ## explicit; go 1.17
 github.com/gomodule/redigo/redis

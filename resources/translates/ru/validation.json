@@ -144,19 +144,6 @@
         }
     },
     "attributes": {
-        "email": "E-mail",
-        "password": "Пароль",
-        "confirm_password": "Повторите пароль",
-        "locale": "Локаль",
-        "surname": "Фамилия",
-        "user_name": "Имя",
-        "name": "Название",
-        "patronymic": "Отчество",
-        "description": "Описание",
-        "code": "Код",
-        "permissions": "Разрешения",
-        "roles_ids": "Роли",
-        "avatar_id": "Аватар ID",
-        "avatar": "Аватар"
+        "email": "E-mail"
     }
 }

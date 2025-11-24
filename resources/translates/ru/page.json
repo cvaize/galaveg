@@ -3,8 +3,8 @@
     "title": "{{page.login.header}} - {{app.name}}",
     "header": "Вход",
     "fields": {
-      "email": "{{validation.attributes.email}}",
-      "password": "{{validation.attributes.password}}"
+      "email": "E-mail",
+      "password": "Пароль"
     },
     "submit": "Войти",
     "reset_password": "Сбросить пароль?",
@@ -15,13 +15,13 @@
     "header": "Сброс пароля",
     "back": "Назад",
     "fields": {
-      "email": "{{validation.attributes.email}}"
+      "email": "E-mail"
     },
     "submit": "Отправить",
     "text": "Отправить код подтверждения на E-mail.",
     "validation": {
       "email": {
-        "not_exists": "{{validation.custom.email.not_exists}}"
+        "not_exists": "Учётная запись с таким электронным адресом не найдена."
       }
     }
   },
@@ -30,9 +30,9 @@
     "header": "Сброс пароля",
     "back": "Назад",
     "fields": {
-      "email": "{{validation.attributes.email}}",
-      "password": "{{validation.attributes.password}}",
-      "confirm_password": "{{validation.attributes.confirm_password}}"
+      "email": "E-mail",
+      "password": "Пароль",
+      "confirm_password": "Повторите пароль"
     },
     "submit": "Сбросить"
   },
@@ -41,9 +41,9 @@
     "header": "Регистрация",
     "back": "Назад",
     "fields": {
-      "email": "{{validation.attributes.email}}",
-      "password": "{{validation.attributes.password}}",
-      "confirm_password": "{{validation.attributes.confirm_password}}"
+      "email": "E-mail",
+      "password": "Пароль",
+      "confirm_password": "Повторите пароль"
     },
     "submit": "Зарегистрироваться",
     "reset_password": "Сбросить пароль?",
@@ -96,15 +96,15 @@
       "title": "{{page.users.create.header}} - {{app.name}}",
       "header": "Создание пользователя",
       "fields": {
-        "email": "{{validation.attributes.email}}",
-        "password": "{{validation.attributes.password}}",
-        "confirm_password": "{{validation.attributes.confirm_password}}",
-        "surname": "{{validation.attributes.surname}}",
-        "name": "{{validation.attributes.user_name}}",
-        "patronymic": "{{validation.attributes.patronymic}}",
-        "locale": "{{validation.attributes.locale}}",
-        "roles_ids": "{{validation.attributes.roles_ids}}",
-        "avatar": "{{validation.attributes.avatar}}"
+        "email": "E-mail",
+        "password": "Пароль",
+        "confirm_password": "Повторите пароль",
+        "surname": "Фамилия",
+        "name": "Имя",
+        "patronymic": "Отчество",
+        "locale": "Локаль",
+        "roles_ids": "Роли",
+        "avatar": "Аватар"
       },
       "tabs": {
         "main": "Основные",
@@ -140,10 +140,10 @@
       "title": "{{page.roles.create.header}} - {{app.name}}",
       "header": "Создание роли",
       "fields": {
-        "code": "{{validation.attributes.code}}",
-        "name": "{{validation.attributes.name}}",
-        "description": "{{validation.attributes.description}}",
-        "permissions": "{{validation.attributes.permissions}}"
+        "code": "Код",
+        "name": "Название",
+        "description": "Описание",
+        "permissions": "Разрешения"
       },
       "tabs": {
         "main": "Основные",
