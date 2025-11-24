@@ -2,7 +2,6 @@ package auth
 
 import (
 	view "galaveg/app/view/layouts/auth"
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -13,8 +12,8 @@ type LoginRequest struct {
 }
 
 func (ctr *Controller) Login(c *gin.Context) {
-	session := sessions.Default(c)
-	if user := session.Get(ctr.ctx.Cfg.Session.StoreUserKey); user != nil {
+	session := ctr.ctx.SS.Default(c)
+	if ctr.ctx.SS.ExistsUserId(session) {
 		c.Redirect(http.StatusFound, "/panel")
 		return
 	}
@@ -23,6 +22,7 @@ func (ctr *Controller) Login(c *gin.Context) {
 	viewData := view.LoginViewData{}
 	reqData := LoginRequest{}
 	status := http.StatusOK
+
 	if c.Request.Method == "POST" {
 		if err := c.ShouldBind(&reqData); err != nil {
 			errs := ctr.ctx.TS.TVE(locale, err)

@@ -1,13 +1,14 @@
 package auth
 
 import (
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 func (ctr *Controller) Logout(c *gin.Context) {
-	session := sessions.Default(c)
-	session.Clear()
+	session := ctr.ctx.SS.Default(c)
+	if ctr.ctx.SS.ExistsUserId(session) {
+		ctr.ctx.SS.Clear(session)
+	}
 	c.Redirect(http.StatusFound, "/")
 }
