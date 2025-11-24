@@ -24,18 +24,3 @@ go test <test_file_path> -v
 ```shell
 watchexec -r -e go,gohtml,html go run . serve
 ```
-
-Чтобы вывести debug информацию в HTML:
-```go
-package controllers
-
-import (
-	"github.com/gin-gonic/gin"
-	"github.com/goforj/godump"
-)
-
-func Index(c *gin.Context) {
-    c.Data(200, "text/html; charset=utf-8", []byte(godump.DumpHTML(err)))
-    return
-}
-```
