@@ -5,7 +5,6 @@ import (
 	"galaveg/config"
 	"galaveg/utils/logger"
 	"github.com/gin-contrib/sessions"
-	"github.com/gin-gonic/gin"
 )
 
 type SessionService struct {
@@ -13,17 +12,9 @@ type SessionService struct {
 	ES  *ErrorService
 }
 
-func (s *SessionService) Default(c *gin.Context) sessions.Session {
-	return sessions.Default(c)
-}
-
 func (s *SessionService) ExistsUserId(session sessions.Session) bool {
 	user := session.Get(s.cfg.Session.StoreUserKey)
 	return user != nil
-}
-
-func (s *SessionService) Clear(session sessions.Session) {
-	session.Clear()
 }
 
 func (s *SessionService) GetUserId(session sessions.Session) (dto.UserID, bool) {

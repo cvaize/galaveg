@@ -3,6 +3,7 @@ package auth
 import (
 	"galaveg/app/dto"
 	view "galaveg/app/view/layouts/auth"
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -14,7 +15,7 @@ type RegisterRequest struct {
 }
 
 func (ctr *Controller) Register(c *gin.Context) {
-	session := ctr.ctx.SS.Default(c)
+	session := sessions.Default(c)
 	if ctr.ctx.SS.ExistsUserId(session) {
 		c.Redirect(http.StatusFound, "/panel")
 		return

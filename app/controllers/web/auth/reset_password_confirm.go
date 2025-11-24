@@ -2,12 +2,13 @@ package auth
 
 import (
 	"galaveg/app/view/layouts/auth"
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 func (ctr *Controller) ResetPasswordConfirm(c *gin.Context) {
-	session := ctr.ctx.SS.Default(c)
+	session := sessions.Default(c)
 	if ctr.ctx.SS.ExistsUserId(session) {
 		c.Redirect(http.StatusFound, "/panel")
 		return

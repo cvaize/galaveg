@@ -2,6 +2,7 @@ package auth
 
 import (
 	view "galaveg/app/view/layouts/auth"
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -12,7 +13,7 @@ type LoginRequest struct {
 }
 
 func (ctr *Controller) Login(c *gin.Context) {
-	session := ctr.ctx.SS.Default(c)
+	session := sessions.Default(c)
 	if ctr.ctx.SS.ExistsUserId(session) {
 		c.Redirect(http.StatusFound, "/panel")
 		return
