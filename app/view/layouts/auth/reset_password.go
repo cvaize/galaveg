@@ -8,7 +8,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func NewResetPassword(c *gin.Context, ctx *providers.Context) (*View, error) {
+type ResetPasswordViewData struct {
+	EmailValue  string
+	EmailErrors []string
+	Errors      []string
+}
+
+func NewResetPassword(c *gin.Context, ctx *providers.Context, data *ResetPasswordViewData) (*View, error) {
 	locale := ctx.LS.GetLocale(ctx.AS.Locale(c, nil))
 	locales := ctx.LS.GetLocales()
 
@@ -35,8 +41,8 @@ func NewResetPassword(c *gin.Context, ctx *providers.Context) (*View, error) {
 					Label:      ctx.TS.T(locale.Code, "page.reset_password.fields.email"),
 					Type:       "email",
 					Name:       "email",
-					Value:      "",
-					Errors:     []string{},
+					Value:      data.EmailValue,
+					Errors:     data.EmailErrors,
 					FieldClass: "admin-login__field",
 					InputClass: "admin-login__field__input",
 				},
@@ -44,7 +50,7 @@ func NewResetPassword(c *gin.Context, ctx *providers.Context) (*View, error) {
 			Submit: &btn.View{
 				Text: ctx.TS.T(locale.Code, "page.reset_password.submit"),
 			},
-			Errors: []string{},
+			Errors: data.Errors,
 			Text:   ctx.TS.T(locale.Code, "page.reset_password.text"),
 		},
 		Back: &btn.View{Text: ctx.TS.T(locale.Code, "page.reset_password.back"), Href: "/login"},
