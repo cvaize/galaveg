@@ -14,6 +14,8 @@ type MailService struct {
 	client *libmail.Client
 }
 
+// TODO: Make messages sent by cron through the message buffer.
+
 func NewMailService(c *config.Config, client *libmail.Client) (*MailService, error) {
 	return &MailService{c, client}, nil
 }
@@ -45,6 +47,9 @@ func (s *MailService) SendEmail(message *dto.EmailMessage) error {
 	m.FromMailAddress(message.Envelope.From)
 	m.ToMailAddress(message.Envelope.To...)
 	m.Subject(message.Envelope.Subject)
+	// TODO: Explore and possibly implement the sending of HTML and TEXT and Markdown together, rather than just HTML or TEXT alone
+	// TODO: Add TEXT and HTML rendering. The SetBodyHTMLTemplate and SetBodyTextTemplate methods.
+
 	if message.Content.HtmlString != "" {
 		m.SetBodyString(libmail.TypeTextHTML, message.Content.HtmlString)
 	} else if message.Content.Text != "" {
