@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"galaveg/app/dto"
 	view "galaveg/app/view/layouts/auth"
 	"galaveg/utils/logger"
 	"github.com/gin-contrib/sessions"
@@ -47,9 +48,11 @@ func (ctr *Controller) ResetPassword(c *gin.Context) {
 			e := ctr.ctx.MS.SendSimpleEmailMessage(to, subject, html, txt)
 			if e != nil {
 				logger.Errorf("(500) Controller.ResetPassword.SendSimpleEmailMessage: %v", e)
-				viewData.Errors = append(viewData.Errors, e.Error())
+				viewData.Errors = append(viewData.Errors, ctr.ctx.TS.T(locale, "alert.reset_password.fail"))
 			} else {
-				// TODO: Alert Success
+				alert := dto.NewSuccessAlert(ctr.ctx.TS.T(locale, "alert.reset_password.success"))
+				//goland:noinspection GoUnhandledErrorResult
+				ctr.ctx.AlS.AddFlash(session, []dto.Alert{alert})
 			}
 		}
 	}
