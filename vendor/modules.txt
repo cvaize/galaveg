@@ -267,6 +267,12 @@ github.com/twitchyliquid64/golang-asm/unsafeheader
 # github.com/ugorji/go/codec v1.3.1
 ## explicit; go 1.21
 github.com/ugorji/go/codec
+# github.com/wneessen/go-mail v0.7.2
+## explicit; go 1.24.0
+github.com/wneessen/go-mail
+github.com/wneessen/go-mail/internal/pkcs7
+github.com/wneessen/go-mail/log
+github.com/wneessen/go-mail/smtp
 # go.uber.org/mock v0.6.0
 ## explicit; go 1.23.0
 # go.yaml.in/yaml/v3 v3.0.4
@@ -324,9 +330,11 @@ golang.org/x/text/internal/utf8internal
 golang.org/x/text/language
 golang.org/x/text/runes
 golang.org/x/text/secure/bidirule
+golang.org/x/text/secure/precis
 golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
+golang.org/x/text/width
 # golang.org/x/tools v0.38.0
 ## explicit; go 1.24.0
 golang.org/x/tools/go/ast/astutil

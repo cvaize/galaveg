@@ -1,4 +1,4 @@
-package mail
+package mailables
 
 type Address struct {
 	Address string

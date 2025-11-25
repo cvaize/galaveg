@@ -6,12 +6,14 @@ import (
 	"galaveg/app/services"
 	"galaveg/config"
 	"galaveg/utils/logger"
+	"github.com/wneessen/go-mail"
 )
 
 type Context struct {
 	Cfg   *config.Config
 	Db    *sql.DB
 	Cache *sql.DB
+	Mail  *mail.Client
 	TS    *services.TranslatorService
 	LS    *services.LocaleService
 	AS    *services.AppService
@@ -20,6 +22,9 @@ type Context struct {
 	ES    *services.ErrorService
 	SS    *services.SessionService
 	AlS   *services.AlertService
+	MS    *services.MailService
+	US    *services.UserService
+	HS    *services.HashService
 }
 
 func (ctx *Context) Close() {
@@ -33,34 +38,39 @@ func (ctx *Context) Close() {
 	}
 }
 
-func NewContext(cfg *config.Config) (*Context, error) {
-	DB, err := NewDB(cfg)
-	if err != nil {
-		return nil, err
-	}
+func MustContext(cfg *config.Config) *Context {
+	db := MustDB(cfg)
+	mc := MustMail(cfg)
 
+	es := services.MustErrorService()
 	// TODO: Добавить в конфигурацию "resources/translates/" и локали
-	TS := services.MustTranslatorServiceFromFiles(cfg.GetFolder("resources/translates/"), cfg.App.Locale)
-	LS := services.MustLocaleService([]dto.Locale{
+	ts := services.MustTranslatorServiceFromFiles(cfg.GetFolder("resources/translates/"), cfg.App.Locale)
+	ls := services.MustLocaleService([]dto.Locale{
 		{Code: "en", ShortName: "en", FullName: "English"},
 		{Code: "ru", ShortName: "ru", FullName: "Русский"},
 	})
-	RS := services.MustRoleService()
-	AS := services.MustAppService(cfg, LS, RS, TS)
+	rs := services.MustRoleService()
+	as := services.MustAppService(cfg, ls, rs, ts)
+	ms := services.MustMailService(cfg, mc)
+	us := services.MustUserService(cfg)
+	hs := services.MustHashService(cfg)
+	ss := services.MustSessionService(cfg, es)
+	als := services.MustAlertService(es)
+	auth := services.MustAuthService(cfg, us, ts, hs, es)
 	return &Context{
-		Cfg: cfg,
-		Db:  DB,
-		TS:  TS,
-		LS:  LS,
-		RS:  RS,
-		AS:  AS,
-	}, nil
-}
-
-func MustContext(C *config.Config) *Context {
-	c, e := NewContext(C)
-	if e != nil {
-		panic(e)
+		Cfg:  cfg,
+		Db:   db,
+		Mail: mc,
+		TS:   ts,
+		LS:   ls,
+		AS:   as,
+		Auth: auth,
+		RS:   rs,
+		MS:   ms,
+		US:   us,
+		HS:   hs,
+		ES:   es,
+		SS:   ss,
+		AlS:  als,
 	}
-	return c
 }

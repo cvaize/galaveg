@@ -33,3 +33,11 @@ func NewDB(cfg *config.Config) (*sql.DB, error) {
 
 	return db, nil
 }
+
+func MustDB(cfg *config.Config) *sql.DB {
+	db, e := NewDB(cfg)
+	if e != nil {
+		panic(e)
+	}
+	return db
+}

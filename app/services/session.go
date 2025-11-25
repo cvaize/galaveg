@@ -9,7 +9,19 @@ import (
 
 type SessionService struct {
 	cfg *config.Config
-	ES  *ErrorService
+	es  *ErrorService
+}
+
+func NewSessionService(cfg *config.Config, es *ErrorService) (*SessionService, error) {
+	return &SessionService{cfg, es}, nil
+}
+
+func MustSessionService(cfg *config.Config, es *ErrorService) *SessionService {
+	s, e := NewSessionService(cfg, es)
+	if e != nil {
+		panic(e)
+	}
+	return s
 }
 
 func (s *SessionService) ExistsUserId(session sessions.Session) bool {
@@ -36,7 +48,7 @@ func (s *SessionService) GetUserId(session sessions.Session) (dto.UserID, bool) 
 func (s *SessionService) Login(session sessions.Session, userId dto.UserID) *dto.Error {
 	session.Set(s.cfg.Session.StoreUserKey, userId)
 	if e := session.Save(); e != nil {
-		return s.ES.E500(e, "SessionService.Login.FailedToSaveSession", "")
+		return s.es.E500(e, "SessionService.Login.FailedToSaveSession", "")
 	}
 	return nil
 }
