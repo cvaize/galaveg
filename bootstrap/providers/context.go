@@ -27,6 +27,7 @@ type Context struct {
 	MS    *services.MailService
 	US    *services.UserService
 	HS    *services.HashService
+	TplS  *services.TemplateService
 }
 
 func (ctx *Context) Close() {
@@ -46,6 +47,7 @@ func MustContext(cfg *config.Config) *Context {
 	mc := MustMail(cfg)
 
 	es := services.MustErrorService()
+	tpl := services.MustTemplateService(cfg, html)
 	// TODO: Добавить в конфигурацию "resources/translates/" и локали
 	ts := services.MustTranslatorServiceFromFiles(cfg.GetFolder("resources/translates/"), cfg.App.Locale)
 	ls := services.MustLocaleService([]dto.Locale{
@@ -76,5 +78,6 @@ func MustContext(cfg *config.Config) *Context {
 		ES:   es,
 		SS:   ss,
 		AlS:  als,
+		TplS: tpl,
 	}
 }

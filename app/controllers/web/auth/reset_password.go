@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"bytes"
 	"galaveg/app/dto"
 	view "galaveg/app/view/layouts/auth"
 	auth "galaveg/app/view/layouts/email/reset_password"
@@ -52,25 +51,25 @@ func (ctr *Controller) ResetPassword(c *gin.Context) {
 				c.AbortWithError(http.StatusInternalServerError, err1)
 				return
 			}
-			var tpl bytes.Buffer
-			if templateError := ctr.ctx.Html.ExecuteTemplate(&tpl, auth.TEMPLATE, d); templateError != nil {
-				logger.Errorf("Error: %v", templateError)
-			} else {
-				to := reqData.Email
-				subject := ctr.ctx.TS.T(locale, "mail.reset_password.subject")
-				html := tpl.String()
-				txt := url
+			html, err2 := ctr.ctx.TplS.Html(auth.TEMPLATE, d)
+			if err2 != nil {
+				c.AbortWithError(http.StatusInternalServerError, err2)
+				return
+			}
 
-				// TODO: Separate rendering of E-mail templates into a separate entity
-				e := ctr.ctx.MS.SyncSendSimpleEmail(to, subject, html, txt)
-				if e != nil {
-					logger.Errorf("(500) Controller.ResetPassword.SyncSendSimpleEmail: %v", e)
-					viewData.Errors = append(viewData.Errors, ctr.ctx.TS.T(locale, "alert.reset_password.fail"))
-				} else {
-					alert := dto.NewSuccessAlert(ctr.ctx.TS.T(locale, "alert.reset_password.success"))
-					//goland:noinspection GoUnhandledErrorResult
-					ctr.ctx.AlS.AddFlash(session, []dto.Alert{alert})
-				}
+			to := reqData.Email
+			subject := ctr.ctx.TS.T(locale, "mail.reset_password.subject")
+			txt := url
+
+			// TODO: Separate rendering of E-mail templates into a separate entity
+			e := ctr.ctx.MS.SyncSendSimpleEmail(to, subject, html, txt)
+			if e != nil {
+				logger.Errorf("(500) Controller.ResetPassword.SyncSendSimpleEmail: %v", e)
+				viewData.Errors = append(viewData.Errors, ctr.ctx.TS.T(locale, "alert.reset_password.fail"))
+			} else {
+				alert := dto.NewSuccessAlert(ctr.ctx.TS.T(locale, "alert.reset_password.success"))
+				//goland:noinspection GoUnhandledErrorResult
+				ctr.ctx.AlS.AddFlash(session, []dto.Alert{alert})
 			}
 		}
 		viewData.EmailValue = reqData.Email
