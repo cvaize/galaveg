@@ -28,21 +28,8 @@ func MustMailService(c *config.Config, client *libmail.Client) *MailService {
 	return s
 }
 
-func (s *MailService) NewSimpleEmailMessage(to, subject, html, txt string) *dto.EmailMessage {
-	return &dto.EmailMessage{
-		Envelope: &mailables.Envelope{
-			Subject: subject,
-			From: &mail.Address{
-				Address: s.cfg.Mail.FromAddress,
-				Name:    s.cfg.Mail.FromName,
-			},
-			To: []*mail.Address{{Address: to}},
-		},
-		Content: &mailables.Content{HtmlString: html, Text: txt},
-	}
-}
-
-func (s *MailService) SendEmail(message *dto.EmailMessage) error {
+// SyncSendEmail Synchronous sending of E-mail messages
+func (s *MailService) SyncSendEmail(message *dto.EmailMessage) error {
 	m := libmail.NewMsg()
 	m.FromMailAddress(message.Envelope.From)
 	m.ToMailAddress(message.Envelope.To...)
@@ -57,13 +44,29 @@ func (s *MailService) SendEmail(message *dto.EmailMessage) error {
 	}
 
 	if err := s.client.DialAndSend(m); err != nil {
-		logger.Errorf("(500) MailService.SendEmail.DialAndSend: %v", err)
+		logger.Errorf("(500) MailService.SyncSendEmail.DialAndSend: %v", err)
 		return err
 	}
 	return nil
 }
 
-func (s *MailService) SendSimpleEmailMessage(to, subject, html, txt string) error {
-	message := s.NewSimpleEmailMessage(to, subject, html, txt)
-	return s.SendEmail(message)
+// NewSimpleEmail New simple email message
+func (s *MailService) NewSimpleEmail(to, subject, html, txt string) *dto.EmailMessage {
+	return &dto.EmailMessage{
+		Envelope: &mailables.Envelope{
+			Subject: subject,
+			From: &mail.Address{
+				Address: s.cfg.Mail.FromAddress,
+				Name:    s.cfg.Mail.FromName,
+			},
+			To: []*mail.Address{{Address: to}},
+		},
+		Content: &mailables.Content{HtmlString: html, Text: txt},
+	}
+}
+
+// SyncSendSimpleEmail Synchronous sending of a simple E-mail message
+func (s *MailService) SyncSendSimpleEmail(to, subject, html, txt string) error {
+	message := s.NewSimpleEmail(to, subject, html, txt)
+	return s.SyncSendEmail(message)
 }

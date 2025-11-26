@@ -1,9 +1,8 @@
 package auth
 
 import (
-	"galaveg/app/dto"
+	"fmt"
 	view "galaveg/app/view/layouts/auth"
-	"galaveg/utils/logger"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -35,26 +34,37 @@ func (ctr *Controller) ResetPassword(c *gin.Context) {
 				}
 			}
 		} else {
-			url := ctr.ctx.AS.CloneUrl()
-			url.JoinPath("reset-password-confirm")
+			url := ctr.ctx.AS.RefUrl()
+			url = url.JoinPath("reset-password-confirm")
 			q := url.Query()
-			q.Add("code", "code123")
-			q.Add("email", reqData.Email)
+			q.Set("code", "code123")
+			q.Set("email", reqData.Email)
+			url.RawQuery = q.Encode()
 
 			to := reqData.Email
 			subject := "subject 123"
 			html := "html 123"
 			txt := "txt 123"
-			e := ctr.ctx.MS.SendSimpleEmailMessage(to, subject, html, txt)
-			if e != nil {
-				logger.Errorf("(500) Controller.ResetPassword.SendSimpleEmailMessage: %v", e)
-				viewData.Errors = append(viewData.Errors, ctr.ctx.TS.T(locale, "alert.reset_password.fail"))
-			} else {
-				alert := dto.NewSuccessAlert(ctr.ctx.TS.T(locale, "alert.reset_password.success"))
-				//goland:noinspection GoUnhandledErrorResult
-				ctr.ctx.AlS.AddFlash(session, []dto.Alert{alert})
-			}
+
+			fmt.Println(to)
+			fmt.Println(subject)
+			fmt.Println(html)
+			fmt.Println(txt)
+			fmt.Println(url.String())
+			fmt.Println(ctr.ctx.AS.RefUrl().String())
+
+			// TODO: Separate rendering of E-mail templates into a separate entity
+			//e := ctr.ctx.MS.SyncSendSimpleEmail(to, subject, html, txt)
+			//if e != nil {
+			//	logger.Errorf("(500) Controller.ResetPassword.SyncSendSimpleEmail: %v", e)
+			//	viewData.Errors = append(viewData.Errors, ctr.ctx.TS.T(locale, "alert.reset_password.fail"))
+			//} else {
+			//	alert := dto.NewSuccessAlert(ctr.ctx.TS.T(locale, "alert.reset_password.success"))
+			//	//goland:noinspection GoUnhandledErrorResult
+			//	ctr.ctx.AlS.AddFlash(session, []dto.Alert{alert})
+			//}
 		}
+		viewData.EmailValue = reqData.Email
 	}
 	d, err := view.NewResetPassword(c, ctr.ctx, &viewData)
 	if err != nil {

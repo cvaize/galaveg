@@ -94,6 +94,10 @@ func (s *AppService) Url() string {
 	return s.url.String()
 }
 
+func (s *AppService) RefUrl() *url.URL {
+	return s.url
+}
+
 func (s *AppService) CloneUrl() url.URL {
 	return *s.url
 }
