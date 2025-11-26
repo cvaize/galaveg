@@ -6,9 +6,7 @@ import (
 	"galaveg/config"
 	"galaveg/routes"
 	"galaveg/utils/logger"
-	"galaveg/utils/path"
 	"github.com/gin-gonic/gin"
-	"strings"
 )
 
 func Http() *gin.Engine {
@@ -24,33 +22,34 @@ func Http() *gin.Engine {
 	}
 
 	router := gin.New()
+	router.SetHTMLTemplate(ctx.Html)
 
-	// TODO: Функции FuncMap вынести отдельно
-	router.FuncMap["eq"] = func(a, b string) bool { return a == b }
-	router.FuncMap["eqInt"] = func(a, b int) bool { return a == b }
-	router.FuncMap["ne"] = func(a, b string) bool { return a != b }
-	router.FuncMap["neInt"] = func(a, b int) bool { return a != b }
-	router.FuncMap["replace"] = strings.ReplaceAll
-	router.FuncMap["unless"] = func(v any) bool {
-		return v == nil || v == "" || v == false
-	}
-	router.FuncMap["dict"] = func(values ...interface{}) map[string]interface{} {
-		dict := make(map[string]interface{})
-		for i := 0; i < len(values); i += 2 {
-			key := values[i].(string)
-			value := values[i+1]
-			dict[key] = value
-		}
-		return dict
-	}
-	router.FuncMap["sub1"] = func(x int) int { return x - 1 }
-	router.FuncMap["startsWith"] = func(s, prefix string) bool {
-		return strings.HasPrefix(s, prefix)
-	}
-
-	// TODO: Поместить "resources/html" конфигурацию
-	templates := path.MustCollectFilepathBySuffix(cfg.GetFolder("resources/html"), ".gohtml")
-	router.LoadHTMLFiles(templates...)
+	//// TODO: Функции FuncMap вынести отдельно
+	//router.FuncMap["eq"] = func(a, b string) bool { return a == b }
+	//router.FuncMap["eqInt"] = func(a, b int) bool { return a == b }
+	//router.FuncMap["ne"] = func(a, b string) bool { return a != b }
+	//router.FuncMap["neInt"] = func(a, b int) bool { return a != b }
+	//router.FuncMap["replace"] = strings.ReplaceAll
+	//router.FuncMap["unless"] = func(v any) bool {
+	//	return v == nil || v == "" || v == false
+	//}
+	//router.FuncMap["dict"] = func(values ...interface{}) map[string]interface{} {
+	//	dict := make(map[string]interface{})
+	//	for i := 0; i < len(values); i += 2 {
+	//		key := values[i].(string)
+	//		value := values[i+1]
+	//		dict[key] = value
+	//	}
+	//	return dict
+	//}
+	//router.FuncMap["sub1"] = func(x int) int { return x - 1 }
+	//router.FuncMap["startsWith"] = func(s, prefix string) bool {
+	//	return strings.HasPrefix(s, prefix)
+	//}
+	//
+	//// TODO: Поместить "resources/html" конфигурацию
+	//templates := path.MustCollectFilepathBySuffix(cfg.GetFolder("resources/html"), ".gohtml")
+	//router.LoadHTMLFiles(templates...)
 
 	if err := router.SetTrustedProxies(cfg.Http.AllowedHosts); err != nil {
 		panic(err)

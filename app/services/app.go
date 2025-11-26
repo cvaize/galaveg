@@ -102,6 +102,11 @@ func (s *AppService) CloneUrl() url.URL {
 	return *s.url
 }
 
+func (s *AppService) LogoSrc() string {
+	cloneUrl := s.CloneUrl()
+	return cloneUrl.JoinPath("/svg/logo.svg").String()
+}
+
 // TODO: Вынести WebDataCtx, NewWebDataCtx, GetWebData в app/view/layouts или app/view/components
 
 type WebDataCtx struct {

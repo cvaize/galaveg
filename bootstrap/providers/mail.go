@@ -15,7 +15,7 @@ func NewMail(cfg *config.Config) (*mail.Client, error) {
 	}
 
 	client, err := mail.NewClient(cfg.Mail.Host, mail.WithPort(cfg.Mail.Port), mail.WithSMTPAuth(mail.SMTPAuthPlainNoEnc),
-		mail.WithUsername(cfg.Mail.Username), mail.WithPassword(cfg.Mail.Password), tls, mail.WithDebugLog(), mail.WithLogAuthData())
+		mail.WithUsername(cfg.Mail.Username), mail.WithPassword(cfg.Mail.Password), tls, mail.WithLogAuthData())
 	if err != nil {
 		return client, err
 	}

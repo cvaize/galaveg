@@ -54,6 +54,11 @@ type Config struct {
 		RedisPassword           string `mapstructure:"REDIS_PASSWORD"`
 		RedisMaxIdleConnections int    `mapstructure:"REDIS_MAX_IDLE_CONNECTIONS"`
 	} `mapstructure:"SESSION"`
+	Templates struct {
+		Html struct {
+			Path string `mapstructure:"PATH"`
+		} `mapstructure:"HTML"`
+	} `mapstructure:"TEMPLATES"`
 }
 
 func beforeReturn(c *Config) {

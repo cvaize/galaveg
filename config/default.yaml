@@ -38,3 +38,6 @@ SESSION:
   REDIS_HOST: "localhost"
   REDIS_PORT: 6379
   REDIS_MAX_IDLE_CONNECTIONS: 100
+TEMPLATES:
+  HTML:
+    PATH: "resources/html"

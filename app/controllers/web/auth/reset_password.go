@@ -1,8 +1,11 @@
 package auth
 
 import (
-	"fmt"
+	"bytes"
+	"galaveg/app/dto"
 	view "galaveg/app/view/layouts/auth"
+	auth "galaveg/app/view/layouts/email/reset_password"
+	"galaveg/utils/logger"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -34,35 +37,41 @@ func (ctr *Controller) ResetPassword(c *gin.Context) {
 				}
 			}
 		} else {
-			url := ctr.ctx.AS.RefUrl()
-			url = url.JoinPath("reset-password-confirm")
-			q := url.Query()
+
+			refUrl := ctr.ctx.AS.RefUrl()
+			refUrl = refUrl.JoinPath("reset-password-confirm")
+			q := refUrl.Query()
 			q.Set("code", "code123")
 			q.Set("email", reqData.Email)
-			url.RawQuery = q.Encode()
+			refUrl.RawQuery = q.Encode()
+			url := refUrl.String()
 
-			to := reqData.Email
-			subject := "subject 123"
-			html := "html 123"
-			txt := "txt 123"
+			emailViewData := auth.ViewData{ResetPasswordLink: url}
+			d, err1 := auth.New(c, ctr.ctx, &emailViewData)
+			if err1 != nil {
+				c.AbortWithError(http.StatusInternalServerError, err1)
+				return
+			}
+			var tpl bytes.Buffer
+			if templateError := ctr.ctx.Html.ExecuteTemplate(&tpl, auth.TEMPLATE, d); templateError != nil {
+				logger.Errorf("Error: %v", templateError)
+			} else {
+				to := reqData.Email
+				subject := ctr.ctx.TS.T(locale, "mail.reset_password.subject")
+				html := tpl.String()
+				txt := url
 
-			fmt.Println(to)
-			fmt.Println(subject)
-			fmt.Println(html)
-			fmt.Println(txt)
-			fmt.Println(url.String())
-			fmt.Println(ctr.ctx.AS.RefUrl().String())
-
-			// TODO: Separate rendering of E-mail templates into a separate entity
-			//e := ctr.ctx.MS.SyncSendSimpleEmail(to, subject, html, txt)
-			//if e != nil {
-			//	logger.Errorf("(500) Controller.ResetPassword.SyncSendSimpleEmail: %v", e)
-			//	viewData.Errors = append(viewData.Errors, ctr.ctx.TS.T(locale, "alert.reset_password.fail"))
-			//} else {
-			//	alert := dto.NewSuccessAlert(ctr.ctx.TS.T(locale, "alert.reset_password.success"))
-			//	//goland:noinspection GoUnhandledErrorResult
-			//	ctr.ctx.AlS.AddFlash(session, []dto.Alert{alert})
-			//}
+				// TODO: Separate rendering of E-mail templates into a separate entity
+				e := ctr.ctx.MS.SyncSendSimpleEmail(to, subject, html, txt)
+				if e != nil {
+					logger.Errorf("(500) Controller.ResetPassword.SyncSendSimpleEmail: %v", e)
+					viewData.Errors = append(viewData.Errors, ctr.ctx.TS.T(locale, "alert.reset_password.fail"))
+				} else {
+					alert := dto.NewSuccessAlert(ctr.ctx.TS.T(locale, "alert.reset_password.success"))
+					//goland:noinspection GoUnhandledErrorResult
+					ctr.ctx.AlS.AddFlash(session, []dto.Alert{alert})
+				}
+			}
 		}
 		viewData.EmailValue = reqData.Email
 	}

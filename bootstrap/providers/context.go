@@ -7,10 +7,12 @@ import (
 	"galaveg/config"
 	"galaveg/utils/logger"
 	"github.com/wneessen/go-mail"
+	"html/template"
 )
 
 type Context struct {
 	Cfg   *config.Config
+	Html  *template.Template
 	Db    *sql.DB
 	Cache *sql.DB
 	Mail  *mail.Client
@@ -39,6 +41,7 @@ func (ctx *Context) Close() {
 }
 
 func MustContext(cfg *config.Config) *Context {
+	html := MustHtmlEngine(cfg)
 	db := MustDB(cfg)
 	mc := MustMail(cfg)
 
@@ -59,6 +62,7 @@ func MustContext(cfg *config.Config) *Context {
 	auth := services.MustAuthService(cfg, us, ts, hs, es)
 	return &Context{
 		Cfg:  cfg,
+		Html: html,
 		Db:   db,
 		Mail: mc,
 		TS:   ts,
