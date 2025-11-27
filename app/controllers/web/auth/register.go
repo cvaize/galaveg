@@ -14,14 +14,14 @@ type RegisterRequest struct {
 	ConfirmPassword string `form:"confirm_password" binding:"required,min=6"`
 }
 
-func (ctr *Controller) Register(c *gin.Context) {
+func (ctr *WebAuthController) Register(c *gin.Context) {
 	session := sessions.Default(c)
-	if ctr.ctx.SS.ExistsUserId(session) {
+	if ctr.ctx.S.SS.ExistsUserId(session) {
 		c.Redirect(http.StatusFound, "/panel")
 		return
 	}
 
-	locale := ctr.ctx.AS.Locale(c, nil)
+	locale := ctr.ctx.S.AS.Locale(c, nil)
 	viewData := view.RegisterViewData{}
 	reqData := RegisterRequest{}
 	status := http.StatusOK
@@ -29,48 +29,48 @@ func (ctr *Controller) Register(c *gin.Context) {
 		valid := false
 
 		if err := c.ShouldBind(&reqData); err != nil {
-			errs := ctr.ctx.TS.TVE(locale, err)
+			errs := ctr.ctx.S.TS.TVE(locale, err)
 
 			for _, e := range errs {
 				if e.Name == "Email" {
-					viewData.EmailErrors = append(viewData.EmailErrors, e.GetMessage(ctr.ctx.TS.T(locale, "page.register.fields.email")))
+					viewData.EmailErrors = append(viewData.EmailErrors, e.GetMessage(ctr.ctx.S.TS.T(locale, "page.register.fields.email")))
 				} else if e.Name == "Password" {
-					viewData.PasswordErrors = append(viewData.PasswordErrors, e.GetMessage(ctr.ctx.TS.T(locale, "page.register.fields.password")))
+					viewData.PasswordErrors = append(viewData.PasswordErrors, e.GetMessage(ctr.ctx.S.TS.T(locale, "page.register.fields.password")))
 				} else if e.Name == "ConfirmPassword" {
-					viewData.ConfirmPasswordErrors = append(viewData.ConfirmPasswordErrors, e.GetMessage(ctr.ctx.TS.T(locale, "page.register.fields.confirm_password")))
+					viewData.ConfirmPasswordErrors = append(viewData.ConfirmPasswordErrors, e.GetMessage(ctr.ctx.S.TS.T(locale, "page.register.fields.confirm_password")))
 				}
 			}
 
 		} else {
 			if reqData.Password != reqData.ConfirmPassword {
-				a := ctr.ctx.TS.T(locale, "page.register.fields.password")
+				a := ctr.ctx.S.TS.T(locale, "page.register.fields.password")
 				attributes := map[string]string{"attribute": a}
 				viewData.PasswordErrors = append(viewData.PasswordErrors, "")
-				viewData.ConfirmPasswordErrors = append(viewData.ConfirmPasswordErrors, ctr.ctx.TS.V(locale, "validation.confirmed", attributes))
+				viewData.ConfirmPasswordErrors = append(viewData.ConfirmPasswordErrors, ctr.ctx.S.TS.V(locale, "validation.confirmed", attributes))
 			} else {
 				valid = true
 			}
 		}
 
 		if valid {
-			userId, e := ctr.ctx.Auth.Register(reqData.Email, reqData.Password)
+			userId, e := ctr.ctx.S.AuthS.Register(reqData.Email, reqData.Password)
 			if e != nil {
 				if e.Code == "AuthService.Register.DuplicateUser" {
 					status = http.StatusBadRequest
-					viewData.Errors = append(viewData.Errors, ctr.ctx.TS.T(locale, "error.Auth.UserIsAlreadyRegistered"))
+					viewData.Errors = append(viewData.Errors, ctr.ctx.S.TS.T(locale, "error.AuthS.UserIsAlreadyRegistered"))
 				} else {
 					status = e.Status
-					viewData.Errors = append(viewData.Errors, ctr.ctx.TS.T(locale, "error.500"))
+					viewData.Errors = append(viewData.Errors, ctr.ctx.S.TS.T(locale, "error.500"))
 				}
 			} else {
-				e = ctr.ctx.SS.Login(session, userId)
+				e = ctr.ctx.S.SS.Login(session, userId)
 				if e != nil {
 					status = e.Status
-					viewData.Errors = append(viewData.Errors, ctr.ctx.TS.T(locale, "error.500"))
+					viewData.Errors = append(viewData.Errors, ctr.ctx.S.TS.T(locale, "error.500"))
 				} else {
-					alert := dto.NewSuccessAlert(ctr.ctx.TS.T(locale, "alert.register.success"))
+					alert := dto.NewSuccessAlert(ctr.ctx.S.TS.T(locale, "alert.register.success"))
 					//goland:noinspection GoUnhandledErrorResult
-					ctr.ctx.AlS.AddFlash(session, []dto.Alert{alert})
+					ctr.ctx.S.AlS.AddFlash(session, []dto.Alert{alert})
 					c.Redirect(http.StatusFound, "/login")
 					return
 				}

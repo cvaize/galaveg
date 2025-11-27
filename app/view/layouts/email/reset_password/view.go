@@ -3,7 +3,6 @@ package auth
 import (
 	"galaveg/app/view/components/btn"
 	"galaveg/bootstrap/providers"
-	"github.com/gin-gonic/gin"
 )
 
 const TEMPLATE = "layouts/email/reset_password"
@@ -24,21 +23,19 @@ type ViewData struct {
 	ResetPasswordLink string
 }
 
-func New(c *gin.Context, ctx *providers.Context, data *ViewData) (*View, error) {
-	locale := ctx.LS.GetLocale(ctx.AS.Locale(c, nil))
-
+func New(ctx *providers.Context, lang, resetPasswordLink string) (*View, error) {
 	return &View{
-		Lang:        locale.Code,
-		Title:       ctx.TS.T(locale.Code, "mail.reset_password.title"),
-		Description: ctx.TS.T(locale.Code, "mail.reset_password.description"),
-		SiteName:    ctx.TS.T(locale.Code, "mail.reset_password.site_name"),
-		SiteURL:     ctx.AS.Url(),
-		LogoSrc:     ctx.AS.LogoSrc(),
-		Header:      ctx.TS.T(locale.Code, "mail.reset_password.header"),
-		SiteDomain:  ctx.AS.CloneUrl().Host,
+		Lang:        lang,
+		Title:       ctx.S.TS.T(lang, "mail.reset_password.title"),
+		Description: ctx.S.TS.T(lang, "mail.reset_password.description"),
+		SiteName:    ctx.S.TS.T(lang, "mail.reset_password.site_name"),
+		SiteURL:     ctx.S.AS.Url(),
+		LogoSrc:     ctx.S.AS.LogoSrc(),
+		Header:      ctx.S.TS.T(lang, "mail.reset_password.header"),
+		SiteDomain:  ctx.S.AS.CloneUrl().Host,
 		Button: &btn.View{
-			Text: ctx.TS.T(locale.Code, "mail.reset_password.button"),
-			Href: data.ResetPasswordLink,
+			Text: ctx.S.TS.T(lang, "mail.reset_password.button"),
+			Href: resetPasswordLink,
 		},
 	}, nil
 }

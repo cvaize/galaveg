@@ -3,62 +3,34 @@ package services
 import (
 	"galaveg/app/dto"
 	"galaveg/app/dto/mailables"
-	"galaveg/config"
-	"galaveg/utils/logger"
 	libmail "github.com/wneessen/go-mail"
-	"net/mail"
 )
 
 type MailService struct {
-	cfg    *config.Config
-	client *libmail.Client
+	mail *libmail.Client
+	es   *ErrorService
 }
 
-// TODO: Make messages sent by cron through the message buffer.
-
-func NewMailService(c *config.Config, client *libmail.Client) (*MailService, error) {
-	return &MailService{c, client}, nil
+func NewMailService() (*MailService, error) {
+	return &MailService{}, nil
 }
 
-// SyncSendEmail Synchronous sending of E-mail messages
-func (s *MailService) SyncSendEmail(message *dto.EmailMessage) error {
+// Send Synchronous sending of E-mail messages
+func (s *MailService) Send(message *mailables.EmailMessage) *dto.Error {
 	m := libmail.NewMsg()
 	m.FromMailAddress(message.Envelope.From)
 	m.ToMailAddress(message.Envelope.To...)
 	m.Subject(message.Envelope.Subject)
 	// TODO: Explore and possibly implement the sending of HTML and TEXT and Markdown together, rather than just HTML or TEXT alone
-	// TODO: Add TEXT and HTML rendering. The SetBodyHTMLTemplate and SetBodyTextTemplate methods.
 
-	if message.Content.HtmlString != "" {
-		m.SetBodyString(libmail.TypeTextHTML, message.Content.HtmlString)
+	if message.Content.Html != "" {
+		m.SetBodyString(libmail.TypeTextHTML, message.Content.Html)
 	} else if message.Content.Text != "" {
 		m.SetBodyString(libmail.TypeTextPlain, message.Content.Text)
 	}
 
-	if err := s.client.DialAndSend(m); err != nil {
-		logger.Errorf("(500) MailService.SyncSendEmail.DialAndSend: %v", err)
-		return err
+	if e := s.mail.DialAndSend(m); e != nil {
+		return s.es.E500(e, "MailService.Send.DialAndSend", "")
 	}
 	return nil
-}
-
-// NewSimpleEmail New simple email message
-func (s *MailService) NewSimpleEmail(to, subject, html, txt string) *dto.EmailMessage {
-	return &dto.EmailMessage{
-		Envelope: &mailables.Envelope{
-			Subject: subject,
-			From: &mail.Address{
-				Address: s.cfg.Mail.FromAddress,
-				Name:    s.cfg.Mail.FromName,
-			},
-			To: []*mail.Address{{Address: to}},
-		},
-		Content: &mailables.Content{HtmlString: html, Text: txt},
-	}
-}
-
-// SyncSendSimpleEmail Synchronous sending of a simple E-mail message
-func (s *MailService) SyncSendSimpleEmail(to, subject, html, txt string) error {
-	message := s.NewSimpleEmail(to, subject, html, txt)
-	return s.SyncSendEmail(message)
 }

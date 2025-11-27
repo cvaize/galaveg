@@ -21,7 +21,7 @@ type View struct {
 }
 
 func New(c *gin.Context, ctx *providers.Context, user *dto.User) (*View, error) {
-	locale := ctx.LS.GetLocale(ctx.AS.Locale(c, user))
+	locale := ctx.S.LS.GetLocale(ctx.S.AS.Locale(c, user))
 
 	sidebarObject, err := sidebar.New(c, ctx, user)
 
@@ -31,16 +31,16 @@ func New(c *gin.Context, ctx *providers.Context, user *dto.User) (*View, error) 
 
 	return &View{
 		Lang:     locale.Code,
-		DarkMode: ctx.AS.DarkMode(c),
-		Title:    ctx.TS.T(locale.Code, "page.home.title"),
-		Heading:  ctx.TS.T(locale.Code, "page.home.header"),
+		DarkMode: ctx.S.AS.DarkMode(c),
+		Title:    ctx.S.TS.T(locale.Code, "page.home.title"),
+		Heading:  ctx.S.TS.T(locale.Code, "page.home.header"),
 		Breadcrumbs: []item.View{
 			{
-				Text: ctx.TS.T(locale.Code, "page.home.breadcrumbs.home"),
+				Text: ctx.S.TS.T(locale.Code, "page.home.breadcrumbs.home"),
 				Href: "/",
 			},
 		},
 		Sidebar: sidebarObject,
-		Alerts:  ctx.AS.Alerts(c),
+		Alerts:  ctx.S.AS.Alerts(c),
 	}, nil
 }

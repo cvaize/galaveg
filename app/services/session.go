@@ -1,9 +1,9 @@
 package services
 
 import (
+	"errors"
 	"galaveg/app/dto"
 	"galaveg/config"
-	"galaveg/utils/logger"
 	"github.com/gin-contrib/sessions"
 )
 
@@ -31,7 +31,8 @@ func (s *SessionService) GetUserId(session sessions.Session) (dto.UserID, bool) 
 	userId, ok := user.(dto.UserID)
 
 	if !ok {
-		logger.Errorf("(500) SessionService.GetUserId: %v", user)
+		//goland:noinspection GoUnhandledErrorResult
+		s.es.E500(errors.New(""), "SessionService.GetUserId.UserID", "")
 	}
 
 	return userId, ok

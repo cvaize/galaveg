@@ -18,15 +18,15 @@ type LoginViewData struct {
 }
 
 func NewLogin(c *gin.Context, ctx *providers.Context, s sessions.Session, data *LoginViewData) (*View, error) {
-	locale := ctx.LS.GetLocale(ctx.AS.Locale(c, nil))
-	locales := ctx.LS.GetLocales()
+	locale := ctx.S.LS.GetLocale(ctx.S.AS.Locale(c, nil))
+	locales := ctx.S.LS.GetLocales()
 
 	return &View{
 		Lang:     locale.Code,
-		DarkMode: ctx.AS.DarkMode(c),
-		Title:    ctx.TS.T(locale.Code, "page.login.title"),
-		Heading:  ctx.TS.T(locale.Code, "page.login.header"),
-		Alerts:   ctx.AlS.Flashes(s),
+		DarkMode: ctx.S.AS.DarkMode(c),
+		Title:    ctx.S.TS.T(locale.Code, "page.login.title"),
+		Heading:  ctx.S.TS.T(locale.Code, "page.login.header"),
+		Alerts:   ctx.S.AlS.Flashes(s),
 		Locale:   locale,
 		Locales:  locales,
 		Form: form.View{
@@ -41,7 +41,7 @@ func NewLogin(c *gin.Context, ctx *providers.Context, s sessions.Session, data *
 					InputClass: "admin-login__field__input",
 				},
 				{
-					Label:      ctx.TS.T(locale.Code, "page.login.fields.email"),
+					Label:      ctx.S.TS.T(locale.Code, "page.login.fields.email"),
 					Type:       "email",
 					Name:       "email",
 					Value:      data.EmailValue,
@@ -50,7 +50,7 @@ func NewLogin(c *gin.Context, ctx *providers.Context, s sessions.Session, data *
 					InputClass: "admin-login__field__input",
 				},
 				{
-					Label:      ctx.TS.T(locale.Code, "page.login.fields.password"),
+					Label:      ctx.S.TS.T(locale.Code, "page.login.fields.password"),
 					Type:       "password",
 					Name:       "password",
 					Value:      data.PasswordValue,
@@ -60,15 +60,15 @@ func NewLogin(c *gin.Context, ctx *providers.Context, s sessions.Session, data *
 				},
 			},
 			Submit: &btn.View{
-				Text: ctx.TS.T(locale.Code, "page.login.submit"),
+				Text: ctx.S.TS.T(locale.Code, "page.login.submit"),
 			},
 			ResetPassword: &btn.View{
 				Href: "/reset-password",
-				Text: ctx.TS.T(locale.Code, "page.login.reset_password"),
+				Text: ctx.S.TS.T(locale.Code, "page.login.reset_password"),
 			},
 			Register: &btn.View{
 				Href: "/register",
-				Text: ctx.TS.T(locale.Code, "page.login.register"),
+				Text: ctx.S.TS.T(locale.Code, "page.login.register"),
 			},
 			Errors: data.Errors,
 		},

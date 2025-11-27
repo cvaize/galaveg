@@ -2,8 +2,9 @@ package tests
 
 import (
 	"galaveg/config"
+	"galaveg/utils"
 )
 
 func GetConfig() *config.Config {
-	return config.Must("tests.env")
+	return utils.Must(config.New("tests.env"))
 }

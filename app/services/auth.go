@@ -7,15 +7,15 @@ import (
 )
 
 type AuthService struct {
-	c  *config.Config
-	us *UserService
-	ts *TranslatorService
-	hs *HashService
-	es *ErrorService
+	cfg *config.Config
+	as  *AppService
+	us  *UserService
+	hs  *HashService
+	es  *ErrorService
 }
 
-func NewAuthService(c *config.Config, us *UserService, ts *TranslatorService, hs *HashService, es *ErrorService) (*AuthService, error) {
-	return &AuthService{c, us, ts, hs, es}, nil
+func NewAuthService(cfg *config.Config, as *AppService, us *UserService, hs *HashService, es *ErrorService) (*AuthService, error) {
+	return &AuthService{cfg, as, us, hs, es}, nil
 }
 
 func (s *AuthService) Login(email, password string) (dto.UserID, *dto.Error) {
@@ -76,4 +76,18 @@ func (s *AuthService) Register(email, password string) (dto.UserID, *dto.Error) 
 	}
 
 	return userId, nil
+}
+
+func (s *AuthService) CreateResetPasswordLink(email string) (string, error) {
+	refUrl := s.as.RefUrl()
+	refUrl = refUrl.JoinPath("reset-password-confirm")
+
+	// Add query parameters
+	q := refUrl.Query()
+	q.Set("code", "code123") // TODO: replace with actual secure token
+	q.Set("email", email)
+	refUrl.RawQuery = q.Encode()
+
+	// The final URL included in the email
+	return refUrl.String(), nil
 }

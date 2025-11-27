@@ -18,37 +18,37 @@ func CreateUsersFilesTable00010101000030Up(ctx *providers.Context) error {
    is_public BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Label: public file or not.',
    disk VARCHAR(255) CHARACTER SET ascii COLLATE ascii_bin NOT NULL COMMENT 'The disk where the file is stored.'
 ) COMMENT 'Files belonging to users.';`
-	_, err := ctx.Db.Exec(query)
+	_, err := ctx.Infra.Db.Exec(query)
 	if err != nil {
 		return err
 	}
 
 	query = `ALTER TABLE ` + ctx.Cfg.Db.Prefix + `users_files ADD UNIQUE file_user_udx (user_id, file_id);`
-	_, err = ctx.Db.Exec(query)
+	_, err = ctx.Infra.Db.Exec(query)
 	if err != nil {
 		return err
 	}
 
 	query = `ALTER TABLE ` + ctx.Cfg.Db.Prefix + `users_files ADD INDEX user_idx (user_id);`
-	_, err = ctx.Db.Exec(query)
+	_, err = ctx.Infra.Db.Exec(query)
 	if err != nil {
 		return err
 	}
 
 	query = `ALTER TABLE ` + ctx.Cfg.Db.Prefix + `users_files ADD INDEX path_idx (path);`
-	_, err = ctx.Db.Exec(query)
+	_, err = ctx.Infra.Db.Exec(query)
 	if err != nil {
 		return err
 	}
 
 	query = `ALTER TABLE ` + ctx.Cfg.Db.Prefix + `users_files ADD INDEX filename_idx (filename);`
-	_, err = ctx.Db.Exec(query)
+	_, err = ctx.Infra.Db.Exec(query)
 	if err != nil {
 		return err
 	}
 
 	query = `ALTER TABLE ` + ctx.Cfg.Db.Prefix + `users_files ADD INDEX upload_filename_idx (upload_filename);`
-	_, err = ctx.Db.Exec(query)
+	_, err = ctx.Infra.Db.Exec(query)
 	if err != nil {
 		return err
 	}
@@ -58,7 +58,7 @@ func CreateUsersFilesTable00010101000030Up(ctx *providers.Context) error {
 
 func CreateUsersFilesTable00010101000030Down(ctx *providers.Context) error {
 	query := `DROP TABLE ` + ctx.Cfg.Db.Prefix + `users_files;`
-	_, err := ctx.Db.Exec(query)
+	_, err := ctx.Infra.Db.Exec(query)
 	if err != nil {
 		return err
 	}

@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"galaveg/app/dto"
 	"galaveg/utils/flatten"
-	"galaveg/utils/logger"
 	"github.com/gin-gonic/gin/binding"
 	"io/fs"
 	"os"
@@ -25,13 +24,26 @@ type TranslatorService struct {
 	locale     string
 	translates map[string]map[string]string
 	u          *ut.UniversalTranslator
+	es         *ErrorService
 }
 
-func NewTranslatorService(locale string, translates map[string]map[string]string) *TranslatorService {
-	return &TranslatorService{locale, translates, nil}
+func NewTranslatorService(locale string, translates map[string]map[string]string, es *ErrorService) *TranslatorService {
+	enLocale := en.New()
+	ruLocale := ru.New()
+
+	u := ut.New(enLocale, enLocale, ruLocale)
+
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		transEN, _ := u.GetTranslator("en")
+		_ = enTranslations.RegisterDefaultTranslations(v, transEN)
+
+		transRU, _ := u.GetTranslator("ru")
+		_ = ruTranslations.RegisterDefaultTranslations(v, transRU)
+	}
+	return &TranslatorService{locale, translates, u, es}
 }
 
-func NewTranslatorServiceFromFiles(dir, locale string) (*TranslatorService, error) {
+func NewTranslatorServiceFromFiles(dir, locale string, es *ErrorService) (*TranslatorService, error) {
 	translates := map[string]map[string]string{}
 
 	dir = filepath.Clean(dir)
@@ -139,22 +151,7 @@ func NewTranslatorServiceFromFiles(dir, locale string) (*TranslatorService, erro
 		}
 	}
 
-	return NewTranslatorService(locale, translates), nil
-}
-
-func (s *TranslatorService) SetupValidator() {
-	enLocale := en.New()
-	ruLocale := ru.New()
-
-	s.u = ut.New(enLocale, enLocale, ruLocale)
-
-	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
-		transEN, _ := s.u.GetTranslator("en")
-		_ = enTranslations.RegisterDefaultTranslations(v, transEN)
-
-		transRU, _ := s.u.GetTranslator("ru")
-		_ = ruTranslations.RegisterDefaultTranslations(v, transRU)
-	}
+	return NewTranslatorService(locale, translates, es), nil
 }
 
 func (s *TranslatorService) GetLocale() string {
@@ -287,7 +284,8 @@ func (s *TranslatorService) TranslateValidationErrors(locale string, e error) []
 		}
 		return response
 	} else {
-		logger.Errorf("(500) TranslatorService.TranslateValidationErrors: %v", e)
+		//goland:noinspection GoUnhandledErrorResult
+		s.es.E500(e, "TranslatorService.TranslateValidationErrors.As", "")
 	}
 	return nil
 }

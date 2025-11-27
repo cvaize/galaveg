@@ -2,10 +2,10 @@ package auth
 
 import "galaveg/bootstrap/providers"
 
-type Controller struct {
+type WebAuthController struct {
 	ctx *providers.Context
 }
 
-func NewController(ctx *providers.Context) Controller {
-	return Controller{ctx}
+func NewController(ctx *providers.Context) WebAuthController {
+	return WebAuthController{ctx}
 }

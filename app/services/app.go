@@ -11,17 +11,15 @@ import (
 type AppService struct {
 	cfg *config.Config
 	ls  *LocaleService
-	rs  *RoleService
-	ts  *TranslatorService
 	url *url.URL
 }
 
-func NewAppService(c *config.Config, ls *LocaleService, rs *RoleService, ts *TranslatorService) (*AppService, error) {
-	u, err := url.Parse(c.App.Url)
+func NewAppService(cfg *config.Config, ls *LocaleService) (*AppService, error) {
+	u, err := url.Parse(cfg.App.Url)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	return &AppService{c, ls, rs, ts, u}, nil
+	return &AppService{cfg, ls, u}, nil
 }
 
 func (s *AppService) DarkMode(c *gin.Context) string {

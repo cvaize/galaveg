@@ -20,15 +20,15 @@ type RegisterViewData struct {
 }
 
 func NewRegister(c *gin.Context, ctx *providers.Context, s sessions.Session, data *RegisterViewData) (*View, error) {
-	locale := ctx.LS.GetLocale(ctx.AS.Locale(c, nil))
-	locales := ctx.LS.GetLocales()
+	locale := ctx.S.LS.GetLocale(ctx.S.AS.Locale(c, nil))
+	locales := ctx.S.LS.GetLocales()
 
 	return &View{
 		Lang:     locale.Code,
-		DarkMode: ctx.AS.DarkMode(c),
-		Title:    ctx.TS.T(locale.Code, "page.register.title"),
-		Heading:  ctx.TS.T(locale.Code, "page.register.header"),
-		Alerts:   ctx.AlS.Flashes(s),
+		DarkMode: ctx.S.AS.DarkMode(c),
+		Title:    ctx.S.TS.T(locale.Code, "page.register.title"),
+		Heading:  ctx.S.TS.T(locale.Code, "page.register.header"),
+		Alerts:   ctx.S.AlS.Flashes(s),
 		Locale:   locale,
 		Locales:  locales,
 		Form: form.View{
@@ -43,7 +43,7 @@ func NewRegister(c *gin.Context, ctx *providers.Context, s sessions.Session, dat
 					InputClass: "admin-login__field__input",
 				},
 				{
-					Label:      ctx.TS.T(locale.Code, "page.register.fields.email"),
+					Label:      ctx.S.TS.T(locale.Code, "page.register.fields.email"),
 					Type:       "email",
 					Name:       "email",
 					Value:      data.EmailValue,
@@ -52,7 +52,7 @@ func NewRegister(c *gin.Context, ctx *providers.Context, s sessions.Session, dat
 					InputClass: "admin-login__field__input",
 				},
 				{
-					Label:      ctx.TS.T(locale.Code, "page.register.fields.password"),
+					Label:      ctx.S.TS.T(locale.Code, "page.register.fields.password"),
 					Type:       "password",
 					Name:       "password",
 					Value:      data.PasswordValue,
@@ -61,7 +61,7 @@ func NewRegister(c *gin.Context, ctx *providers.Context, s sessions.Session, dat
 					InputClass: "admin-login__field__input",
 				},
 				{
-					Label:      ctx.TS.T(locale.Code, "page.register.fields.confirm_password"),
+					Label:      ctx.S.TS.T(locale.Code, "page.register.fields.confirm_password"),
 					Type:       "password",
 					Name:       "confirm_password",
 					Value:      data.ConfirmPasswordValue,
@@ -71,18 +71,18 @@ func NewRegister(c *gin.Context, ctx *providers.Context, s sessions.Session, dat
 				},
 			},
 			Submit: &btn.View{
-				Text: ctx.TS.T(locale.Code, "page.register.submit"),
+				Text: ctx.S.TS.T(locale.Code, "page.register.submit"),
 			},
 			ResetPassword: &btn.View{
 				Href: "/reset-password",
-				Text: ctx.TS.T(locale.Code, "page.register.reset_password"),
+				Text: ctx.S.TS.T(locale.Code, "page.register.reset_password"),
 			},
 			Login: &btn.View{
 				Href: "/login",
-				Text: ctx.TS.T(locale.Code, "page.register.login"),
+				Text: ctx.S.TS.T(locale.Code, "page.register.login"),
 			},
 			Errors: data.Errors,
 		},
-		Back: &btn.View{Text: ctx.TS.T(locale.Code, "page.register.back"), Href: "/login"},
+		Back: &btn.View{Text: ctx.S.TS.T(locale.Code, "page.register.back"), Href: "/login"},
 	}, nil
 }

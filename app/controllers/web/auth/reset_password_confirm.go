@@ -7,9 +7,9 @@ import (
 	"net/http"
 )
 
-func (ctr *Controller) ResetPasswordConfirm(c *gin.Context) {
+func (ctr *WebAuthController) ResetPasswordConfirm(c *gin.Context) {
 	session := sessions.Default(c)
-	if ctr.ctx.SS.ExistsUserId(session) {
+	if ctr.ctx.S.SS.ExistsUserId(session) {
 		c.Redirect(http.StatusFound, "/panel")
 		return
 	}

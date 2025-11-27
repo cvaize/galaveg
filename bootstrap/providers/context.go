@@ -12,73 +12,70 @@ import (
 )
 
 type Context struct {
-	Cfg   *config.Config
-	Html  *template.Template
-	Db    *sql.DB
-	Cache *sql.DB
-	Mail  *mail.Client
-	TS    *services.TranslatorService
-	LS    *services.LocaleService
-	AS    *services.AppService
-	Auth  *services.AuthService
-	RS    *services.RoleService
-	ES    *services.ErrorService
-	SS    *services.SessionService
-	AlS   *services.AlertService
-	MS    *services.MailService
-	US    *services.UserService
-	HS    *services.HashService
-	TplS  *services.TemplateService
+	Cfg *config.Config
+	// Infrastructures
+	Infra struct {
+		Html *template.Template
+		Db   *sql.DB
+		//Cache *sql.DB
+		Mail *mail.Client
+	}
+	// Repositories
+	R struct{}
+	// Services
+	S struct {
+		AlS   *services.AlertService
+		AS    *services.AppService
+		AuthS *services.AuthService
+		ES    *services.ErrorService
+		HS    *services.HashService
+		LS    *services.LocaleService
+		MS    *services.MailService
+		RS    *services.RoleService
+		SS    *services.SessionService
+		TplS  *services.TemplateService
+		TS    *services.TranslatorService
+		US    *services.UserService
+	}
 }
 
 func (ctx *Context) Close() {
-	if ctx.Db != nil {
-		err := ctx.Db.Close()
+	if ctx.Infra.Db != nil {
+		err := ctx.Infra.Db.Close()
 		logger.Errorf("Db Close() error: %s", err)
 	}
-	if ctx.Cache != nil {
-		err := ctx.Cache.Close()
-		logger.Errorf("Cache Close() error: %s", err)
+	//if ctx.Infra.Cache != nil {
+	//	err := ctx.Infra.Cache.Close()
+	//	logger.Errorf("Cache Close() error: %s", err)
+	//}
+	if ctx.Infra.Mail != nil {
+		err := ctx.Infra.Mail.Close()
+		logger.Errorf("Mail Close() error: %s", err)
 	}
 }
 
 func MustContext(cfg *config.Config) *Context {
-	html := utils.Must(NewHtmlEngine(cfg))
-	db := utils.Must(NewDB(cfg))
-	mc := utils.Must(NewMail(cfg))
+	ctx := &Context{}
+	ctx.Cfg = cfg
+	ctx.Infra.Db = utils.Must(NewDB(cfg))
+	ctx.Infra.Html = utils.Must(NewHtmlEngine(cfg))
+	ctx.Infra.Mail = utils.Must(NewMail(cfg))
 
-	es := utils.Must(services.NewErrorService())
-	tpl := utils.Must(services.NewTemplateService(cfg, html))
-	// TODO: Добавить в конфигурацию "resources/translates/" и локали
-	ts := utils.Must(services.NewTranslatorServiceFromFiles(cfg.GetFolder("resources/translates/"), cfg.App.Locale))
-	ls := utils.Must(services.NewLocaleService([]dto.Locale{
+	ctx.S.ES = utils.Must(services.NewErrorService())
+	ctx.S.AlS = utils.Must(services.NewAlertService(ctx.S.ES))
+	ctx.S.LS = utils.Must(services.NewLocaleService([]dto.Locale{
 		{Code: "en", ShortName: "en", FullName: "English"},
 		{Code: "ru", ShortName: "ru", FullName: "Русский"},
 	}))
-	rs := utils.Must(services.NewRoleService())
-	as := utils.Must(services.NewAppService(cfg, ls, rs, ts))
-	ms := utils.Must(services.NewMailService(cfg, mc))
-	us := utils.Must(services.NewUserService(cfg))
-	hs := utils.Must(services.NewHashService(cfg))
-	ss := utils.Must(services.NewSessionService(cfg, es))
-	als := utils.Must(services.NewAlertService(es))
-	auth := utils.Must(services.NewAuthService(cfg, us, ts, hs, es))
-	return &Context{
-		Cfg:  cfg,
-		Html: html,
-		Db:   db,
-		Mail: mc,
-		TS:   ts,
-		LS:   ls,
-		AS:   as,
-		Auth: auth,
-		RS:   rs,
-		MS:   ms,
-		US:   us,
-		HS:   hs,
-		ES:   es,
-		SS:   ss,
-		AlS:  als,
-		TplS: tpl,
-	}
+	ctx.S.AS = utils.Must(services.NewAppService(cfg, ctx.S.LS))
+	ctx.S.US = utils.Must(services.NewUserService())
+	ctx.S.HS = utils.Must(services.NewHashService())
+	ctx.S.AuthS = utils.Must(services.NewAuthService(cfg, ctx.S.AS, ctx.S.US, ctx.S.HS, ctx.S.ES))
+	ctx.S.MS = utils.Must(services.NewMailService())
+	ctx.S.RS = utils.Must(services.NewRoleService())
+	ctx.S.SS = utils.Must(services.NewSessionService(cfg, ctx.S.ES))
+	ctx.S.TplS = utils.Must(services.NewTemplateService(cfg, ctx.Infra.Html))
+	// TODO: Добавить в конфигурацию "resources/translates/" и локали
+	ctx.S.TS = utils.Must(services.NewTranslatorServiceFromFiles(cfg.GetFolder("resources/translates/"), cfg.App.Locale, ctx.S.ES))
+	return ctx
 }

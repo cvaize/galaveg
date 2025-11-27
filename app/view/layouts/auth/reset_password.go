@@ -16,15 +16,15 @@ type ResetPasswordViewData struct {
 }
 
 func NewResetPassword(c *gin.Context, ctx *providers.Context, s sessions.Session, data *ResetPasswordViewData) (*View, error) {
-	locale := ctx.LS.GetLocale(ctx.AS.Locale(c, nil))
-	locales := ctx.LS.GetLocales()
+	locale := ctx.S.LS.GetLocale(ctx.S.AS.Locale(c, nil))
+	locales := ctx.S.LS.GetLocales()
 
 	return &View{
 		Lang:     locale.Code,
-		DarkMode: ctx.AS.DarkMode(c),
-		Title:    ctx.TS.T(locale.Code, "page.reset_password.title"),
-		Heading:  ctx.TS.T(locale.Code, "page.reset_password.header"),
-		Alerts:   ctx.AlS.Flashes(s),
+		DarkMode: ctx.S.AS.DarkMode(c),
+		Title:    ctx.S.TS.T(locale.Code, "page.reset_password.title"),
+		Heading:  ctx.S.TS.T(locale.Code, "page.reset_password.header"),
+		Alerts:   ctx.S.AlS.Flashes(s),
 		Locale:   locale,
 		Locales:  locales,
 		Form: form.View{
@@ -39,7 +39,7 @@ func NewResetPassword(c *gin.Context, ctx *providers.Context, s sessions.Session
 					InputClass: "admin-login__field__input",
 				},
 				{
-					Label:      ctx.TS.T(locale.Code, "page.reset_password.fields.email"),
+					Label:      ctx.S.TS.T(locale.Code, "page.reset_password.fields.email"),
 					Type:       "email",
 					Name:       "email",
 					Value:      data.EmailValue,
@@ -49,11 +49,11 @@ func NewResetPassword(c *gin.Context, ctx *providers.Context, s sessions.Session
 				},
 			},
 			Submit: &btn.View{
-				Text: ctx.TS.T(locale.Code, "page.reset_password.submit"),
+				Text: ctx.S.TS.T(locale.Code, "page.reset_password.submit"),
 			},
 			Errors: data.Errors,
-			Text:   ctx.TS.T(locale.Code, "page.reset_password.text"),
+			Text:   ctx.S.TS.T(locale.Code, "page.reset_password.text"),
 		},
-		Back: &btn.View{Text: ctx.TS.T(locale.Code, "page.reset_password.back"), Href: "/login"},
+		Back: &btn.View{Text: ctx.S.TS.T(locale.Code, "page.reset_password.back"), Href: "/login"},
 	}, nil
 }

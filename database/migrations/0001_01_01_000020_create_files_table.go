@@ -19,31 +19,31 @@ func CreateFilesTable00010101000020Up(ctx *providers.Context) error {
    is_deleted BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Label: whether the file has been deleted.',
    disk VARCHAR(255) CHARACTER SET ascii COLLATE ascii_bin NOT NULL COMMENT 'The disk where the file is stored.'
 ) COMMENT 'The file table.';`
-	_, err := ctx.Db.Exec(query)
+	_, err := ctx.Infra.Db.Exec(query)
 	if err != nil {
 		return err
 	}
 
 	query = `ALTER TABLE ` + ctx.Cfg.Db.Prefix + `files ADD UNIQUE disk_path_udx (disk, path);`
-	_, err = ctx.Db.Exec(query)
+	_, err = ctx.Infra.Db.Exec(query)
 	if err != nil {
 		return err
 	}
 
 	query = `ALTER TABLE ` + ctx.Cfg.Db.Prefix + `files ADD INDEX creator_user_idx (creator_user_id);`
-	_, err = ctx.Db.Exec(query)
+	_, err = ctx.Infra.Db.Exec(query)
 	if err != nil {
 		return err
 	}
 
 	query = `ALTER TABLE ` + ctx.Cfg.Db.Prefix + `files ADD INDEX path_idx (path);`
-	_, err = ctx.Db.Exec(query)
+	_, err = ctx.Infra.Db.Exec(query)
 	if err != nil {
 		return err
 	}
 
 	query = `ALTER TABLE ` + ctx.Cfg.Db.Prefix + `files ADD INDEX filename_idx (filename);`
-	_, err = ctx.Db.Exec(query)
+	_, err = ctx.Infra.Db.Exec(query)
 	if err != nil {
 		return err
 	}
@@ -53,7 +53,7 @@ func CreateFilesTable00010101000020Up(ctx *providers.Context) error {
 
 func CreateFilesTable00010101000020Down(ctx *providers.Context) error {
 	query := `DROP TABLE ` + ctx.Cfg.Db.Prefix + `files;`
-	_, err := ctx.Db.Exec(query)
+	_, err := ctx.Infra.Db.Exec(query)
 	if err != nil {
 		return err
 	}

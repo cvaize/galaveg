@@ -31,7 +31,7 @@ func init() {
 func DeleteMigration(ctx *providers.Context, name string) error {
 	//goland:noinspection ALL
 	query := "DELETE FROM " + ctx.Cfg.Db.Prefix + "_migrations WHERE name=?"
-	_, err := ctx.Db.Exec(query, name)
+	_, err := ctx.Infra.Db.Exec(query, name)
 	if err != nil {
 		return err
 	}

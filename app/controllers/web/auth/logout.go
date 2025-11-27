@@ -6,9 +6,9 @@ import (
 	"net/http"
 )
 
-func (ctr *Controller) Logout(c *gin.Context) {
+func (ctr *WebAuthController) Logout(c *gin.Context) {
 	session := sessions.Default(c)
-	if ctr.ctx.SS.ExistsUserId(session) {
+	if ctr.ctx.S.SS.ExistsUserId(session) {
 		session.Clear()
 	}
 	c.Redirect(http.StatusFound, "/")

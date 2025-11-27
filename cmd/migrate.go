@@ -33,7 +33,7 @@ func createMigrationsTable(ctx *providers.Context) error {
 		id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
 		name VARCHAR(255) NOT NULL UNIQUE
 	);`
-	_, err := ctx.Db.Exec(query)
+	_, err := ctx.Infra.Db.Exec(query)
 	if err != nil {
 		return err
 	}
@@ -49,7 +49,7 @@ type migrationRow struct {
 func LoadMigrations(ctx *providers.Context) ([]migrationRow, error) {
 	//goland:noinspection ALL
 	query := "SELECT * FROM " + ctx.Cfg.Db.Prefix + "_migrations ORDER BY id ASC;"
-	rows, err := ctx.Db.Query(query)
+	rows, err := ctx.Infra.Db.Query(query)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +72,7 @@ func LoadMigrations(ctx *providers.Context) ([]migrationRow, error) {
 func InsertMigration(ctx *providers.Context, name string) error {
 	//goland:noinspection ALL
 	query := "INSERT INTO " + ctx.Cfg.Db.Prefix + "_migrations (name) VALUES (?);"
-	_, err := ctx.Db.Exec(query, name)
+	_, err := ctx.Infra.Db.Exec(query, name)
 	if err != nil {
 		return err
 	}

@@ -10,7 +10,7 @@ name VARCHAR(255) NOT NULL UNIQUE,
 description VARCHAR(255) NULL DEFAULT NULL,
 permissions JSON NULL DEFAULT NULL
 );`
-	_, err := ctx.Db.Exec(query)
+	_, err := ctx.Infra.Db.Exec(query)
 	if err != nil {
 		return err
 	}
@@ -24,7 +24,7 @@ permissions JSON NULL DEFAULT NULL
 "roles_create",
 "roles_update",
 "roles_delete"]');`
-	_, err = ctx.Db.Exec(query)
+	_, err = ctx.Infra.Db.Exec(query)
 	if err != nil {
 		return err
 	}
@@ -34,7 +34,7 @@ permissions JSON NULL DEFAULT NULL
 
 func CreateRolesTable00010101000010Down(ctx *providers.Context) error {
 	query := `DROP TABLE ` + ctx.Cfg.Db.Prefix + `roles;`
-	_, err := ctx.Db.Exec(query)
+	_, err := ctx.Infra.Db.Exec(query)
 	if err != nil {
 		return err
 	}

@@ -9,7 +9,7 @@ import (
 
 func WithoutAuth(ctx *providers.Context) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if ctx.SS.ExistsUserId(sessions.Default(c)) {
+		if ctx.S.SS.ExistsUserId(sessions.Default(c)) {
 			c.Redirect(http.StatusFound, "/panel")
 			return
 		}

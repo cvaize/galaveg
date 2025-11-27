@@ -15,19 +15,19 @@ is_super_admin BOOLEAN NOT NULL DEFAULT FALSE,
 roles_ids JSON NULL DEFAULT NULL,
 avatar_id BIGINT UNSIGNED NULL DEFAULT NULL
 );`
-	_, err := ctx.Db.Exec(query)
+	_, err := ctx.Infra.Db.Exec(query)
 	if err != nil {
 		return err
 	}
 
 	query = `ALTER TABLE ` + ctx.Cfg.Db.Prefix + `users ADD INDEX avatar_idx (avatar_id);`
-	_, err = ctx.Db.Exec(query)
+	_, err = ctx.Infra.Db.Exec(query)
 	if err != nil {
 		return err
 	}
 
 	query = `INSERT INTO ` + ctx.Cfg.Db.Prefix + `users (id, email, is_super_admin, roles_ids) VALUES (1, 'admin@admin.example', true, '[1]');`
-	_, err = ctx.Db.Exec(query)
+	_, err = ctx.Infra.Db.Exec(query)
 	if err != nil {
 		return err
 	}
@@ -37,7 +37,7 @@ avatar_id BIGINT UNSIGNED NULL DEFAULT NULL
 
 func CreateUsersTable00010101000000Down(ctx *providers.Context) error {
 	query := `DROP TABLE ` + ctx.Cfg.Db.Prefix + `users;`
-	_, err := ctx.Db.Exec(query)
+	_, err := ctx.Infra.Db.Exec(query)
 	if err != nil {
 		return err
 	}

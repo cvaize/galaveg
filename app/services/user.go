@@ -2,15 +2,13 @@ package services
 
 import (
 	"galaveg/app/dto"
-	"galaveg/config"
 )
 
 type UserService struct {
-	cfg *config.Config
 }
 
-func NewUserService(cfg *config.Config) (*UserService, error) {
-	return &UserService{cfg}, nil
+func NewUserService() (*UserService, error) {
+	return &UserService{}, nil
 }
 
 func (s *UserService) FirstByEmail(email string) (*dto.User, error) {

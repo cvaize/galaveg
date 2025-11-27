@@ -10,15 +10,15 @@ import (
 )
 
 func NewResetPasswordConfirm(c *gin.Context, ctx *providers.Context, s sessions.Session) (*View, error) {
-	locale := ctx.LS.GetLocale(ctx.AS.Locale(c, nil))
-	locales := ctx.LS.GetLocales()
+	locale := ctx.S.LS.GetLocale(ctx.S.AS.Locale(c, nil))
+	locales := ctx.S.LS.GetLocales()
 
 	return &View{
 		Lang:     locale.Code,
-		DarkMode: ctx.AS.DarkMode(c),
-		Title:    ctx.TS.T(locale.Code, "page.reset_password_confirm.title"),
-		Heading:  ctx.TS.T(locale.Code, "page.reset_password_confirm.header"),
-		Alerts:   ctx.AlS.Flashes(s),
+		DarkMode: ctx.S.AS.DarkMode(c),
+		Title:    ctx.S.TS.T(locale.Code, "page.reset_password_confirm.title"),
+		Heading:  ctx.S.TS.T(locale.Code, "page.reset_password_confirm.header"),
+		Alerts:   ctx.S.AlS.Flashes(s),
 		Locale:   locale,
 		Locales:  locales,
 		Form: form.View{
@@ -41,7 +41,7 @@ func NewResetPasswordConfirm(c *gin.Context, ctx *providers.Context, s sessions.
 					InputClass: "admin-login__field__input",
 				},
 				{
-					Label:      ctx.TS.T(locale.Code, "page.reset_password_confirm.fields.email"),
+					Label:      ctx.S.TS.T(locale.Code, "page.reset_password_confirm.fields.email"),
 					Type:       "email",
 					Name:       "email",
 					Value:      "",
@@ -51,7 +51,7 @@ func NewResetPasswordConfirm(c *gin.Context, ctx *providers.Context, s sessions.
 					InputClass: "admin-login__field__input",
 				},
 				{
-					Label:      ctx.TS.T(locale.Code, "page.reset_password_confirm.fields.password"),
+					Label:      ctx.S.TS.T(locale.Code, "page.reset_password_confirm.fields.password"),
 					Type:       "password",
 					Name:       "password",
 					Value:      "",
@@ -60,7 +60,7 @@ func NewResetPasswordConfirm(c *gin.Context, ctx *providers.Context, s sessions.
 					InputClass: "admin-login__field__input",
 				},
 				{
-					Label:      ctx.TS.T(locale.Code, "page.reset_password_confirm.fields.confirm_password"),
+					Label:      ctx.S.TS.T(locale.Code, "page.reset_password_confirm.fields.confirm_password"),
 					Type:       "password",
 					Name:       "confirm_password",
 					Value:      "",
@@ -70,10 +70,10 @@ func NewResetPasswordConfirm(c *gin.Context, ctx *providers.Context, s sessions.
 				},
 			},
 			Submit: &btn.View{
-				Text: ctx.TS.T(locale.Code, "page.reset_password_confirm.submit"),
+				Text: ctx.S.TS.T(locale.Code, "page.reset_password_confirm.submit"),
 			},
 			Errors: []string{},
 		},
-		Back: &btn.View{Text: ctx.TS.T(locale.Code, "page.reset_password_confirm.back"), Href: "/reset-password"},
+		Back: &btn.View{Text: ctx.S.TS.T(locale.Code, "page.reset_password_confirm.back"), Href: "/reset-password"},
 	}, nil
 }

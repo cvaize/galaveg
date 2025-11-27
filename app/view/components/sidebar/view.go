@@ -16,8 +16,8 @@ type View struct {
 }
 
 func New(c *gin.Context, ctx *providers.Context, user *dto.User) (*View, error) {
-	locale := ctx.LS.GetLocale(ctx.AS.Locale(c, user))
-	locales := ctx.LS.GetLocales()
+	locale := ctx.S.LS.GetLocale(ctx.S.AS.Locale(c, user))
+	locales := ctx.S.LS.GetLocales()
 	path := c.FullPath()
 
 	isProfileActive := strings.HasPrefix(path, "/profile")
@@ -31,7 +31,7 @@ func New(c *gin.Context, ctx *providers.Context, user *dto.User) (*View, error) 
 		{
 			Name: "home",
 			Href: "/",
-			Text: ctx.TS.T(locale.Code, "layout.sidebar.home"),
+			Text: ctx.S.TS.T(locale.Code, "layout.sidebar.home"),
 		},
 		{
 			Name:     "profile_dropdown",
@@ -41,31 +41,31 @@ func New(c *gin.Context, ctx *providers.Context, user *dto.User) (*View, error) 
 				{
 					Name:     "profile",
 					Href:     "/profile",
-					Text:     ctx.TS.T(locale.Code, "layout.sidebar.profile"),
+					Text:     ctx.S.TS.T(locale.Code, "layout.sidebar.profile"),
 					IsActive: isProfileActive,
 				},
 				{
 					Name: "logout",
-					Text: ctx.TS.T(locale.Code, "layout.sidebar.logout"),
+					Text: ctx.S.TS.T(locale.Code, "layout.sidebar.logout"),
 				},
 			},
 			DropdownMaxHeight: "4rem",
 		},
 		{
 			Name:     "users_dropdown",
-			Text:     ctx.TS.T(locale.Code, "layout.sidebar.users.index"),
+			Text:     ctx.S.TS.T(locale.Code, "layout.sidebar.users.index"),
 			IsActive: isUsersActive && isRolesActive,
 			Dropdown: []menu_item.View{
 				{
 					Name:     "users",
 					Href:     "/users",
-					Text:     ctx.TS.T(locale.Code, "layout.sidebar.users.index"),
+					Text:     ctx.S.TS.T(locale.Code, "layout.sidebar.users.index"),
 					IsActive: isUsersActive,
 				},
 				{
 					Name:     "roles",
 					Href:     "/roles",
-					Text:     ctx.TS.T(locale.Code, "layout.sidebar.users.roles"),
+					Text:     ctx.S.TS.T(locale.Code, "layout.sidebar.users.roles"),
 					IsActive: isRolesActive,
 				},
 			},
@@ -74,7 +74,7 @@ func New(c *gin.Context, ctx *providers.Context, user *dto.User) (*View, error) 
 		{
 			Name:     "files",
 			Href:     "/files",
-			Text:     ctx.TS.T(locale.Code, "layout.sidebar.files"),
+			Text:     ctx.S.TS.T(locale.Code, "layout.sidebar.files"),
 			IsActive: strings.HasPrefix(path, "/files"),
 		},
 	}
@@ -98,7 +98,7 @@ func New(c *gin.Context, ctx *providers.Context, user *dto.User) (*View, error) 
 
 	return &View{
 		Brand: brand.View{
-			Text:  ctx.TS.T(locale.Code, "layout.brand"),
+			Text:  ctx.S.TS.T(locale.Code, "layout.brand"),
 			Href:  "/",
 			Image: "",
 		},
