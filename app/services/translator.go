@@ -142,14 +142,6 @@ func NewTranslatorServiceFromFiles(dir, locale string) (*TranslatorService, erro
 	return NewTranslatorService(locale, translates), nil
 }
 
-func MustTranslatorServiceFromFiles(dir, locale string) *TranslatorService {
-	s, e := NewTranslatorServiceFromFiles(dir, locale)
-	if e != nil {
-		panic(e)
-	}
-	return s
-}
-
 func (s *TranslatorService) SetupValidator() {
 	enLocale := en.New()
 	ruLocale := ru.New()

@@ -13,14 +13,6 @@ func NewErrorService() (*ErrorService, error) {
 	return &ErrorService{}, nil
 }
 
-func MustErrorService() *ErrorService {
-	s, e := NewErrorService()
-	if e != nil {
-		panic(e)
-	}
-	return s
-}
-
 func (s *ErrorService) E400(cause error, code, message string) *dto.Error {
 	logger.Infof("(400) %s: %v", code, cause)
 	return &dto.Error{Code: code, Message: message, Status: http.StatusBadRequest}

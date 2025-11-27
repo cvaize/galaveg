@@ -13,7 +13,7 @@ func (ctr *Controller) ResetPasswordConfirm(c *gin.Context) {
 		c.Redirect(http.StatusFound, "/panel")
 		return
 	}
-	d, err := auth.NewResetPasswordConfirm(c, ctr.ctx)
+	d, err := auth.NewResetPasswordConfirm(c, ctr.ctx, session)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return

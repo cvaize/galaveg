@@ -82,7 +82,7 @@ func (ctr *Controller) Register(c *gin.Context) {
 		viewData.ConfirmPasswordValue = reqData.ConfirmPassword
 	}
 
-	d, err := view.NewRegister(c, ctr.ctx, &viewData)
+	d, err := view.NewRegister(c, ctr.ctx, session, &viewData)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return

@@ -5,10 +5,11 @@ import (
 	"galaveg/app/view/components/field"
 	"galaveg/app/view/layouts/auth/form"
 	"galaveg/bootstrap/providers"
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
-func NewResetPasswordConfirm(c *gin.Context, ctx *providers.Context) (*View, error) {
+func NewResetPasswordConfirm(c *gin.Context, ctx *providers.Context, s sessions.Session) (*View, error) {
 	locale := ctx.LS.GetLocale(ctx.AS.Locale(c, nil))
 	locales := ctx.LS.GetLocales()
 
@@ -17,7 +18,7 @@ func NewResetPasswordConfirm(c *gin.Context, ctx *providers.Context) (*View, err
 		DarkMode: ctx.AS.DarkMode(c),
 		Title:    ctx.TS.T(locale.Code, "page.reset_password_confirm.title"),
 		Heading:  ctx.TS.T(locale.Code, "page.reset_password_confirm.header"),
-		Alerts:   ctx.AS.Alerts(c),
+		Alerts:   ctx.AlS.Flashes(s),
 		Locale:   locale,
 		Locales:  locales,
 		Form: form.View{

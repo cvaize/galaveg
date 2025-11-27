@@ -16,14 +16,6 @@ func NewTemplateService(cfg *config.Config, html *htmlLib.Template) (*TemplateSe
 	return &TemplateService{cfg, html}, nil
 }
 
-func MustTemplateService(cfg *config.Config, html *htmlLib.Template) *TemplateService {
-	s, e := NewTemplateService(cfg, html)
-	if e != nil {
-		panic(e)
-	}
-	return s
-}
-
 func (s *TemplateService) Html(template string, data any) (string, error) {
 	var tpl bytes.Buffer
 	if templateError := s.html.ExecuteTemplate(&tpl, template, data); templateError != nil {

@@ -5,6 +5,7 @@ import (
 	"galaveg/app/view/components/field"
 	"galaveg/app/view/layouts/auth/form"
 	"galaveg/bootstrap/providers"
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,7 +17,7 @@ type LoginViewData struct {
 	Errors         []string
 }
 
-func NewLogin(c *gin.Context, ctx *providers.Context, data *LoginViewData) (*View, error) {
+func NewLogin(c *gin.Context, ctx *providers.Context, s sessions.Session, data *LoginViewData) (*View, error) {
 	locale := ctx.LS.GetLocale(ctx.AS.Locale(c, nil))
 	locales := ctx.LS.GetLocales()
 
@@ -25,7 +26,7 @@ func NewLogin(c *gin.Context, ctx *providers.Context, data *LoginViewData) (*Vie
 		DarkMode: ctx.AS.DarkMode(c),
 		Title:    ctx.TS.T(locale.Code, "page.login.title"),
 		Heading:  ctx.TS.T(locale.Code, "page.login.header"),
-		Alerts:   ctx.AS.Alerts(c),
+		Alerts:   ctx.AlS.Flashes(s),
 		Locale:   locale,
 		Locales:  locales,
 		Form: form.View{

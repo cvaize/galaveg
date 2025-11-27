@@ -27,14 +27,6 @@ func NewLocaleService(locales []dto.Locale) (*LocaleService, error) {
 	}, nil
 }
 
-func MustLocaleService(locales []dto.Locale) *LocaleService {
-	s, e := NewLocaleService(locales)
-	if e != nil {
-		panic(e)
-	}
-	return s
-}
-
 func (s *LocaleService) Exists(code string) bool {
 	return slices.Contains(s.localesCodes, code)
 }

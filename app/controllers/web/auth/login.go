@@ -65,8 +65,9 @@ func (ctr *Controller) Login(c *gin.Context) {
 		viewData.PasswordValue = reqData.Password
 	}
 
-	d, err := view.NewLogin(c, ctr.ctx, &viewData)
+	d, err := view.NewLogin(c, ctr.ctx, session, &viewData)
 	if err != nil {
+		//goland:noinspection GoUnhandledErrorResult
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}

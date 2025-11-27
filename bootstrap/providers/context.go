@@ -5,6 +5,7 @@ import (
 	"galaveg/app/dto"
 	"galaveg/app/services"
 	"galaveg/config"
+	"galaveg/utils"
 	"galaveg/utils/logger"
 	"github.com/wneessen/go-mail"
 	"html/template"
@@ -42,26 +43,26 @@ func (ctx *Context) Close() {
 }
 
 func MustContext(cfg *config.Config) *Context {
-	html := MustHtmlEngine(cfg)
-	db := MustDB(cfg)
-	mc := MustMail(cfg)
+	html := utils.Must(NewHtmlEngine(cfg))
+	db := utils.Must(NewDB(cfg))
+	mc := utils.Must(NewMail(cfg))
 
-	es := services.MustErrorService()
-	tpl := services.MustTemplateService(cfg, html)
+	es := utils.Must(services.NewErrorService())
+	tpl := utils.Must(services.NewTemplateService(cfg, html))
 	// TODO: Добавить в конфигурацию "resources/translates/" и локали
-	ts := services.MustTranslatorServiceFromFiles(cfg.GetFolder("resources/translates/"), cfg.App.Locale)
-	ls := services.MustLocaleService([]dto.Locale{
+	ts := utils.Must(services.NewTranslatorServiceFromFiles(cfg.GetFolder("resources/translates/"), cfg.App.Locale))
+	ls := utils.Must(services.NewLocaleService([]dto.Locale{
 		{Code: "en", ShortName: "en", FullName: "English"},
 		{Code: "ru", ShortName: "ru", FullName: "Русский"},
-	})
-	rs := services.MustRoleService()
-	as := services.MustAppService(cfg, ls, rs, ts)
-	ms := services.MustMailService(cfg, mc)
-	us := services.MustUserService(cfg)
-	hs := services.MustHashService(cfg)
-	ss := services.MustSessionService(cfg, es)
-	als := services.MustAlertService(es)
-	auth := services.MustAuthService(cfg, us, ts, hs, es)
+	}))
+	rs := utils.Must(services.NewRoleService())
+	as := utils.Must(services.NewAppService(cfg, ls, rs, ts))
+	ms := utils.Must(services.NewMailService(cfg, mc))
+	us := utils.Must(services.NewUserService(cfg))
+	hs := utils.Must(services.NewHashService(cfg))
+	ss := utils.Must(services.NewSessionService(cfg, es))
+	als := utils.Must(services.NewAlertService(es))
+	auth := utils.Must(services.NewAuthService(cfg, us, ts, hs, es))
 	return &Context{
 		Cfg:  cfg,
 		Html: html,

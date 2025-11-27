@@ -1,8 +1,15 @@
 package dto
 
+import "encoding/gob"
+
 type Alert struct {
 	Style   string
 	Content string
+}
+
+func init() {
+	gob.Register(Alert{})
+	gob.Register([]Alert{})
 }
 
 func NewInfoAlert(content string) Alert {

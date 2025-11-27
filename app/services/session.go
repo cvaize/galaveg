@@ -16,14 +16,6 @@ func NewSessionService(cfg *config.Config, es *ErrorService) (*SessionService, e
 	return &SessionService{cfg, es}, nil
 }
 
-func MustSessionService(cfg *config.Config, es *ErrorService) *SessionService {
-	s, e := NewSessionService(cfg, es)
-	if e != nil {
-		panic(e)
-	}
-	return s
-}
-
 func (s *SessionService) ExistsUserId(session sessions.Session) bool {
 	user := session.Get(s.cfg.Session.StoreUserKey)
 	return user != nil

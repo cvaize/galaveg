@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func MustHtmlEngine(cfg *config.Config) *template.Template {
+func NewHtmlEngine(cfg *config.Config) (*template.Template, error) {
 	funcMap := template.FuncMap{}
 
 	funcMap["eq"] = func(a, b string) bool { return a == b }
@@ -32,7 +32,10 @@ func MustHtmlEngine(cfg *config.Config) *template.Template {
 		return strings.HasPrefix(s, prefix)
 	}
 
-	files := path.MustCollectFilepathBySuffix(cfg.GetFolder(cfg.Templates.Html.Path), ".gohtml")
+	files, err := path.CollectFilepathBySuffix(cfg.GetFolder(cfg.Templates.Html.Path), ".gohtml")
+	if err != nil {
+		return nil, err
+	}
 
-	return template.Must(template.New("").Delims("{{", "}}").Funcs(funcMap).ParseFiles(files...))
+	return template.New("").Delims("{{", "}}").Funcs(funcMap).ParseFiles(files...)
 }

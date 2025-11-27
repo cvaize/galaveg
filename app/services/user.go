@@ -13,14 +13,6 @@ func NewUserService(cfg *config.Config) (*UserService, error) {
 	return &UserService{cfg}, nil
 }
 
-func MustUserService(cfg *config.Config) *UserService {
-	s, e := NewUserService(cfg)
-	if e != nil {
-		panic(e)
-	}
-	return s
-}
-
 func (s *UserService) FirstByEmail(email string) (*dto.User, error) {
 	return nil, nil
 }

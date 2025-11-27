@@ -56,11 +56,3 @@ func CollectFilepathBySuffix(dir, suffix string) ([]string, error) {
 	})
 	return paths, err
 }
-
-func MustCollectFilepathBySuffix(dir, suffix string) []string {
-	paths, err := CollectFilepathBySuffix(dir, suffix)
-	if err != nil {
-		panic(err)
-	}
-	return paths
-}

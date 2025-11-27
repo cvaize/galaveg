@@ -20,14 +20,6 @@ func NewMailService(c *config.Config, client *libmail.Client) (*MailService, err
 	return &MailService{c, client}, nil
 }
 
-func MustMailService(c *config.Config, client *libmail.Client) *MailService {
-	s, e := NewMailService(c, client)
-	if e != nil {
-		panic(e)
-	}
-	return s
-}
-
 // SyncSendEmail Synchronous sending of E-mail messages
 func (s *MailService) SyncSendEmail(message *dto.EmailMessage) error {
 	m := libmail.NewMsg()

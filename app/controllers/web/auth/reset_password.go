@@ -70,11 +70,14 @@ func (ctr *Controller) ResetPassword(c *gin.Context) {
 				alert := dto.NewSuccessAlert(ctr.ctx.TS.T(locale, "alert.reset_password.success"))
 				//goland:noinspection GoUnhandledErrorResult
 				ctr.ctx.AlS.AddFlash(session, []dto.Alert{alert})
+
+				c.Redirect(http.StatusFound, "/login")
+				return
 			}
 		}
 		viewData.EmailValue = reqData.Email
 	}
-	d, err := view.NewResetPassword(c, ctr.ctx, &viewData)
+	d, err := view.NewResetPassword(c, ctr.ctx, session, &viewData)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return

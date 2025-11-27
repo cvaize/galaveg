@@ -16,30 +16,25 @@ func NewAlertService(es *ErrorService) (*AlertService, error) {
 	return &AlertService{es}, nil
 }
 
-func MustAlertService(es *ErrorService) *AlertService {
-	s, e := NewAlertService(es)
-	if e != nil {
-		panic(e)
-	}
-	return s
-}
-
-func (s *AlertService) Flashes(session sessions.Session) ([]dto.Alert, *dto.Error) {
+//goland:noinspection GoUnhandledErrorResult
+func (s *AlertService) Flashes(session sessions.Session) []dto.Alert {
 	var alerts []dto.Alert
 	flashes := session.Flashes(alertsKey)
 	if e := session.Save(); e != nil {
-		return alerts, s.es.E500(e, "AlertService.Flashes.FailedToSaveSession", "")
+		s.es.E500(e, "AlertService.Flashes.FailedToSaveSession", "")
+		return alerts
 	}
 
 	for _, flash := range flashes {
 		alert, ok := flash.(dto.Alert)
 		if !ok {
-			return alerts, s.es.E500(errors.New(""), "AlertService.Flashes.InvalidDeserializeAlert", "")
+			s.es.E500(errors.New(""), "AlertService.Flashes.InvalidDeserializeAlert", "")
+			return alerts
 		}
 		alerts = append(alerts, alert)
 	}
 
-	return alerts, nil
+	return alerts
 }
 
 func (s *AlertService) AddFlash(session sessions.Session, alerts []dto.Alert) *dto.Error {

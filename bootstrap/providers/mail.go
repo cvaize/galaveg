@@ -21,11 +21,3 @@ func NewMail(cfg *config.Config) (*mail.Client, error) {
 	}
 	return client, nil
 }
-
-func MustMail(cfg *config.Config) *mail.Client {
-	client, e := NewMail(cfg)
-	if e != nil {
-		panic(e)
-	}
-	return client
-}

@@ -7,13 +7,14 @@ import (
 	"galaveg/app/controllers/web/panel/users"
 	mWeb "galaveg/app/middlewares/web"
 	"galaveg/bootstrap/providers"
+	"galaveg/utils"
 	"github.com/gin-gonic/gin"
 
 	"github.com/gin-contrib/sessions"
 )
 
 func webRegister(router *gin.Engine, ctx *providers.Context) {
-	store := providers.MustSessionStore(ctx.Cfg)
+	store := utils.Must(providers.NewSessionStore(ctx.Cfg))
 
 	r := router.Group("/")
 	r.Use(sessions.Sessions(ctx.Cfg.Session.CookieKey, store))

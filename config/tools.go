@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"galaveg/utils"
 	"galaveg/utils/logger"
 	"galaveg/utils/path"
 	"github.com/joho/godotenv"
@@ -49,16 +50,12 @@ func New(envFilename string) (*Config, error) {
 	return &c, nil
 }
 
-func Must(envFilename string) *Config {
-	c, e := New(envFilename)
-	if e != nil {
-		panic(e)
-	}
-	return c
+func Default() (*Config, error) {
+	return New(".env")
 }
 
 func MustDefault() *Config {
-	return Must(".env")
+	return utils.Must(Default())
 }
 
 func strDefault(v string, d string) string {

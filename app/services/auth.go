@@ -18,14 +18,6 @@ func NewAuthService(c *config.Config, us *UserService, ts *TranslatorService, hs
 	return &AuthService{c, us, ts, hs, es}, nil
 }
 
-func MustAuthService(c *config.Config, us *UserService, ts *TranslatorService, hs *HashService, es *ErrorService) *AuthService {
-	s, e := NewAuthService(c, us, ts, hs, es)
-	if e != nil {
-		panic(e)
-	}
-	return s
-}
-
 func (s *AuthService) Login(email, password string) (dto.UserID, *dto.Error) {
 	user, e := s.us.FirstByEmail(email)
 	if e != nil {

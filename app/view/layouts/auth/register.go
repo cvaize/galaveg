@@ -5,6 +5,7 @@ import (
 	"galaveg/app/view/components/field"
 	"galaveg/app/view/layouts/auth/form"
 	"galaveg/bootstrap/providers"
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,7 +19,7 @@ type RegisterViewData struct {
 	Errors                []string
 }
 
-func NewRegister(c *gin.Context, ctx *providers.Context, data *RegisterViewData) (*View, error) {
+func NewRegister(c *gin.Context, ctx *providers.Context, s sessions.Session, data *RegisterViewData) (*View, error) {
 	locale := ctx.LS.GetLocale(ctx.AS.Locale(c, nil))
 	locales := ctx.LS.GetLocales()
 
@@ -27,7 +28,7 @@ func NewRegister(c *gin.Context, ctx *providers.Context, data *RegisterViewData)
 		DarkMode: ctx.AS.DarkMode(c),
 		Title:    ctx.TS.T(locale.Code, "page.register.title"),
 		Heading:  ctx.TS.T(locale.Code, "page.register.header"),
-		Alerts:   ctx.AS.Alerts(c),
+		Alerts:   ctx.AlS.Flashes(s),
 		Locale:   locale,
 		Locales:  locales,
 		Form: form.View{

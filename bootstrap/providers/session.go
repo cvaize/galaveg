@@ -17,11 +17,3 @@ func NewSessionStore(cfg *config.Config) (sessions.Store, error) {
 	key := cfg.App.Key
 	return redis.NewStore(size, "tcp", url, username, password, []byte(key))
 }
-
-func MustSessionStore(cfg *config.Config) sessions.Store {
-	c, e := NewSessionStore(cfg)
-	if e != nil {
-		panic(e)
-	}
-	return c
-}
