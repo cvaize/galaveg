@@ -10,7 +10,7 @@ type Service struct {
 	mailService *mail.Service
 }
 
-func NewService(mailService *mail.Service) (*Service, error) {
+func NewService(mailService *mail.Service) (*Service, *errors.Error) {
 	return &Service{mailService}, nil
 }
 

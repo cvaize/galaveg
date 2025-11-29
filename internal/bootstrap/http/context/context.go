@@ -7,6 +7,7 @@ import (
 	"galaveg/internal/infrastructures/mail"
 	"galaveg/internal/infrastructures/session"
 	"galaveg/internal/modules/app"
+	"galaveg/internal/modules/errors"
 	"galaveg/internal/modules/hash"
 	"galaveg/internal/modules/locales"
 	mailModule "galaveg/internal/modules/mail"
@@ -55,18 +56,18 @@ func Must(cfg *config.Config) *Context {
 	ctx.Infra.Mail = utils.Must(mail.New(cfg))
 	ctx.Infra.SessionStore = utils.Must(session.NewStore(cfg))
 
-	ctx.Services.App = utils.Must(app.NewService(cfg))
-	ctx.Services.Users = utils.Must(users.NewService())
+	ctx.Services.App = errors.Must(app.NewService(cfg))
+	ctx.Services.Users = errors.Must(users.NewService())
 	// TODO: Добавить в конфигурацию "resources/translates/" и локали
-	ctx.Services.Translator = utils.Must(translator.NewServiceFromFiles(cfg.GetFolder("resources/translates/"), cfg.App.Locale))
-	ctx.Services.Template = utils.Must(template.NewService(ctx.Infra.Html))
-	ctx.Services.Roles = utils.Must(roles.NewService())
-	ctx.Services.Mail = utils.Must(mailModule.NewService(ctx.Infra.Mail))
-	ctx.Services.Notifications = utils.Must(notifications.NewService(ctx.Services.Mail))
-	ctx.Services.Locales = utils.Must(locales.NewService(cfg, []locales.Locale{
+	ctx.Services.Translator = errors.Must(translator.NewServiceFromFiles(cfg.GetFolder("resources/translates/"), cfg.App.Locale))
+	ctx.Services.Template = errors.Must(template.NewService(ctx.Infra.Html))
+	ctx.Services.Roles = errors.Must(roles.NewService())
+	ctx.Services.Mail = errors.Must(mailModule.NewService(ctx.Infra.Mail))
+	ctx.Services.Notifications = errors.Must(notifications.NewService(ctx.Services.Mail))
+	ctx.Services.Locales = errors.Must(locales.NewService(cfg, []locales.Locale{
 		{Code: "en", ShortName: "en", FullName: "English"},
 		{Code: "ru", ShortName: "ru", FullName: "Русский"},
 	}))
-	ctx.Services.Hash = utils.Must(hash.NewService())
+	ctx.Services.Hash = errors.Must(hash.NewService())
 	return ctx
 }

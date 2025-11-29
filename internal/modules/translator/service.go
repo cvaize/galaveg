@@ -26,7 +26,7 @@ type Service struct {
 	u          *ut.UniversalTranslator
 }
 
-func NewService(locale string, translates map[string]map[string]string) *Service {
+func NewService(locale string, translates map[string]map[string]string) (*Service, *errorsModule.Error) {
 	enLocale := en.New()
 	ruLocale := ru.New()
 
@@ -39,10 +39,10 @@ func NewService(locale string, translates map[string]map[string]string) *Service
 		transRU, _ := u.GetTranslator("ru")
 		_ = ruTranslations.RegisterDefaultTranslations(v, transRU)
 	}
-	return &Service{locale, translates, u}
+	return &Service{locale, translates, u}, nil
 }
 
-func NewServiceFromFiles(dir, locale string) (*Service, error) {
+func NewServiceFromFiles(dir, locale string) (*Service, *errorsModule.Error) {
 	translates := map[string]map[string]string{}
 
 	dir = filepath.Clean(dir)
@@ -150,7 +150,7 @@ func NewServiceFromFiles(dir, locale string) (*Service, error) {
 		}
 	}
 
-	return NewService(locale, translates), nil
+	return NewService(locale, translates)
 }
 
 func (s *Service) GetLocale() string {

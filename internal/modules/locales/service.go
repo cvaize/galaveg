@@ -2,6 +2,7 @@ package locales
 
 import (
 	"galaveg/config"
+	"galaveg/internal/modules/errors"
 	"galaveg/internal/modules/users"
 	"github.com/gin-gonic/gin"
 	"slices"
@@ -17,7 +18,7 @@ type Service struct {
 	locales      []Locale
 }
 
-func NewService(cfg *config.Config, locales []Locale) (*Service, error) {
+func NewService(cfg *config.Config, locales []Locale) (*Service, *errors.Error) {
 	localesMap := map[string]Locale{}
 	var localesCodes []string
 

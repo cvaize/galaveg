@@ -2,6 +2,7 @@ package app
 
 import (
 	"galaveg/config"
+	"galaveg/internal/modules/errors"
 	"github.com/gin-gonic/gin"
 	"net/url"
 )
@@ -11,10 +12,10 @@ type Service struct {
 	url *url.URL
 }
 
-func NewService(cfg *config.Config) (*Service, error) {
+func NewService(cfg *config.Config) (*Service, *errors.Error) {
 	u, err := url.Parse(cfg.Http.Url)
 	if err != nil {
-		return nil, err
+		return nil, errors.E500(err, "app.Service.url.Parse", "")
 	}
 	return &Service{cfg, u}, nil
 }

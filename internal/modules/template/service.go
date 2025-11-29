@@ -10,7 +10,7 @@ type Service struct {
 	html *htmlLib.Template
 }
 
-func NewService(html *htmlLib.Template) (*Service, error) {
+func NewService(html *htmlLib.Template) (*Service, *errors.Error) {
 	return &Service{html}, nil
 }
 
