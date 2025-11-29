@@ -2,9 +2,8 @@ package config
 
 import (
 	"fmt"
-	"galaveg/utils"
-	"galaveg/utils/logger"
-	"galaveg/utils/path"
+	"galaveg/pkg/logger"
+	"galaveg/pkg/utils"
 	"github.com/joho/godotenv"
 	"github.com/samber/lo"
 	"github.com/spf13/viper"
@@ -18,14 +17,14 @@ func New(envFilename string) (*Config, error) {
 	v := viper.New()
 	c := Config{}
 
-	envPath := filepath.Join(path.FindModuleRoot(path.Cwd()), envFilename)
+	envPath := filepath.Join(utils.FindModuleRoot(utils.Cwd()), envFilename)
 	if err := godotenv.Load(envPath); err != nil {
 		if !os.IsNotExist(err) {
 			log.Printf("Warning: .env file not loaded: %v", err)
 		}
 	}
 
-	configPath := filepath.Join(path.FindModuleRoot(path.Cwd()), "config", "default.yaml")
+	configPath := filepath.Join(utils.FindModuleRoot(utils.Cwd()), "config", "default.yaml")
 
 	v.SetConfigFile(configPath)
 	v.SetConfigType("yaml")

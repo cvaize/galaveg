@@ -1,12 +1,16 @@
 APP:
   KEY: "123"
-  URL: "http://localhost/"
   DEBUG: false
   TIMEZONE: "UTC"
   LOG_LEVEL: "info"
   LOCALE: "en"
   LOCALE_COOKIE_KEY: "locale"
   DARK_MODE_COOKIE_KEY: "dark_mode"
+HTTP:
+  URL: "http://localhost/"
+  HOST: "localhost"
+  PORT: 80
+  SCHEMA: "http"
 DB:
   HOST: "localhost"
   PORT: 3306
@@ -21,10 +25,6 @@ DB:
   CONN_MAX_LIFETIME: 3600000000000
   # Example: int64(5*time.Minute)
   CONN_MAX_IDLE_TIME: 300000000000
-HTTP:
-  HOST: "localhost"
-  PORT: 80
-  SCHEMA: "http"
 MAIL:
   HOST: "localhost"
   PORT: 8025

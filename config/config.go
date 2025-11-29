@@ -1,12 +1,11 @@
 package config
 
-import "galaveg/utils/path"
+import "galaveg/pkg/utils"
 
 type Config struct {
 	App struct {
 		Key               string   `mapstructure:"KEY"`
 		PreviousKeys      []string `mapstructure:"PREVIOUS_KEYS"`
-		Url               string   `mapstructure:"URL"`
 		Debug             bool     `mapstructure:"DEBUG"`
 		Timezone          string   `mapstructure:"TIMEZONE"`
 		LogLevel          string   `mapstructure:"LOG_LEVEL"` // Example: panic, fatal, error, warn, info, debug, trace
@@ -35,6 +34,7 @@ type Config struct {
 		Port         int      `mapstructure:"PORT"`
 		Schema       string   `mapstructure:"SCHEMA"`        // Example: https, http
 		AllowedHosts []string `mapstructure:"ALLOWED_HOSTS"` // Example: localhost,0.0.0.0,example.com
+		Url          string   `mapstructure:"URL"`
 	} `mapstructure:"HTTP"`
 	Mail struct {
 		Host        string `mapstructure:"HOST"`
@@ -62,7 +62,7 @@ type Config struct {
 }
 
 func beforeReturn(c *Config) {
-	c.App.Folder = strDefault(c.App.Folder, path.FindModuleRoot(path.Cwd()))
+	c.App.Folder = strDefault(c.App.Folder, utils.FindModuleRoot(utils.Cwd()))
 	c.App.PreviousKeys = strSliceFilter(c.App.PreviousKeys)
 	c.Http.AllowedHosts = strSliceFilter(c.Http.AllowedHosts)
 }

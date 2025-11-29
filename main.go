@@ -1,11 +1,7 @@
 package main
 
-import (
-	"galaveg/cmd"
-	"galaveg/utils/logger"
-)
+import "galaveg/cmd"
 
 func main() {
-	logger.SetLogLevel("info")
 	cmd.Execute()
 }
