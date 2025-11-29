@@ -42,7 +42,7 @@ func NewService(locale string, translates map[string]map[string]string) *Service
 	return &Service{locale, translates, u}
 }
 
-func NewServiceFromFiles(dir, locale string) (*Service, *errorsModule.Error) {
+func NewServiceFromFiles(dir, locale string) (*Service, error) {
 	translates := map[string]map[string]string{}
 
 	dir = filepath.Clean(dir)

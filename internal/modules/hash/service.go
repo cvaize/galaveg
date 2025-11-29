@@ -5,7 +5,7 @@ import "galaveg/internal/modules/errors"
 type Service struct {
 }
 
-func NewService() (*Service, *errors.Error) {
+func NewService() (*Service, error) {
 	return &Service{}, nil
 }
 
