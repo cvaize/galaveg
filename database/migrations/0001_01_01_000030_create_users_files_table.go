@@ -1,8 +1,8 @@
 package migrations
 
-import "galaveg/bootstrap/providers"
+import "galaveg/internal/bootstrap/http/context"
 
-func CreateUsersFilesTable00010101000030Up(ctx *providers.Context) error {
+func CreateUsersFilesTable00010101000030Up(ctx *context.Context) error {
 	query := `CREATE TABLE ` + ctx.Cfg.Db.Prefix + `users_files (
    id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
    file_id BIGINT UNSIGNED NOT NULL COMMENT 'Relation to the files table.',
@@ -56,7 +56,7 @@ func CreateUsersFilesTable00010101000030Up(ctx *providers.Context) error {
 	return nil
 }
 
-func CreateUsersFilesTable00010101000030Down(ctx *providers.Context) error {
+func CreateUsersFilesTable00010101000030Down(ctx *context.Context) error {
 	query := `DROP TABLE ` + ctx.Cfg.Db.Prefix + `users_files;`
 	_, err := ctx.Infra.Db.Exec(query)
 	if err != nil {

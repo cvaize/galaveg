@@ -1,8 +1,8 @@
 package migrations
 
-import "galaveg/bootstrap/providers"
+import "galaveg/internal/bootstrap/http/context"
 
-func CreateUsersTable00010101000000Up(ctx *providers.Context) error {
+func CreateUsersTable00010101000000Up(ctx *context.Context) error {
 	query := `CREATE TABLE ` + ctx.Cfg.Db.Prefix + `users (
 id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
 email VARCHAR(255) NOT NULL UNIQUE,
@@ -35,7 +35,7 @@ avatar_id BIGINT UNSIGNED NULL DEFAULT NULL
 	return nil
 }
 
-func CreateUsersTable00010101000000Down(ctx *providers.Context) error {
+func CreateUsersTable00010101000000Down(ctx *context.Context) error {
 	query := `DROP TABLE ` + ctx.Cfg.Db.Prefix + `users;`
 	_, err := ctx.Infra.Db.Exec(query)
 	if err != nil {

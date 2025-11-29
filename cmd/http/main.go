@@ -1,6 +1,6 @@
 package main
 
-import "galaveg/bootstrap/http"
+import "galaveg/internal/bootstrap/http"
 
 func main() {
 	http.Run()

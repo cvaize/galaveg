@@ -2,10 +2,10 @@ package cmd
 
 import (
 	"fmt"
-	"galaveg/bootstrap/providers"
 	"galaveg/config"
 	"galaveg/database/migrations"
-	"galaveg/utils/logger"
+	"galaveg/internal/bootstrap/http/context"
+	"galaveg/pkg/logger"
 	"github.com/spf13/cobra"
 )
 
@@ -16,7 +16,7 @@ var migrateCmd = &cobra.Command{
 	Long:  `Start database migrations.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cfg := config.MustDefault()
-		ctx := providers.MustContext(cfg)
+		ctx := context.Must(cfg)
 		err := UpMigration(ctx)
 		logger.Infof("The migration was successful!")
 		return err
@@ -27,7 +27,7 @@ func init() {
 	rootCmd.AddCommand(migrateCmd)
 }
 
-func createMigrationsTable(ctx *providers.Context) error {
+func createMigrationsTable(ctx *context.Context) error {
 	//goland:noinspection ALL
 	query := `CREATE TABLE IF NOT EXISTS ` + ctx.Cfg.Db.Prefix + `_migrations (
 		id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
@@ -46,7 +46,7 @@ type migrationRow struct {
 	name string
 }
 
-func LoadMigrations(ctx *providers.Context) ([]migrationRow, error) {
+func LoadMigrations(ctx *context.Context) ([]migrationRow, error) {
 	//goland:noinspection ALL
 	query := "SELECT * FROM " + ctx.Cfg.Db.Prefix + "_migrations ORDER BY id ASC;"
 	rows, err := ctx.Infra.Db.Query(query)
@@ -69,7 +69,7 @@ func LoadMigrations(ctx *providers.Context) ([]migrationRow, error) {
 	return migrationRows, err
 }
 
-func InsertMigration(ctx *providers.Context, name string) error {
+func InsertMigration(ctx *context.Context, name string) error {
 	//goland:noinspection ALL
 	query := "INSERT INTO " + ctx.Cfg.Db.Prefix + "_migrations (name) VALUES (?);"
 	_, err := ctx.Infra.Db.Exec(query, name)
@@ -80,7 +80,7 @@ func InsertMigration(ctx *providers.Context, name string) error {
 	return nil
 }
 
-func UpMigration(ctx *providers.Context) error {
+func UpMigration(ctx *context.Context) error {
 	err := createMigrationsTable(ctx)
 	if err != nil {
 		return err

@@ -1,6 +1,6 @@
 package main
 
-import "galaveg/bootstrap/chat"
+import "galaveg/internal/bootstrap/chat"
 
 func main() {
 	chat.Run()

@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"galaveg/bootstrap"
+	"galaveg/internal/bootstrap/http"
 	"github.com/spf13/cobra"
 )
 
@@ -11,7 +11,7 @@ var serveCmd = &cobra.Command{
 	Short: "Start the http server of the application.",
 	Long:  `Start the http server of the application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		bootstrap.Http()
+		http.Run()
 	},
 }
 

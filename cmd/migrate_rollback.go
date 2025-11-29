@@ -2,10 +2,10 @@ package cmd
 
 import (
 	"fmt"
-	"galaveg/bootstrap/providers"
 	"galaveg/config"
 	"galaveg/database/migrations"
-	"galaveg/utils/logger"
+	"galaveg/internal/bootstrap/http/context"
+	"galaveg/pkg/logger"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 )
@@ -17,7 +17,7 @@ var migrateRollbackCmd = &cobra.Command{
 	Long:  `Rollback the database migration.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cfg := config.MustDefault()
-		ctx := providers.MustContext(cfg)
+		ctx := context.Must(cfg)
 		err := RollbackMigration(ctx)
 		logger.Infof("The rollback migration was successful!")
 		return err
@@ -28,7 +28,7 @@ func init() {
 	rootCmd.AddCommand(migrateRollbackCmd)
 }
 
-func DeleteMigration(ctx *providers.Context, name string) error {
+func DeleteMigration(ctx *context.Context, name string) error {
 	//goland:noinspection ALL
 	query := "DELETE FROM " + ctx.Cfg.Db.Prefix + "_migrations WHERE name=?"
 	_, err := ctx.Infra.Db.Exec(query, name)
@@ -39,7 +39,7 @@ func DeleteMigration(ctx *providers.Context, name string) error {
 	return nil
 }
 
-func RollbackMigration(ctx *providers.Context) error {
+func RollbackMigration(ctx *context.Context) error {
 	err := createMigrationsTable(ctx)
 	if err != nil {
 		return err

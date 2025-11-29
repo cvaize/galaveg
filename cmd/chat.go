@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"galaveg/bootstrap"
+	"galaveg/internal/bootstrap/chat"
 	"github.com/spf13/cobra"
 )
 
@@ -11,7 +11,7 @@ var chatCmd = &cobra.Command{
 	Short: "Start socket.io the chat server.",
 	Long:  `Start socket.io the chat server.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		bootstrap.Chat()
+		chat.Run()
 	},
 }
 

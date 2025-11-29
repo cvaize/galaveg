@@ -1,11 +1,11 @@
 package migrations
 
-import "galaveg/bootstrap/providers"
+import "galaveg/internal/bootstrap/http/context"
 
 type Migration struct {
 	Uuid string
-	Up   func(ctx *providers.Context) error
-	Down func(ctx *providers.Context) error
+	Up   func(ctx *context.Context) error
+	Down func(ctx *context.Context) error
 }
 
 func GetMigrations() []Migration {

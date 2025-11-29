@@ -1,8 +1,8 @@
 package migrations
 
-import "galaveg/bootstrap/providers"
+import "galaveg/internal/bootstrap/http/context"
 
-func CreateRolesTable00010101000010Up(ctx *providers.Context) error {
+func CreateRolesTable00010101000010Up(ctx *context.Context) error {
 	query := `CREATE TABLE ` + ctx.Cfg.Db.Prefix + `roles (
 id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
 code VARCHAR(255) NOT NULL UNIQUE,
@@ -32,7 +32,7 @@ permissions JSON NULL DEFAULT NULL
 	return nil
 }
 
-func CreateRolesTable00010101000010Down(ctx *providers.Context) error {
+func CreateRolesTable00010101000010Down(ctx *context.Context) error {
 	query := `DROP TABLE ` + ctx.Cfg.Db.Prefix + `roles;`
 	_, err := ctx.Infra.Db.Exec(query)
 	if err != nil {

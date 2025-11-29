@@ -1,8 +1,8 @@
 package migrations
 
-import "galaveg/bootstrap/providers"
+import "galaveg/internal/bootstrap/http/context"
 
-func CreateFilesTable00010101000020Up(ctx *providers.Context) error {
+func CreateFilesTable00010101000020Up(ctx *context.Context) error {
 	query := `CREATE TABLE ` + ctx.Cfg.Db.Prefix + `files (
    id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
    filename VARCHAR(2048) CHARACTER SET ascii COLLATE ascii_bin NOT NULL COMMENT 'The file name is made up of the hash, size, and extensions obtained when uploading the file, by mask: [hash]-[size].[extensions].',
@@ -51,7 +51,7 @@ func CreateFilesTable00010101000020Up(ctx *providers.Context) error {
 	return nil
 }
 
-func CreateFilesTable00010101000020Down(ctx *providers.Context) error {
+func CreateFilesTable00010101000020Down(ctx *context.Context) error {
 	query := `DROP TABLE ` + ctx.Cfg.Db.Prefix + `files;`
 	_, err := ctx.Infra.Db.Exec(query)
 	if err != nil {

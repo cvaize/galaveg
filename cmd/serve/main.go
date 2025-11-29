@@ -1,6 +1,6 @@
 package main
 
-import "galaveg/bootstrap/serve"
+import "galaveg/internal/bootstrap/serve"
 
 func main() {
 	serve.Run()

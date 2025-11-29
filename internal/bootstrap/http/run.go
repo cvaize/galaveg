@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"galaveg/config"
 	"galaveg/internal/bootstrap/http/context"
-	httpHandler "galaveg/internal/bootstrap/http/handlers/http"
+	"galaveg/internal/bootstrap/http/handlers/http/routes"
 	"galaveg/pkg/logger"
 	"github.com/gin-gonic/gin"
 )
@@ -32,8 +32,7 @@ func Run() {
 	router.Use(gin.Recovery())
 	//router.Use(middleware.CORSMiddleware())
 
-	handler := httpHandler.New(ctx)
-	handler.Router(router)
+	routes.Router(router, ctx)
 
 	protocol := cfg.Http.Schema
 	host := cfg.Http.Host
