@@ -1,8 +1,8 @@
 package form
 
 import (
-	"galaveg/app/view/components/btn"
-	"galaveg/app/view/components/field"
+	"galaveg/internal/modules/view/components/btn"
+	"galaveg/internal/modules/view/components/field"
 )
 
 type View struct {

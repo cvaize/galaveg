@@ -1,10 +1,13 @@
 package auth
 
 import (
-	"galaveg/app/view/components/btn"
-	"galaveg/app/view/components/field"
-	"galaveg/app/view/layouts/auth/form"
-	"galaveg/bootstrap/providers"
+	"galaveg/internal/modules/alerts"
+	"galaveg/internal/modules/app"
+	localesModule "galaveg/internal/modules/locales"
+	"galaveg/internal/modules/translator"
+	"galaveg/internal/modules/view/components/btn"
+	"galaveg/internal/modules/view/components/field"
+	"galaveg/internal/modules/view/layouts/auth/form"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
@@ -15,16 +18,16 @@ type ResetPasswordViewData struct {
 	Errors      []string
 }
 
-func NewResetPassword(c *gin.Context, ctx *providers.Context, s sessions.Session, data *ResetPasswordViewData) (*View, error) {
-	locale := ctx.S.LS.GetLocale(ctx.S.AS.Locale(c, nil))
-	locales := ctx.S.LS.GetLocales()
+func NewResetPassword(c *gin.Context, as *app.Service, ls *localesModule.Service, ts *translator.Service, s sessions.Session, data *ResetPasswordViewData) (*View, error) {
+	locale := ls.GetLocale(ls.Locale(c, nil))
+	locales := ls.GetLocales()
 
 	return &View{
 		Lang:     locale.Code,
-		DarkMode: ctx.S.AS.DarkMode(c),
-		Title:    ctx.S.TS.T(locale.Code, "page.reset_password.title"),
-		Heading:  ctx.S.TS.T(locale.Code, "page.reset_password.header"),
-		Alerts:   ctx.S.AlS.Flashes(s),
+		DarkMode: as.DarkMode(c),
+		Title:    ts.T(locale.Code, "page.reset_password.title"),
+		Heading:  ts.T(locale.Code, "page.reset_password.header"),
+		Alerts:   alerts.Flashes(s),
 		Locale:   locale,
 		Locales:  locales,
 		Form: form.View{
@@ -39,7 +42,7 @@ func NewResetPassword(c *gin.Context, ctx *providers.Context, s sessions.Session
 					InputClass: "admin-login__field__input",
 				},
 				{
-					Label:      ctx.S.TS.T(locale.Code, "page.reset_password.fields.email"),
+					Label:      ts.T(locale.Code, "page.reset_password.fields.email"),
 					Type:       "email",
 					Name:       "email",
 					Value:      data.EmailValue,
@@ -49,11 +52,11 @@ func NewResetPassword(c *gin.Context, ctx *providers.Context, s sessions.Session
 				},
 			},
 			Submit: &btn.View{
-				Text: ctx.S.TS.T(locale.Code, "page.reset_password.submit"),
+				Text: ts.T(locale.Code, "page.reset_password.submit"),
 			},
 			Errors: data.Errors,
-			Text:   ctx.S.TS.T(locale.Code, "page.reset_password.text"),
+			Text:   ts.T(locale.Code, "page.reset_password.text"),
 		},
-		Back: &btn.View{Text: ctx.S.TS.T(locale.Code, "page.reset_password.back"), Href: "/login"},
+		Back: &btn.View{Text: ts.T(locale.Code, "page.reset_password.back"), Href: "/login"},
 	}, nil
 }

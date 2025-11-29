@@ -1,8 +1,9 @@
 package auth
 
 import (
-	"galaveg/app/view/components/btn"
-	"galaveg/bootstrap/providers"
+	"galaveg/internal/modules/app"
+	"galaveg/internal/modules/translator"
+	"galaveg/internal/modules/view/components/btn"
 )
 
 const TEMPLATE = "layouts/email/reset_password"
@@ -23,18 +24,18 @@ type ViewData struct {
 	ResetPasswordLink string
 }
 
-func New(ctx *providers.Context, lang, resetPasswordLink string) (*View, error) {
+func New(as *app.Service, ts *translator.Service, lang, resetPasswordLink string) (*View, error) {
 	return &View{
 		Lang:        lang,
-		Title:       ctx.S.TS.T(lang, "mail.reset_password.title"),
-		Description: ctx.S.TS.T(lang, "mail.reset_password.description"),
-		SiteName:    ctx.S.TS.T(lang, "mail.reset_password.site_name"),
-		SiteURL:     ctx.S.AS.Url(),
-		LogoSrc:     ctx.S.AS.LogoSrc(),
-		Header:      ctx.S.TS.T(lang, "mail.reset_password.header"),
-		SiteDomain:  ctx.S.AS.CloneUrl().Host,
+		Title:       ts.T(lang, "mail.reset_password.title"),
+		Description: ts.T(lang, "mail.reset_password.description"),
+		SiteName:    ts.T(lang, "mail.reset_password.site_name"),
+		SiteURL:     as.Url(),
+		LogoSrc:     as.LogoSrc(),
+		Header:      ts.T(lang, "mail.reset_password.header"),
+		SiteDomain:  as.CloneUrl().Host,
 		Button: &btn.View{
-			Text: ctx.S.TS.T(lang, "mail.reset_password.button"),
+			Text: ts.T(lang, "mail.reset_password.button"),
 			Href: resetPasswordLink,
 		},
 	}, nil

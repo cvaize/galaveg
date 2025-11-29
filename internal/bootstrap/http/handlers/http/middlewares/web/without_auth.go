@@ -1,15 +1,16 @@
 package web
 
 import (
-	"galaveg/bootstrap/providers"
+	"galaveg/config"
+	sessionsActions "galaveg/internal/modules/sessions"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
-func WithoutAuth(ctx *providers.Context) gin.HandlerFunc {
+func WithoutAuth(cfg *config.Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if ctx.S.SS.ExistsUserId(sessions.Default(c)) {
+		if sessionsActions.ExistsUserId(cfg, sessions.Default(c)) {
 			c.Redirect(http.StatusFound, "/panel")
 			return
 		}

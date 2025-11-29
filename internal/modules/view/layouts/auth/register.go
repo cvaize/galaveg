@@ -1,10 +1,13 @@
 package auth
 
 import (
-	"galaveg/app/view/components/btn"
-	"galaveg/app/view/components/field"
-	"galaveg/app/view/layouts/auth/form"
-	"galaveg/bootstrap/providers"
+	"galaveg/internal/modules/alerts"
+	"galaveg/internal/modules/app"
+	localesModule "galaveg/internal/modules/locales"
+	"galaveg/internal/modules/translator"
+	"galaveg/internal/modules/view/components/btn"
+	"galaveg/internal/modules/view/components/field"
+	"galaveg/internal/modules/view/layouts/auth/form"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
@@ -19,16 +22,16 @@ type RegisterViewData struct {
 	Errors                []string
 }
 
-func NewRegister(c *gin.Context, ctx *providers.Context, s sessions.Session, data *RegisterViewData) (*View, error) {
-	locale := ctx.S.LS.GetLocale(ctx.S.AS.Locale(c, nil))
-	locales := ctx.S.LS.GetLocales()
+func NewRegister(c *gin.Context, as *app.Service, ls *localesModule.Service, ts *translator.Service, s sessions.Session, data *RegisterViewData) (*View, error) {
+	locale := ls.GetLocale(ls.Locale(c, nil))
+	locales := ls.GetLocales()
 
 	return &View{
 		Lang:     locale.Code,
-		DarkMode: ctx.S.AS.DarkMode(c),
-		Title:    ctx.S.TS.T(locale.Code, "page.register.title"),
-		Heading:  ctx.S.TS.T(locale.Code, "page.register.header"),
-		Alerts:   ctx.S.AlS.Flashes(s),
+		DarkMode: as.DarkMode(c),
+		Title:    ts.T(locale.Code, "page.register.title"),
+		Heading:  ts.T(locale.Code, "page.register.header"),
+		Alerts:   alerts.Flashes(s),
 		Locale:   locale,
 		Locales:  locales,
 		Form: form.View{
@@ -43,7 +46,7 @@ func NewRegister(c *gin.Context, ctx *providers.Context, s sessions.Session, dat
 					InputClass: "admin-login__field__input",
 				},
 				{
-					Label:      ctx.S.TS.T(locale.Code, "page.register.fields.email"),
+					Label:      ts.T(locale.Code, "page.register.fields.email"),
 					Type:       "email",
 					Name:       "email",
 					Value:      data.EmailValue,
@@ -52,7 +55,7 @@ func NewRegister(c *gin.Context, ctx *providers.Context, s sessions.Session, dat
 					InputClass: "admin-login__field__input",
 				},
 				{
-					Label:      ctx.S.TS.T(locale.Code, "page.register.fields.password"),
+					Label:      ts.T(locale.Code, "page.register.fields.password"),
 					Type:       "password",
 					Name:       "password",
 					Value:      data.PasswordValue,
@@ -61,7 +64,7 @@ func NewRegister(c *gin.Context, ctx *providers.Context, s sessions.Session, dat
 					InputClass: "admin-login__field__input",
 				},
 				{
-					Label:      ctx.S.TS.T(locale.Code, "page.register.fields.confirm_password"),
+					Label:      ts.T(locale.Code, "page.register.fields.confirm_password"),
 					Type:       "password",
 					Name:       "confirm_password",
 					Value:      data.ConfirmPasswordValue,
@@ -71,18 +74,18 @@ func NewRegister(c *gin.Context, ctx *providers.Context, s sessions.Session, dat
 				},
 			},
 			Submit: &btn.View{
-				Text: ctx.S.TS.T(locale.Code, "page.register.submit"),
+				Text: ts.T(locale.Code, "page.register.submit"),
 			},
 			ResetPassword: &btn.View{
 				Href: "/reset-password",
-				Text: ctx.S.TS.T(locale.Code, "page.register.reset_password"),
+				Text: ts.T(locale.Code, "page.register.reset_password"),
 			},
 			Login: &btn.View{
 				Href: "/login",
-				Text: ctx.S.TS.T(locale.Code, "page.register.login"),
+				Text: ts.T(locale.Code, "page.register.login"),
 			},
 			Errors: data.Errors,
 		},
-		Back: &btn.View{Text: ctx.S.TS.T(locale.Code, "page.register.back"), Href: "/login"},
+		Back: &btn.View{Text: ts.T(locale.Code, "page.register.back"), Href: "/login"},
 	}, nil
 }

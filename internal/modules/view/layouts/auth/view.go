@@ -1,9 +1,10 @@
 package auth
 
 import (
-	"galaveg/app/dto"
-	"galaveg/app/view/components/btn"
-	"galaveg/app/view/layouts/auth/form"
+	"galaveg/internal/modules/alerts"
+	"galaveg/internal/modules/locales"
+	"galaveg/internal/modules/view/components/btn"
+	"galaveg/internal/modules/view/layouts/auth/form"
 )
 
 const TEMPLATE = "layouts/auth"
@@ -13,9 +14,9 @@ type View struct {
 	DarkMode string
 	Title    string
 	Heading  string
-	Alerts   []dto.Alert
-	Locale   dto.Locale
-	Locales  []dto.Locale
+	Alerts   []alerts.Alert
+	Locale   locales.Locale
+	Locales  []locales.Locale
 	Form     form.View
 	Back     *btn.View
 }

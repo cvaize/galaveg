@@ -1,23 +1,20 @@
 package routes
 
 import (
-	"galaveg/app/controllers/web"
-	"galaveg/app/controllers/web/auth"
-	"galaveg/app/controllers/web/locale"
-	"galaveg/app/controllers/web/panel/users"
-	mWeb "galaveg/app/middlewares/web"
-	"galaveg/bootstrap/providers"
 	"galaveg/internal/bootstrap/http/context"
+	"galaveg/internal/bootstrap/http/handlers/http/controllers/web"
+	"galaveg/internal/bootstrap/http/handlers/http/controllers/web/auth"
+	"galaveg/internal/bootstrap/http/handlers/http/controllers/web/locale"
+	"galaveg/internal/bootstrap/http/handlers/http/controllers/web/panel/users"
+	mWeb "galaveg/internal/bootstrap/http/handlers/http/middlewares/web"
 	"github.com/gin-gonic/gin"
 
 	"github.com/gin-contrib/sessions"
 )
 
 func webRouter(router *gin.Engine, ctx *context.Context) {
-	store := pkg.Must(providers.NewSessionStore(ctx.Cfg))
-
 	r := router.Group("/")
-	r.Use(sessions.Sessions(ctx.Cfg.Session.CookieKey, store))
+	r.Use(sessions.Sessions(ctx.Cfg.Session.CookieKey, ctx.Infra.SessionStore))
 	wCtr := web.NewController(ctx)
 	r.GET("/", wCtr.Index)
 
@@ -39,7 +36,7 @@ func webRouter(router *gin.Engine, ctx *context.Context) {
 	// Private
 	uCtr := users.NewController(ctx)
 	p := r.Group("/panel")
-	p.Use(mWeb.AuthRequired(ctx))
+	p.Use(mWeb.AuthRequired(ctx.Cfg))
 	p.GET("/", wCtr.Index)
 	p.GET("/users", uCtr.Index)
 }

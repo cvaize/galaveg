@@ -10,8 +10,8 @@ type Service struct {
 	mail *libmail.Client
 }
 
-func NewService() (*Service, *errors.Error) {
-	return &Service{}, nil
+func NewService(mail *libmail.Client) (*Service, *errors.Error) {
+	return &Service{mail}, nil
 }
 
 // Send Synchronous sending of E-mail messages

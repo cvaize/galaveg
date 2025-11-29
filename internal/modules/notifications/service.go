@@ -10,8 +10,8 @@ type Service struct {
 	mailService *mail.Service
 }
 
-func NewService() (*Service, error) {
-	return &Service{}, nil
+func NewService(mailService *mail.Service) (*Service, error) {
+	return &Service{mailService}, nil
 }
 
 // NotificationsService The service is responsible for sending notifications via E-mail, SMS, Alerts, and Chat. Currently, only sending to E-mail is implemented.

@@ -1,10 +1,14 @@
 package home
 
 import (
-	"galaveg/app/dto"
-	"galaveg/app/view/components/breadcrumbs/item"
-	"galaveg/app/view/components/sidebar"
-	"galaveg/bootstrap/providers"
+	"galaveg/internal/modules/alerts"
+	"galaveg/internal/modules/app"
+	localesModule "galaveg/internal/modules/locales"
+	"galaveg/internal/modules/translator"
+	"galaveg/internal/modules/users"
+	"galaveg/internal/modules/view/components/breadcrumbs/item"
+	"galaveg/internal/modules/view/components/sidebar"
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,13 +21,13 @@ type View struct {
 	Heading     string
 	Breadcrumbs []item.View
 	Sidebar     *sidebar.View
-	Alerts      []dto.Alert
+	Alerts      []alerts.Alert
 }
 
-func New(c *gin.Context, ctx *providers.Context, user *dto.User) (*View, error) {
-	locale := ctx.S.LS.GetLocale(ctx.S.AS.Locale(c, user))
+func New(c *gin.Context, as *app.Service, ls *localesModule.Service, ts *translator.Service, s sessions.Session, user *users.User) (*View, error) {
+	locale := ls.GetLocale(ls.Locale(c, user))
 
-	sidebarObject, err := sidebar.New(c, ctx, user)
+	sidebarObject, err := sidebar.New(c, ls, ts, user)
 
 	if err != nil {
 		return nil, err
@@ -31,16 +35,16 @@ func New(c *gin.Context, ctx *providers.Context, user *dto.User) (*View, error) 
 
 	return &View{
 		Lang:     locale.Code,
-		DarkMode: ctx.S.AS.DarkMode(c),
-		Title:    ctx.S.TS.T(locale.Code, "page.home.title"),
-		Heading:  ctx.S.TS.T(locale.Code, "page.home.header"),
+		DarkMode: as.DarkMode(c),
+		Title:    ts.T(locale.Code, "page.home.title"),
+		Heading:  ts.T(locale.Code, "page.home.header"),
 		Breadcrumbs: []item.View{
 			{
-				Text: ctx.S.TS.T(locale.Code, "page.home.breadcrumbs.home"),
+				Text: ts.T(locale.Code, "page.home.breadcrumbs.home"),
 				Href: "/",
 			},
 		},
 		Sidebar: sidebarObject,
-		Alerts:  ctx.S.AS.Alerts(c),
+		Alerts:  alerts.Flashes(s),
 	}, nil
 }

@@ -6,6 +6,15 @@ import (
 	"galaveg/internal/infrastructures/html"
 	"galaveg/internal/infrastructures/mail"
 	"galaveg/internal/infrastructures/session"
+	"galaveg/internal/modules/app"
+	"galaveg/internal/modules/hash"
+	"galaveg/internal/modules/locales"
+	mailModule "galaveg/internal/modules/mail"
+	"galaveg/internal/modules/notifications"
+	"galaveg/internal/modules/roles"
+	"galaveg/internal/modules/template"
+	"galaveg/internal/modules/translator"
+	"galaveg/internal/modules/users"
 	"galaveg/pkg/utils"
 )
 
@@ -19,9 +28,17 @@ type Context struct {
 		SessionStore session.SessionStore
 	}
 	//Repositories struct{}
-	//Services struct {
-	//	Users    *services.UserService
-	//}
+	Services struct {
+		App           *app.Service
+		Users         *users.Service
+		Translator    *translator.Service
+		Template      *template.Service
+		Roles         *roles.Service
+		Mail          *mailModule.Service
+		Notifications *notifications.Service
+		Locales       *locales.Service
+		Hash          *hash.Service
+	}
 }
 
 //goland:noinspection GoUnhandledErrorResult
@@ -38,21 +55,18 @@ func Must(cfg *config.Config) *Context {
 	ctx.Infra.Mail = utils.Must(mail.New(cfg))
 	ctx.Infra.SessionStore = utils.Must(session.NewStore(cfg))
 
-	//ctx.S.ES = utils.Must(services.NewErrorService())
-	//ctx.S.AlS = utils.Must(services.NewAlertService(ctx.S.ES))
-	//ctx.S.LS = utils.Must(services.NewLocaleService([]dto.Locale{
-	//	{Code: "en", ShortName: "en", FullName: "English"},
-	//	{Code: "ru", ShortName: "ru", FullName: "Русский"},
-	//}))
-	//ctx.S.AS = utils.Must(services.NewAppService(cfg, ctx.S.LS))
-	//ctx.S.US = utils.Must(services.NewUserService())
-	//ctx.S.HS = utils.Must(services.NewHashService())
-	//ctx.S.AuthS = utils.Must(services.NewAuthService(cfg, ctx.S.AS, ctx.S.US, ctx.S.HS, ctx.S.ES))
-	//ctx.S.MS = utils.Must(services.NewMailService())
-	//ctx.S.RS = utils.Must(services.NewRoleService())
-	//ctx.S.SS = utils.Must(services.NewSessionService(cfg, ctx.S.ES))
-	//ctx.S.TplS = utils.Must(services.NewTemplateService(cfg, ctx.Infra.Html))
-	//// TODO: Добавить в конфигурацию "resources/translates/" и локали
-	//ctx.S.TS = utils.Must(services.NewTranslatorServiceFromFiles(cfg.GetFolder("resources/translates/"), cfg.App.Locale, ctx.S.ES))
+	ctx.Services.App = utils.Must(app.NewService(cfg))
+	ctx.Services.Users = utils.Must(users.NewService())
+	// TODO: Добавить в конфигурацию "resources/translates/" и локали
+	ctx.Services.Translator = utils.Must(translator.NewServiceFromFiles(cfg.GetFolder("resources/translates/"), cfg.App.Locale))
+	ctx.Services.Template = utils.Must(template.NewService(ctx.Infra.Html))
+	ctx.Services.Roles = utils.Must(roles.NewService())
+	ctx.Services.Mail = utils.Must(mailModule.NewService(ctx.Infra.Mail))
+	ctx.Services.Notifications = utils.Must(notifications.NewService(ctx.Services.Mail))
+	ctx.Services.Locales = utils.Must(locales.NewService(cfg, []locales.Locale{
+		{Code: "en", ShortName: "en", FullName: "English"},
+		{Code: "ru", ShortName: "ru", FullName: "Русский"},
+	}))
+	ctx.Services.Hash = utils.Must(hash.NewService())
 	return ctx
 }

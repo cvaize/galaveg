@@ -1,24 +1,27 @@
 package auth
 
 import (
-	"galaveg/app/view/components/btn"
-	"galaveg/app/view/components/field"
-	"galaveg/app/view/layouts/auth/form"
-	"galaveg/bootstrap/providers"
+	"galaveg/internal/modules/alerts"
+	"galaveg/internal/modules/app"
+	localesModule "galaveg/internal/modules/locales"
+	"galaveg/internal/modules/translator"
+	"galaveg/internal/modules/view/components/btn"
+	"galaveg/internal/modules/view/components/field"
+	"galaveg/internal/modules/view/layouts/auth/form"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
-func NewResetPasswordConfirm(c *gin.Context, ctx *providers.Context, s sessions.Session) (*View, error) {
-	locale := ctx.S.LS.GetLocale(ctx.S.AS.Locale(c, nil))
-	locales := ctx.S.LS.GetLocales()
+func NewResetPasswordConfirm(c *gin.Context, as *app.Service, ls *localesModule.Service, ts *translator.Service, s sessions.Session) (*View, error) {
+	locale := ls.GetLocale(ls.Locale(c, nil))
+	locales := ls.GetLocales()
 
 	return &View{
 		Lang:     locale.Code,
-		DarkMode: ctx.S.AS.DarkMode(c),
-		Title:    ctx.S.TS.T(locale.Code, "page.reset_password_confirm.title"),
-		Heading:  ctx.S.TS.T(locale.Code, "page.reset_password_confirm.header"),
-		Alerts:   ctx.S.AlS.Flashes(s),
+		DarkMode: as.DarkMode(c),
+		Title:    ts.T(locale.Code, "page.reset_password_confirm.title"),
+		Heading:  ts.T(locale.Code, "page.reset_password_confirm.header"),
+		Alerts:   alerts.Flashes(s),
 		Locale:   locale,
 		Locales:  locales,
 		Form: form.View{
@@ -41,7 +44,7 @@ func NewResetPasswordConfirm(c *gin.Context, ctx *providers.Context, s sessions.
 					InputClass: "admin-login__field__input",
 				},
 				{
-					Label:      ctx.S.TS.T(locale.Code, "page.reset_password_confirm.fields.email"),
+					Label:      ts.T(locale.Code, "page.reset_password_confirm.fields.email"),
 					Type:       "email",
 					Name:       "email",
 					Value:      "",
@@ -51,7 +54,7 @@ func NewResetPasswordConfirm(c *gin.Context, ctx *providers.Context, s sessions.
 					InputClass: "admin-login__field__input",
 				},
 				{
-					Label:      ctx.S.TS.T(locale.Code, "page.reset_password_confirm.fields.password"),
+					Label:      ts.T(locale.Code, "page.reset_password_confirm.fields.password"),
 					Type:       "password",
 					Name:       "password",
 					Value:      "",
@@ -60,7 +63,7 @@ func NewResetPasswordConfirm(c *gin.Context, ctx *providers.Context, s sessions.
 					InputClass: "admin-login__field__input",
 				},
 				{
-					Label:      ctx.S.TS.T(locale.Code, "page.reset_password_confirm.fields.confirm_password"),
+					Label:      ts.T(locale.Code, "page.reset_password_confirm.fields.confirm_password"),
 					Type:       "password",
 					Name:       "confirm_password",
 					Value:      "",
@@ -70,10 +73,10 @@ func NewResetPasswordConfirm(c *gin.Context, ctx *providers.Context, s sessions.
 				},
 			},
 			Submit: &btn.View{
-				Text: ctx.S.TS.T(locale.Code, "page.reset_password_confirm.submit"),
+				Text: ts.T(locale.Code, "page.reset_password_confirm.submit"),
 			},
 			Errors: []string{},
 		},
-		Back: &btn.View{Text: ctx.S.TS.T(locale.Code, "page.reset_password_confirm.back"), Href: "/reset-password"},
+		Back: &btn.View{Text: ts.T(locale.Code, "page.reset_password_confirm.back"), Href: "/reset-password"},
 	}, nil
 }

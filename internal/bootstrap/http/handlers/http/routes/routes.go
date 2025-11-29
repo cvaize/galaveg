@@ -8,5 +8,5 @@ import (
 func Router(router *gin.Engine, ctx *context.Context) {
 	apiRouter(router, ctx)
 	webRouter(router, ctx)
-	staticFilesRouter(router, ctx)
+	staticFilesRouter(router)
 }
