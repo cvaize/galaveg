@@ -25,6 +25,9 @@ DB:
   CONN_MAX_LIFETIME: 3600000000000
   # Example: int64(5*time.Minute)
   CONN_MAX_IDLE_TIME: 300000000000
+KV:
+  REDIS_HOST: "localhost"
+  REDIS_PORT: 6379
 MAIL:
   HOST: "localhost"
   PORT: 8025

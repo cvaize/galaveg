@@ -7,9 +7,9 @@ import (
 	"strings"
 )
 
-type HtmlEngine = *template.Template
+type Engine = *template.Template
 
-func New(cfg *config.Config) (HtmlEngine, error) {
+func New(cfg *config.Config) (Engine, error) {
 	funcMap := template.FuncMap{}
 
 	funcMap["eq"] = func(a, b string) bool { return a == b }

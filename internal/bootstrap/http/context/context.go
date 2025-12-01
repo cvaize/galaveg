@@ -4,6 +4,7 @@ import (
 	"galaveg/internal/config"
 	"galaveg/internal/infrastructures/db"
 	"galaveg/internal/infrastructures/html"
+	"galaveg/internal/infrastructures/kv"
 	"galaveg/internal/infrastructures/mail"
 	"galaveg/internal/infrastructures/session"
 	"galaveg/internal/modules/app"
@@ -23,10 +24,11 @@ type Context struct {
 	Cfg   *config.Config
 	Infra struct {
 		//Cache *sql.DB
-		Html         html.HtmlEngine
+		Html         html.Engine
 		Db           db.Db
+		KV           kv.KV
 		Mail         mail.Mail
-		SessionStore session.SessionStore
+		SessionStore session.Store
 	}
 	//Repositories struct{}
 	Services struct {
@@ -45,6 +47,7 @@ type Context struct {
 //goland:noinspection GoUnhandledErrorResult
 func (ctx *Context) Close() {
 	db.Close(ctx.Infra.Db)
+	kv.Close(ctx.Infra.KV)
 	mail.Close(ctx.Infra.Mail)
 }
 
@@ -52,6 +55,7 @@ func Must(cfg *config.Config) *Context {
 	ctx := &Context{}
 	ctx.Cfg = cfg
 	ctx.Infra.Db = utils.Must(db.New(cfg))
+	ctx.Infra.KV = utils.Must(kv.New(cfg))
 	ctx.Infra.Html = utils.Must(html.New(cfg))
 	ctx.Infra.Mail = utils.Must(mail.New(cfg))
 	ctx.Infra.SessionStore = utils.Must(session.NewStore(cfg))

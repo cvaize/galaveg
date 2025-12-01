@@ -28,7 +28,13 @@ type Config struct {
 		MaxIdleConns    int    `mapstructure:"MAX_IDLE_CONNS"`
 		ConnMaxLifetime int64  `mapstructure:"CONN_MAX_LIFETIME"`  // Example: int64(time.Hour)
 		ConnMaxIdleTime int64  `mapstructure:"CONN_MAX_IDLE_TIME"` // Example: int64(5*time.Minute))
-	} `mapstructure:"Db"`
+	} `mapstructure:"DB"`
+	KeyValue struct {
+		RedisHost     string `mapstructure:"REDIS_HOST"`
+		RedisPort     int    `mapstructure:"REDIS_PORT"`
+		RedisUsername string `mapstructure:"REDIS_USERNAME"`
+		RedisPassword string `mapstructure:"REDIS_PASSWORD"`
+	} `mapstructure:"KV"`
 	Http struct {
 		Host         string   `mapstructure:"HOST"`
 		Port         int      `mapstructure:"PORT"`

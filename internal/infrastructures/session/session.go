@@ -8,9 +8,9 @@ import (
 )
 
 type Session = sessions.Session
-type SessionStore = sessions.Store
+type Store = sessions.Store
 
-func NewStore(cfg *config.Config) (SessionStore, error) {
+func NewStore(cfg *config.Config) (Store, error) {
 	// TODO: Сделать команду генерации ключей приложения
 	// TODO: Добавить в конфиг настроек отдельно ctx.Cfg.App.Key и настройки подключения к базе данных
 	size := cfg.Session.RedisMaxIdleConnections
