@@ -63,7 +63,7 @@ func Must(cfg *config.Config) *Context {
 	ctx.Services.Template = errors.Must(template.NewService(ctx.Infra.Html))
 	ctx.Services.Roles = errors.Must(roles.NewService())
 	ctx.Services.Mail = errors.Must(mailModule.NewService(ctx.Infra.Mail))
-	ctx.Services.Notifications = errors.Must(notifications.NewService(ctx.Services.Mail))
+	ctx.Services.Notifications = errors.Must(notifications.NewService(cfg, ctx.Services.Mail, ctx.Services.Translator, ctx.Services.App, ctx.Services.Template))
 	ctx.Services.Locales = errors.Must(locales.NewService(cfg, []locales.Locale{
 		{Code: "en", ShortName: "en", FullName: "English"},
 		{Code: "ru", ShortName: "ru", FullName: "Русский"},
