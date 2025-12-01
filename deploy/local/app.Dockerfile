@@ -11,18 +11,6 @@ RUN mkdir -p /app
 WORKDIR /app
 COPY --from=build_rust "/usr/local/cargo/bin/watchexec" /bin/watchexec
 
-# Install Node.js
-ENV NODE_VERSION=24.11.1
-RUN apt install -y curl
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
-ENV NVM_DIR=/root/.nvm
-RUN . "$NVM_DIR/nvm.sh" && nvm install ${NODE_VERSION}
-RUN . "$NVM_DIR/nvm.sh" && nvm use v${NODE_VERSION}
-RUN . "$NVM_DIR/nvm.sh" && nvm alias default v${NODE_VERSION}
-ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
-RUN node --version
-RUN npm --version
-
 RUN #userdel -r ubuntu
 RUN groupadd --force -g $WWWGROUP web
 RUN useradd -ms /bin/bash --no-user-group -g $WWWGROUP -u $WWWUSER web
