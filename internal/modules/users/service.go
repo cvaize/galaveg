@@ -18,9 +18,11 @@ func (s *Service) ExistsByEmail(email string) (bool, *errors.Error) {
 }
 
 func (s *Service) Create(data *User) (UserID, *errors.Error) {
+	// TODO: Email to LowCase
 	return 0, nil
 }
 
 func (s *Service) Update(data *User, fields []string) (UserID, *errors.Error) {
+	// TODO: Email to LowCase
 	return 0, nil
 }

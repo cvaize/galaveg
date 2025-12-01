@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"galaveg/internal/config"
 	"galaveg/pkg/logger"
-
 	"github.com/redis/go-redis/v9"
 )
 

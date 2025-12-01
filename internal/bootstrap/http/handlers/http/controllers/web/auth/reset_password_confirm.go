@@ -8,6 +8,13 @@ import (
 	"net/http"
 )
 
+type ResetPasswordConfirmRequest struct {
+	Code            string `form:"code" binding:"required,min=6"`
+	Email           string `form:"email" binding:"required,email"`
+	Password        string `form:"password" binding:"required,min=6"`
+	ConfirmPassword string `form:"confirm_password" binding:"required,min=6"`
+}
+
 func (ctr *Controller) ResetPasswordConfirm(c *gin.Context) {
 	session := sessions.Default(c)
 	if sessionsModule.ExistsUserId(ctr.ctx.Cfg, session) {
@@ -17,6 +24,7 @@ func (ctr *Controller) ResetPasswordConfirm(c *gin.Context) {
 	as := ctr.ctx.Services.App
 	ts := ctr.ctx.Services.Translator
 	ls := ctr.ctx.Services.Locales
+
 	d, err := auth.NewResetPasswordConfirm(c, as, ls, ts, session)
 	if err != nil {
 		//goland:noinspection GoUnhandledErrorResult

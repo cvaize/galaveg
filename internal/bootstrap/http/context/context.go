@@ -8,11 +8,13 @@ import (
 	"galaveg/internal/infrastructures/mail"
 	"galaveg/internal/infrastructures/session"
 	"galaveg/internal/modules/app"
+	"galaveg/internal/modules/auth"
 	"galaveg/internal/modules/errors"
 	"galaveg/internal/modules/hash"
 	"galaveg/internal/modules/locales"
 	mailModule "galaveg/internal/modules/mail"
 	"galaveg/internal/modules/notifications"
+	"galaveg/internal/modules/rate_limit"
 	"galaveg/internal/modules/roles"
 	"galaveg/internal/modules/template"
 	"galaveg/internal/modules/translator"
@@ -33,6 +35,7 @@ type Context struct {
 	//Repositories struct{}
 	Services struct {
 		App           *app.Service
+		Auth          *auth.Service
 		Users         *users.Service
 		Translator    *translator.Service
 		Template      *template.Service
@@ -41,6 +44,7 @@ type Context struct {
 		Notifications *notifications.Service
 		Locales       *locales.Service
 		Hash          *hash.Service
+		RateLimit     *rate_limit.Service
 	}
 }
 
@@ -73,5 +77,7 @@ func Must(cfg *config.Config) *Context {
 		{Code: "ru", ShortName: "ru", FullName: "Русский"},
 	}))
 	ctx.Services.Hash = errors.Must(hash.NewService())
+	ctx.Services.RateLimit = errors.Must(rate_limit.NewService(ctx.Services.Translator))
+	ctx.Services.Auth = errors.Must(auth.NewService(ctx.Services.Hash))
 	return ctx
 }
