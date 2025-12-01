@@ -2,9 +2,11 @@ package roles
 
 import "galaveg/internal/modules/errors"
 
-type Service struct {
+type Service = *ServiceImpl
+
+type ServiceImpl struct {
 }
 
-func NewService() (*Service, *errors.Error) {
-	return &Service{}, nil
+func NewService() (*ServiceImpl, *errors.Error) {
+	return &ServiceImpl{}, nil
 }

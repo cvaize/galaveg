@@ -2,7 +2,7 @@ package actions
 
 import "galaveg/internal/modules/app"
 
-func CreateResetPasswordLink(as *app.Service, email string) (string, error) {
+func CreateResetPasswordLink(as app.Service, email string) (string, error) {
 	refUrl := as.RefUrl()
 	refUrl = refUrl.JoinPath("reset-password-confirm")
 

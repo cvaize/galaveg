@@ -24,7 +24,7 @@ type ViewData struct {
 	ResetPasswordLink string
 }
 
-func New(as *app.Service, ts *translator.Service, lang, resetPasswordLink string) (*View, error) {
+func New(as app.Service, ts translator.Service, lang, resetPasswordLink string) (*View, error) {
 	return &View{
 		Lang:        lang,
 		Title:       ts.T(lang, "mail.reset_password.title"),

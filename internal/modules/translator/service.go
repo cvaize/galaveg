@@ -20,13 +20,15 @@ import (
 	ruTranslations "github.com/go-playground/validator/v10/translations/ru"
 )
 
-type Service struct {
+type Service = *ServiceImpl
+
+type ServiceImpl struct {
 	locale     string
 	translates map[string]map[string]string
 	u          *ut.UniversalTranslator
 }
 
-func NewService(locale string, translates map[string]map[string]string) (*Service, *errorsModule.Error) {
+func NewService(locale string, translates map[string]map[string]string) (*ServiceImpl, *errorsModule.Error) {
 	enLocale := en.New()
 	ruLocale := ru.New()
 
@@ -39,16 +41,16 @@ func NewService(locale string, translates map[string]map[string]string) (*Servic
 		transRU, _ := u.GetTranslator("ru")
 		_ = ruTranslations.RegisterDefaultTranslations(v, transRU)
 	}
-	return &Service{locale, translates, u}, nil
+	return &ServiceImpl{locale, translates, u}, nil
 }
 
-func NewServiceFromFiles(dir, locale string) (*Service, *errorsModule.Error) {
+func NewServiceFromFiles(dir, locale string) (*ServiceImpl, *errorsModule.Error) {
 	translates := map[string]map[string]string{}
 
 	dir = filepath.Clean(dir)
 	stat, err := os.Stat(dir)
 	if err != nil || !stat.IsDir() {
-		return nil, errorsModule.E500(err, "translator.Service.NewServiceFromFiles", fmt.Sprintf("translates folder not found: %s", dir))
+		return nil, errorsModule.E500(err, "translator.ServiceImpl.NewServiceFromFiles", fmt.Sprintf("translates folder not found: %s", dir))
 	}
 
 	var fullKey, locale1, prefixKey, key, value string
@@ -117,7 +119,7 @@ func NewServiceFromFiles(dir, locale string) (*Service, *errorsModule.Error) {
 		return nil
 	})
 	if err != nil {
-		return nil, errorsModule.E500(err, "translator.Service.NewServiceFromFiles", "")
+		return nil, errorsModule.E500(err, "translator.ServiceImpl.NewServiceFromFiles", "")
 	}
 
 	var variables, sp1, sp2 []string
@@ -153,29 +155,29 @@ func NewServiceFromFiles(dir, locale string) (*Service, *errorsModule.Error) {
 	return NewService(locale, translates)
 }
 
-func (s *Service) GetLocale() string {
+func (s *ServiceImpl) GetLocale() string {
 	return s.locale
 }
 
-func (s *Service) GetTranslates() map[string]map[string]string {
+func (s *ServiceImpl) GetTranslates() map[string]map[string]string {
 	return s.translates
 }
 
-func (s *Service) Get(locale, key string) string {
+func (s *ServiceImpl) Get(locale, key string) string {
 	v, _ := s.translates[locale][key]
 	return v
 }
 
-func (s *Service) Is(locale, key string) bool {
+func (s *ServiceImpl) Is(locale, key string) bool {
 	_, ok := s.translates[locale][key]
 	return ok
 }
 
-func (s *Service) vKey(key string) string {
+func (s *ServiceImpl) vKey(key string) string {
 	return ":" + key
 }
 
-func (s *Service) Translate(locale, key string) string {
+func (s *ServiceImpl) Translate(locale, key string) string {
 	if v, ok := s.translates[locale][key]; ok {
 		return v
 	}
@@ -187,11 +189,11 @@ func (s *Service) Translate(locale, key string) string {
 	return key
 }
 
-func (s *Service) T(locale, key string) string {
+func (s *ServiceImpl) T(locale, key string) string {
 	return s.Translate(locale, key)
 }
 
-func (s *Service) Contains(locale, key string) bool {
+func (s *ServiceImpl) Contains(locale, key string) bool {
 	if _, ok := s.translates[locale][key]; ok {
 		return true
 	}
@@ -203,22 +205,22 @@ func (s *Service) Contains(locale, key string) bool {
 	return false
 }
 
-func (s *Service) applyVariables(value string, vars map[string]string) string {
+func (s *ServiceImpl) applyVariables(value string, vars map[string]string) string {
 	for k, v := range vars {
 		value = strings.ReplaceAll(value, s.vKey(k), v)
 	}
 	return value
 }
 
-func (s *Service) Variables(locale, key string, vars map[string]string) string {
+func (s *ServiceImpl) Variables(locale, key string, vars map[string]string) string {
 	return s.applyVariables(s.Translate(locale, key), vars)
 }
 
-func (s *Service) V(locale, key string, vars map[string]string) string {
+func (s *ServiceImpl) V(locale, key string, vars map[string]string) string {
 	return s.Variables(locale, key, vars)
 }
 
-func (s *Service) Choices(locale, key string, value int, vars map[string]string) string {
+func (s *ServiceImpl) Choices(locale, key string, value int, vars map[string]string) string {
 	result := s.Translate(locale, key)
 	resultSplit := strings.Split(result, "|")
 	resultSplitLen := len(resultSplit)
@@ -250,18 +252,18 @@ func (s *Service) Choices(locale, key string, value int, vars map[string]string)
 	return result
 }
 
-func (s *Service) C(locale, key string, value int, vars map[string]string) string {
+func (s *ServiceImpl) C(locale, key string, value int, vars map[string]string) string {
 	return s.Choices(locale, key, value, vars)
 }
 
-func (s *Service) choicesRuleEn(value int) int {
+func (s *ServiceImpl) choicesRuleEn(value int) int {
 	if value == 1 {
 		return 0
 	}
 	return 1
 }
 
-func (s *Service) choicesRuleRu(value, choices int) int {
+func (s *ServiceImpl) choicesRuleRu(value, choices int) int {
 	if value%10 == 1 && value%100 != 11 {
 		return 0
 	}
@@ -272,7 +274,7 @@ func (s *Service) choicesRuleRu(value, choices int) int {
 	return 2
 }
 
-func (s *Service) TranslateValidationErrors(locale string, e error) []errorsModule.FieldError {
+func (s *ServiceImpl) TranslateValidationErrors(locale string, e error) []errorsModule.FieldError {
 	trans, _ := s.u.GetTranslator(locale)
 
 	var validationErrors validator.ValidationErrors
@@ -284,11 +286,11 @@ func (s *Service) TranslateValidationErrors(locale string, e error) []errorsModu
 		return response
 	} else {
 		//goland:noinspection GoUnhandledErrorResult
-		errorsModule.E500(e, "translator.Service.TranslateValidationErrors.As", "")
+		errorsModule.E500(e, "translator.ServiceImpl.TranslateValidationErrors.As", "")
 	}
 	return nil
 }
 
-func (s *Service) TVE(locale string, e error) []errorsModule.FieldError {
+func (s *ServiceImpl) TVE(locale string, e error) []errorsModule.FieldError {
 	return s.TranslateValidationErrors(locale, e)
 }

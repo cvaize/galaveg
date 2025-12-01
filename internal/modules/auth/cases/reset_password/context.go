@@ -10,14 +10,14 @@ import (
 )
 
 type Context struct {
-	as   *app.Service
-	auth *auth.Service
-	us   *users.Service
-	ns   *notifications.Service
-	rl   *rate_limit.Service
+	as   app.Service
+	auth auth.Service
+	us   users.Service
+	ns   notifications.Service
+	rl   rate_limit.Service
 	kv   kv.KV
 }
 
-func NewContext(as *app.Service, auth *auth.Service, us *users.Service, ns *notifications.Service, kv kv.KV, rl *rate_limit.Service) *Context {
+func NewContext(as app.Service, auth auth.Service, us users.Service, ns notifications.Service, kv kv.KV, rl rate_limit.Service) *Context {
 	return &Context{as, auth, us, ns, rl, kv}
 }

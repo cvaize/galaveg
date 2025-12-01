@@ -2,17 +2,19 @@ package hash
 
 import "galaveg/internal/modules/errors"
 
-type Service struct {
+type Service = *ServiceImpl
+
+type ServiceImpl struct {
 }
 
-func NewService() (*Service, *errors.Error) {
-	return &Service{}, nil
+func NewService() (*ServiceImpl, *errors.Error) {
+	return &ServiceImpl{}, nil
 }
 
-func (s *Service) VerifyPassword(password, hash string) (bool, *errors.Error) {
+func (s *ServiceImpl) VerifyPassword(password, hash string) (bool, *errors.Error) {
 	return false, nil
 }
 
-func (s *Service) HashPassword(password string) (string, *errors.Error) {
+func (s *ServiceImpl) HashPassword(password string) (string, *errors.Error) {
 	return "", nil
 }

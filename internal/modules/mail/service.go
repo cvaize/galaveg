@@ -6,16 +6,18 @@ import (
 	libmail "github.com/wneessen/go-mail"
 )
 
-type Service struct {
+type Service = *ServiceImpl
+
+type ServiceImpl struct {
 	mail *libmail.Client
 }
 
-func NewService(mail *libmail.Client) (*Service, *errors.Error) {
-	return &Service{mail}, nil
+func NewService(mail *libmail.Client) (*ServiceImpl, *errors.Error) {
+	return &ServiceImpl{mail}, nil
 }
 
 // Send Synchronous sending of E-mail messages
-func (s *Service) Send(message *dto.EmailMessage) *errors.Error {
+func (s *ServiceImpl) Send(message *dto.EmailMessage) *errors.Error {
 	m := libmail.NewMsg()
 	m.FromMailAddress(message.Envelope.From)
 	m.ToMailAddress(message.Envelope.To...)
@@ -29,7 +31,7 @@ func (s *Service) Send(message *dto.EmailMessage) *errors.Error {
 	}
 
 	if e := s.mail.DialAndSend(m); e != nil {
-		return errors.E500(e, "mail.Service.Send.DialAndSend", "")
+		return errors.E500(e, "mail.ServiceImpl.Send.DialAndSend", "")
 	}
 	return nil
 }

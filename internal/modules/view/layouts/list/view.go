@@ -27,7 +27,7 @@ type View struct {
 	Alerts      []alerts.Alert
 }
 
-func New(c *gin.Context, as *app.Service, ls *localesModule.Service, ts *translator.Service, s sessions.Session, user *users.User) (*View, error) {
+func New(c *gin.Context, as app.Service, ls *localesModule.ServiceImpl, ts translator.Service, s sessions.Session, user *users.User) (*View, error) {
 	locale := ls.GetLocale(ls.Locale(c, user))
 
 	sidebarObject, err := sidebar.New(c, ls, ts, user)

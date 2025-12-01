@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func Register(us *users.Service, hs *hash.Service, email, password string) (users.UserID, *errors.Error) {
+func Register(us users.Service, hs hash.Service, email, password string) (users.UserID, *errors.Error) {
 	exists, e := us.ExistsByEmail(email)
 	if e != nil {
 		// Failed to check for user existence

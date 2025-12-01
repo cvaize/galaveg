@@ -6,7 +6,7 @@ import (
 	"galaveg/internal/modules/users"
 )
 
-func Login(us *users.Service, hs *hash.Service, email, password string) (users.UserID, *errors.Error) {
+func Login(us users.Service, hs hash.Service, email, password string) (users.UserID, *errors.Error) {
 	user, e := us.FirstByEmail(email)
 	if e != nil {
 		// Failed to get user

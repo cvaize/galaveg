@@ -9,16 +9,18 @@ import (
 	"strings"
 )
 
+type Service = *ServiceImpl
+
 // TODO: Использовать cfg.Locales.Default вместо s.cfg.App.Locale и cfg.Locales.CookieKey вместо s.cfg.App.LocaleCookieKey
 
-type Service struct {
+type ServiceImpl struct {
 	cfg          *config.Config
 	localesMap   map[string]Locale
 	localesCodes []string
 	locales      []Locale
 }
 
-func NewService(cfg *config.Config, locales []Locale) (*Service, *errors.Error) {
+func NewService(cfg *config.Config, locales []Locale) (*ServiceImpl, *errors.Error) {
 	localesMap := map[string]Locale{}
 	var localesCodes []string
 
@@ -27,7 +29,7 @@ func NewService(cfg *config.Config, locales []Locale) (*Service, *errors.Error) 
 		localesMap[l.Code] = l
 	}
 
-	return &Service{
+	return &ServiceImpl{
 		cfg,
 		localesMap,
 		localesCodes,
@@ -35,24 +37,24 @@ func NewService(cfg *config.Config, locales []Locale) (*Service, *errors.Error) 
 	}, nil
 }
 
-func (s *Service) Exists(code string) bool {
+func (s *ServiceImpl) Exists(code string) bool {
 	return slices.Contains(s.localesCodes, code)
 }
 
-func (s *Service) GetLocale(code string) Locale {
+func (s *ServiceImpl) GetLocale(code string) Locale {
 	l, _ := s.localesMap[code]
 	return l
 }
 
-func (s *Service) GetLocales() []Locale {
+func (s *ServiceImpl) GetLocales() []Locale {
 	return s.locales
 }
 
-func (s *Service) GetLocalesCodes() []string {
+func (s *ServiceImpl) GetLocalesCodes() []string {
 	return s.localesCodes
 }
 
-func (s *Service) Locale(c *gin.Context, user *users.User) string {
+func (s *ServiceImpl) Locale(c *gin.Context, user *users.User) string {
 	var val string
 	if c != nil {
 		// manually selected by the user in the browser

@@ -12,7 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func NewResetPasswordConfirm(c *gin.Context, as *app.Service, ls *localesModule.Service, ts *translator.Service, s sessions.Session) (*View, error) {
+func NewResetPasswordConfirm(c *gin.Context, as app.Service, ls *localesModule.ServiceImpl, ts translator.Service, s sessions.Session) (*View, error) {
 	locale := ls.GetLocale(ls.Locale(c, nil))
 	locales := ls.GetLocales()
 

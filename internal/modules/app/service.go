@@ -7,20 +7,22 @@ import (
 	"net/url"
 )
 
-type Service struct {
+type Service = *ServiceImpl
+
+type ServiceImpl struct {
 	cfg *config.Config
 	url *url.URL
 }
 
-func NewService(cfg *config.Config) (*Service, *errors.Error) {
+func NewService(cfg *config.Config) (*ServiceImpl, *errors.Error) {
 	u, err := url.Parse(cfg.Http.Url)
 	if err != nil {
-		return nil, errors.E500(err, "app.Service.url.Parse", "")
+		return nil, errors.E500(err, "app.ServiceImpl.url.Parse", "")
 	}
-	return &Service{cfg, u}, nil
+	return &ServiceImpl{cfg, u}, nil
 }
 
-func (s *Service) DarkMode(c *gin.Context) string {
+func (s *ServiceImpl) DarkMode(c *gin.Context) string {
 	var val string
 	if c != nil {
 		val, _ = c.Cookie(s.cfg.App.DarkModeCookieKey)
@@ -32,19 +34,19 @@ func (s *Service) DarkMode(c *gin.Context) string {
 	return val
 }
 
-func (s *Service) Url() string {
+func (s *ServiceImpl) Url() string {
 	return s.url.String()
 }
 
-func (s *Service) RefUrl() *url.URL {
+func (s *ServiceImpl) RefUrl() *url.URL {
 	return s.url
 }
 
-func (s *Service) CloneUrl() url.URL {
+func (s *ServiceImpl) CloneUrl() url.URL {
 	return *s.url
 }
 
-func (s *Service) LogoSrc() string {
+func (s *ServiceImpl) LogoSrc() string {
 	cloneUrl := s.CloneUrl()
 	return cloneUrl.JoinPath("/svg/logo.svg").String()
 }

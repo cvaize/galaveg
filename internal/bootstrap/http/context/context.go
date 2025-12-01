@@ -34,17 +34,17 @@ type Context struct {
 	}
 	//Repositories struct{}
 	Services struct {
-		App           *app.Service
-		Auth          *auth.Service
-		Users         *users.Service
-		Translator    *translator.Service
-		Template      *template.Service
-		Roles         *roles.Service
-		Mail          *mailModule.Service
-		Notifications *notifications.Service
-		Locales       *locales.Service
-		Hash          *hash.Service
-		RateLimit     *rate_limit.Service
+		App           app.Service
+		Auth          auth.Service
+		Users         users.Service
+		Translator    translator.Service
+		Template      template.Service
+		Roles         roles.Service
+		Mail          mailModule.Service
+		Notifications notifications.Service
+		Locales       locales.Service
+		Hash          hash.Service
+		RateLimit     rate_limit.Service
 	}
 }
 

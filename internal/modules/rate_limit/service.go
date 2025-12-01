@@ -6,22 +6,24 @@ import (
 	"time"
 )
 
-type Service struct {
-	ts *translator.Service
+type Service = *ServiceImpl
+
+type ServiceImpl struct {
+	ts translator.Service
 }
 
-func NewService(ts *translator.Service) (Service, *errors.Error) {
-	return Service{ts}, nil
+func NewService(ts translator.Service) (*ServiceImpl, *errors.Error) {
+	return &ServiceImpl{ts}, nil
 }
 
-func (s *Service) Attempt(key string, maxAttempts int, ttl time.Duration) (bool, *errors.Error) {
+func (s *ServiceImpl) Attempt(key string, maxAttempts int, ttl time.Duration) (bool, *errors.Error) {
 	return true, nil
 }
 
-func (s *Service) TtlMessage(locale, key string) (string, *errors.Error) {
+func (s *ServiceImpl) TtlMessage(locale, key string) (string, *errors.Error) {
 	return "", nil
 }
 
-func (s *Service) Clear(key string) *errors.Error {
+func (s *ServiceImpl) Clear(key string) *errors.Error {
 	return nil
 }

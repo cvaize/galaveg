@@ -22,7 +22,7 @@ type RegisterViewData struct {
 	Errors                []string
 }
 
-func NewRegister(c *gin.Context, as *app.Service, ls *localesModule.Service, ts *translator.Service, s sessions.Session, data *RegisterViewData) (*View, error) {
+func NewRegister(c *gin.Context, as app.Service, ls *localesModule.ServiceImpl, ts translator.Service, s sessions.Session, data *RegisterViewData) (*View, error) {
 	locale := ls.GetLocale(ls.Locale(c, nil))
 	locales := ls.GetLocales()
 

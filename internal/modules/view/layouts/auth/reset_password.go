@@ -18,7 +18,7 @@ type ResetPasswordViewData struct {
 	Errors      []string
 }
 
-func NewResetPassword(c *gin.Context, as *app.Service, ls *localesModule.Service, ts *translator.Service, s sessions.Session, data *ResetPasswordViewData) (*View, error) {
+func NewResetPassword(c *gin.Context, as app.Service, ls *localesModule.ServiceImpl, ts translator.Service, s sessions.Session, data *ResetPasswordViewData) (*View, error) {
 	locale := ls.GetLocale(ls.Locale(c, nil))
 	locales := ls.GetLocales()
 

@@ -7,18 +7,20 @@ import (
 	"galaveg/pkg/debug"
 )
 
-type Service struct {
-	hs *hash.Service
+type Service = *ServiceImpl
+
+type ServiceImpl struct {
+	hs hash.Service
 }
 
-func NewService(hs *hash.Service) (Service, *errors.Error) {
-	return Service{hs}, nil
+func NewService(hs hash.Service) (*ServiceImpl, *errors.Error) {
+	return &ServiceImpl{hs}, nil
 }
 
-func (s *Service) UpdatePassword(id users.UserID, password string) *errors.Error {
+func (s *ServiceImpl) UpdatePassword(id users.UserID, password string) *errors.Error {
 	passwordHashed, e := s.hs.HashPassword(password)
 	if e != nil {
-		return errors.E500(e, "auth.Service.UpdatePassword.HashPassword", "")
+		return errors.E500(e, "auth.ServiceImpl.UpdatePassword.HashPassword", "")
 	}
 
 	debug.Dump(passwordHashed)

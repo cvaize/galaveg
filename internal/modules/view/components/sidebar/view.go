@@ -16,7 +16,7 @@ type View struct {
 	Menu  []menu_item.View
 }
 
-func New(c *gin.Context, ls *localesModule.Service, ts *translator.Service, user *users.User) (*View, error) {
+func New(c *gin.Context, ls *localesModule.ServiceImpl, ts translator.Service, user *users.User) (*View, error) {
 	locale := ls.GetLocale(ls.Locale(c, user))
 	locales := ls.GetLocales()
 	path := c.FullPath()

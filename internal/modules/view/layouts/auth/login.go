@@ -20,7 +20,7 @@ type LoginViewData struct {
 	Errors         []string
 }
 
-func NewLogin(c *gin.Context, as *app.Service, ls *localesModule.Service, ts *translator.Service, s sessions.Session, data *LoginViewData) (*View, error) {
+func NewLogin(c *gin.Context, as app.Service, ls *localesModule.ServiceImpl, ts translator.Service, s sessions.Session, data *LoginViewData) (*View, error) {
 	locale := ls.GetLocale(ls.Locale(c, nil))
 	locales := ls.GetLocales()
 

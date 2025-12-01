@@ -2,27 +2,29 @@ package users
 
 import "galaveg/internal/modules/errors"
 
-type Service struct {
+type Service = *ServiceImpl
+
+type ServiceImpl struct {
 }
 
-func NewService() (*Service, *errors.Error) {
-	return &Service{}, nil
+func NewService() (*ServiceImpl, *errors.Error) {
+	return &ServiceImpl{}, nil
 }
 
-func (s *Service) FirstByEmail(email string) (*User, *errors.Error) {
+func (s *ServiceImpl) FirstByEmail(email string) (*User, *errors.Error) {
 	return nil, nil
 }
 
-func (s *Service) ExistsByEmail(email string) (bool, *errors.Error) {
+func (s *ServiceImpl) ExistsByEmail(email string) (bool, *errors.Error) {
 	return false, nil
 }
 
-func (s *Service) Create(data *User) (UserID, *errors.Error) {
+func (s *ServiceImpl) Create(data *User) (UserID, *errors.Error) {
 	// TODO: Email to LowCase
 	return 0, nil
 }
 
-func (s *Service) Update(data *User, fields []string) (UserID, *errors.Error) {
+func (s *ServiceImpl) Update(data *User, fields []string) (UserID, *errors.Error) {
 	// TODO: Email to LowCase
 	return 0, nil
 }
