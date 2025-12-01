@@ -1,7 +1,7 @@
 package static_files
 
 import (
-	"galaveg/config"
+	"galaveg/internal/config"
 	"github.com/gin-gonic/gin"
 	"mime"
 	"os"

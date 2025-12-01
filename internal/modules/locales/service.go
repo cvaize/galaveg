@@ -1,7 +1,7 @@
 package locales
 
 import (
-	"galaveg/config"
+	"galaveg/internal/config"
 	"galaveg/internal/modules/errors"
 	"galaveg/internal/modules/users"
 	"github.com/gin-gonic/gin"

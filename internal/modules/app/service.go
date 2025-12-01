@@ -1,7 +1,7 @@
 package app
 
 import (
-	"galaveg/config"
+	"galaveg/internal/config"
 	"galaveg/internal/modules/errors"
 	"github.com/gin-gonic/gin"
 	"net/url"

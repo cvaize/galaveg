@@ -1,7 +1,7 @@
 package mail
 
 import (
-	"galaveg/config"
+	"galaveg/internal/config"
 	"galaveg/pkg/logger"
 	"github.com/wneessen/go-mail"
 	"strings"

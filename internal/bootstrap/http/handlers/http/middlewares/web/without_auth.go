@@ -1,7 +1,7 @@
 package web
 
 import (
-	"galaveg/config"
+	"galaveg/internal/config"
 	sessionsActions "galaveg/internal/modules/sessions"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"

@@ -3,7 +3,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"galaveg/config"
+	"galaveg/internal/config"
 	"galaveg/pkg/logger"
 	_ "github.com/go-sql-driver/mysql"
 	"time"

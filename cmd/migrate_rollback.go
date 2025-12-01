@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"galaveg/config"
 	"galaveg/database/migrations"
 	"galaveg/internal/bootstrap/http/context"
+	"galaveg/internal/config"
 	"galaveg/pkg/logger"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"

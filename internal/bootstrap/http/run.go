@@ -2,9 +2,9 @@ package http
 
 import (
 	"fmt"
-	"galaveg/config"
 	"galaveg/internal/bootstrap/http/context"
 	"galaveg/internal/bootstrap/http/handlers/http/routes"
+	"galaveg/internal/config"
 	"galaveg/pkg/logger"
 	"github.com/gin-gonic/gin"
 )

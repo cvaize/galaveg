@@ -2,7 +2,7 @@ package session
 
 import (
 	"fmt"
-	"galaveg/config"
+	"galaveg/internal/config"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/redis"
 )

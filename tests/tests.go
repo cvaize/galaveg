@@ -1,7 +1,7 @@
 package tests
 
 import (
-	"galaveg/config"
+	"galaveg/internal/config"
 	"galaveg/pkg/utils"
 )
 

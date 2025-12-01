@@ -24,7 +24,7 @@ func New(envFilename string) (*Config, error) {
 		}
 	}
 
-	configPath := filepath.Join(utils.FindModuleRoot(utils.Cwd()), "config", "default.yaml")
+	configPath := filepath.Join(utils.FindModuleRoot(utils.Cwd()), "internal", "config", "default.yaml")
 
 	v.SetConfigFile(configPath)
 	v.SetConfigType("yaml")

@@ -1,7 +1,7 @@
 package context
 
 import (
-	"galaveg/config"
+	"galaveg/internal/config"
 	"galaveg/internal/infrastructures/db"
 	"galaveg/internal/infrastructures/html"
 	"galaveg/internal/infrastructures/mail"
