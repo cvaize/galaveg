@@ -5,10 +5,11 @@ import "galaveg/internal/modules/errors"
 type Service = *ServiceImpl
 
 type ServiceImpl struct {
+	dbRepo DbRepo
 }
 
-func NewService() (*ServiceImpl, *errors.Error) {
-	return &ServiceImpl{}, nil
+func NewService(dbRepo DbRepo) (*ServiceImpl, *errors.Error) {
+	return &ServiceImpl{dbRepo}, nil
 }
 
 func (s *ServiceImpl) FirstByEmail(email string) (*UserDto, *errors.Error) {
