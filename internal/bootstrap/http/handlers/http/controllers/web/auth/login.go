@@ -1,7 +1,7 @@
 package auth
 
 import (
-	authActions "galaveg/internal/modules/auth/actions"
+	"galaveg/internal/modules/auth"
 	sessionsModule "galaveg/internal/modules/sessions"
 	view "galaveg/internal/modules/view/layouts/auth"
 	"github.com/gin-contrib/sessions"
@@ -21,10 +21,9 @@ func (ctr *Controller) Login(c *gin.Context) {
 		c.Redirect(http.StatusFound, "/panel")
 		return
 	}
+	authService := ctr.ctx.Services.Auth
 	as := ctr.ctx.Services.App
 	ts := ctr.ctx.Services.Translator
-	hs := ctr.ctx.Services.Hash
-	us := ctr.ctx.Services.Users
 	ls := ctr.ctx.Services.Locales
 
 	locale := ctr.ctx.Services.Locales.Locale(c, nil)
@@ -44,8 +43,7 @@ func (ctr *Controller) Login(c *gin.Context) {
 				}
 			}
 		} else {
-
-			userId, e := authActions.Login(us, hs, reqData.Email, reqData.Password)
+			userId, e := authService.Login(auth.NewEmailVO(reqData.Email), auth.NewPasswordVO(reqData.Password))
 			if e != nil {
 				status = e.Status
 				if status >= 500 {

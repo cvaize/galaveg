@@ -2,7 +2,7 @@ package auth
 
 import (
 	"galaveg/internal/modules/alerts"
-	authActions "galaveg/internal/modules/auth/actions"
+	"galaveg/internal/modules/auth"
 	sessionsModule "galaveg/internal/modules/sessions"
 	view "galaveg/internal/modules/view/layouts/auth"
 	"github.com/gin-contrib/sessions"
@@ -22,10 +22,9 @@ func (ctr *Controller) Register(c *gin.Context) {
 		c.Redirect(http.StatusFound, "/panel")
 		return
 	}
+	authService := ctr.ctx.Services.Auth
 	as := ctr.ctx.Services.App
 	ts := ctr.ctx.Services.Translator
-	hs := ctr.ctx.Services.Hash
-	us := ctr.ctx.Services.Users
 	ls := ctr.ctx.Services.Locales
 
 	locale := ls.Locale(c, nil)
@@ -60,7 +59,7 @@ func (ctr *Controller) Register(c *gin.Context) {
 		}
 
 		if valid {
-			userId, e := authActions.Register(us, hs, reqData.Email, reqData.Password)
+			e := authService.Register(auth.NewEmailVO(reqData.Email), auth.NewPasswordVO(reqData.Password))
 			if e != nil {
 				if e.Code == "AuthService.Register.DuplicateUser" {
 					status = http.StatusBadRequest
@@ -70,17 +69,11 @@ func (ctr *Controller) Register(c *gin.Context) {
 					viewData.Errors = append(viewData.Errors, ts.T(locale, "error.500"))
 				}
 			} else {
-				e = sessionsModule.Login(ctr.ctx.Cfg, session, userId)
-				if e != nil {
-					status = e.Status
-					viewData.Errors = append(viewData.Errors, ts.T(locale, "error.500"))
-				} else {
-					alert := alerts.NewSuccessAlert(ts.T(locale, "alert.register.success"))
-					//goland:noinspection GoUnhandledErrorResult
-					alerts.AddFlash(session, []alerts.Alert{alert})
-					c.Redirect(http.StatusFound, "/login")
-					return
-				}
+				alert := alerts.NewSuccessAlert(ts.T(locale, "alert.register.success"))
+				//goland:noinspection GoUnhandledErrorResult
+				alerts.AddFlash(session, []alerts.Alert{alert})
+				c.Redirect(http.StatusFound, "/login")
+				return
 			}
 		}
 
