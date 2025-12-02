@@ -1,24 +1,53 @@
 package auth
 
 import (
+	"database/sql"
+	"errors"
+	"galaveg/internal/config"
 	"galaveg/internal/infrastructures/db"
-	"galaveg/internal/modules/errors"
+	moduleErrors "galaveg/internal/modules/errors"
 )
 
 type DbRepo = *DbRepoImpl
 
 type DbRepoImpl struct {
-	db db.Db
+	cfg *config.Config
+	db  db.Db
 }
 
-func NewDbRepoImpl(db db.Db) *DbRepoImpl {
-	return &DbRepoImpl{db}
+func NewDbRepoImpl(cfg *config.Config, db db.Db) *DbRepoImpl {
+	return &DbRepoImpl{cfg, db}
 }
 
-func (r *DbRepoImpl) FirstByEmail(email string) (*UserDto, *errors.Error) {
-	return nil, nil
+// FirstByEmail retrieves a user by email from the database
+func (r *DbRepoImpl) FirstByEmail(email string) (*UserDto, *moduleErrors.Error) {
+	var user UserDto
+	query := "SELECT id, email, password FROM " + r.cfg.Db.Prefix + "users WHERE email = ?"
+	err := r.db.QueryRow(query, email).Scan(
+		&user.ID,
+		&user.Email.Value,
+		&user.PasswordHash,
+	)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil // Row not found
+		}
+		return nil, moduleErrors.E500(err, "auth.DbRepoImpl.FirstByEmail.QueryRow", "")
+	}
+	return &user, nil
 }
 
-func (r *DbRepoImpl) Create(data *UserDto) *errors.Error {
+// Create creates a new user in the database
+func (r *DbRepoImpl) Create(user *UserDto) *moduleErrors.Error {
+	query := "INSERT INTO " + r.cfg.Db.Prefix + "users (email, password) VALUES (?, ?)"
+	_, err := r.db.Exec(
+		query,
+		user.Email,
+		user.PasswordHash,
+	)
+	if err != nil {
+		return moduleErrors.E500(err, "auth.DbRepoImpl.Create.Exec", "")
+	}
+
 	return nil
 }
