@@ -69,11 +69,11 @@ func Send(ctx *Context, locale, email string) *errors.Error {
 	return nil
 }
 
-func makeKey(id users.UserID, code string) string {
+func makeKey(id users.ID, code string) string {
 	return fmt.Sprintf("auth.reset_password_link.code.%d_%s", id, code)
 }
 
-func makeRLSendKey(id users.UserID) string {
+func makeRLSendKey(id users.ID) string {
 	return fmt.Sprintf("auth.reset_password_link.%d", id)
 }
 

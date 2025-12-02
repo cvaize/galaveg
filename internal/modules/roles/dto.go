@@ -4,8 +4,8 @@ import (
 	"time"
 )
 
-type Role struct {
-	ID          uint64
+type RoleDto struct {
+	ID          ID
 	Code        string
 	Name        string
 	Description string

@@ -56,7 +56,7 @@ func (ctr *Controller) ResetPassword(c *gin.Context) {
 			} else {
 				alert := alerts.NewSuccessAlert(ts.T(locale, "alert.reset_password.success"))
 				//goland:noinspection GoUnhandledErrorResult
-				alerts.AddFlash(session, []alerts.Alert{alert})
+				alerts.AddFlash(session, []alerts.AlertDto{alert})
 
 				c.Redirect(http.StatusFound, "/login")
 				return

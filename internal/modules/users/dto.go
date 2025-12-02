@@ -5,8 +5,8 @@ import (
 	"time"
 )
 
-type User struct {
-	ID           UserID
+type UserDto struct {
+	ID           ID
 	Email        string
 	Locale       string
 	Surname      string
@@ -17,5 +17,5 @@ type User struct {
 	AvatarId     uint64
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
-	Roles        []roles.Role
+	Roles        []roles.RoleDto
 }

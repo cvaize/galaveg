@@ -12,24 +12,24 @@ func ExistsUserId(cfg *config.Config, session sessions.Session) bool {
 	return user != nil
 }
 
-func GetUserId(cfg *config.Config, session sessions.Session) (users.UserID, bool) {
+func GetUserId(cfg *config.Config, session sessions.Session) (users.ID, bool) {
 	user := session.Get(cfg.Session.StoreUserKey)
 
 	if user == nil {
 		return 0, false
 	}
 
-	userId, ok := user.(users.UserID)
+	userId, ok := user.(users.ID)
 
 	if !ok {
 		//goland:noinspection GoUnhandledErrorResult
-		errors.E500(nil, "sessions.actions.GetUserId.UserID", "")
+		errors.E500(nil, "sessions.actions.GetUserId.ID", "")
 	}
 
 	return userId, ok
 }
 
-func Login(cfg *config.Config, session sessions.Session, userId users.UserID) *errors.Error {
+func Login(cfg *config.Config, session sessions.Session, userId users.ID) *errors.Error {
 	session.Set(cfg.Session.StoreUserKey, userId)
 	if e := session.Save(); e != nil {
 		return errors.E500(e, "sessions.actions.Login.FailedToSaveSession", "")

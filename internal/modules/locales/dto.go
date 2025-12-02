@@ -1,6 +1,6 @@
 package locales
 
-type Locale struct {
+type LocaleDto struct {
 	Code      string
 	ShortName string
 	FullName  string

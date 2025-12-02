@@ -19,7 +19,7 @@ func NewService(hs hash.Service, dbRepo DbRepo) (*ServiceImpl, *errors.Error) {
 	return &ServiceImpl{hs, dbRepo}, nil
 }
 
-func (s *ServiceImpl) UpdatePassword(id users.UserID, password string) *errors.Error {
+func (s *ServiceImpl) UpdatePassword(id users.ID, password string) *errors.Error {
 	passwordHashed, e := s.hs.HashPassword(password)
 	if e != nil {
 		return errors.E500(e, "auth.ServiceImpl.UpdatePassword.HashPassword", "")
@@ -32,7 +32,7 @@ func (s *ServiceImpl) UpdatePassword(id users.UserID, password string) *errors.E
 	return nil
 }
 
-func (s *ServiceImpl) Login(email EmailVO, password PasswordVO) (users.UserID, *errors.Error) {
+func (s *ServiceImpl) Login(email EmailVO, password PasswordVO) (users.ID, *errors.Error) {
 	user, e := s.dbRepo.FirstByEmail(email.Value)
 	if e != nil {
 		// Failed to get user

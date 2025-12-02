@@ -5,7 +5,7 @@ import (
 )
 
 type UserDto struct {
-	ID           users.UserID
+	ID           users.ID
 	Email        EmailVO
 	PasswordHash string
 }

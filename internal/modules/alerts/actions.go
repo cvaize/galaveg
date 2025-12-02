@@ -7,8 +7,8 @@ import (
 
 const alertsKey = "alerts"
 
-func Flashes(session sessions.Session) []Alert {
-	var alerts []Alert
+func Flashes(session sessions.Session) []AlertDto {
+	var alerts []AlertDto
 	flashes := session.Flashes(alertsKey)
 	if e := session.Save(); e != nil {
 		//goland:noinspection GoUnhandledErrorResult
@@ -17,7 +17,7 @@ func Flashes(session sessions.Session) []Alert {
 	}
 
 	for _, flash := range flashes {
-		alert, ok := flash.(Alert)
+		alert, ok := flash.(AlertDto)
 		if !ok {
 			//goland:noinspection GoUnhandledErrorResult
 			errors.E500(nil, "alerts.Flashes.InvalidDeserializeAlert", "")
@@ -29,7 +29,7 @@ func Flashes(session sessions.Session) []Alert {
 	return alerts
 }
 
-func AddFlash(session sessions.Session, alerts []Alert) *errors.Error {
+func AddFlash(session sessions.Session, alerts []AlertDto) *errors.Error {
 	for _, alert := range alerts {
 		session.AddFlash(alert, alertsKey)
 	}

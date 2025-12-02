@@ -71,7 +71,7 @@ func (ctr *Controller) Register(c *gin.Context) {
 			} else {
 				alert := alerts.NewSuccessAlert(ts.T(locale, "alert.register.success"))
 				//goland:noinspection GoUnhandledErrorResult
-				alerts.AddFlash(session, []alerts.Alert{alert})
+				alerts.AddFlash(session, []alerts.AlertDto{alert})
 				c.Redirect(http.StatusFound, "/login")
 				return
 			}

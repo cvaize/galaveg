@@ -21,10 +21,10 @@ type View struct {
 	Heading     string
 	Breadcrumbs []item.View
 	Sidebar     *sidebar.View
-	Alerts      []alerts.Alert
+	Alerts      []alerts.AlertDto
 }
 
-func New(c *gin.Context, as app.Service, ls *localesModule.ServiceImpl, ts translator.Service, s sessions.Session, user *users.User) (*View, error) {
+func New(c *gin.Context, as app.Service, ls *localesModule.ServiceImpl, ts translator.Service, s sessions.Session, user *users.UserDto) (*View, error) {
 	locale := ls.GetLocale(ls.Locale(c, user))
 
 	sidebarObject, err := sidebar.New(c, ls, ts, user)

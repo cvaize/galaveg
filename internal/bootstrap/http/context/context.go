@@ -72,12 +72,12 @@ func Must(cfg *config.Config) *Context {
 	ctx.Services.Roles = errors.Must(roles.NewService())
 	ctx.Services.Mail = errors.Must(mailModule.NewService(ctx.Infra.Mail))
 	ctx.Services.Notifications = errors.Must(notifications.NewService(cfg, ctx.Services.Mail, ctx.Services.Translator, ctx.Services.App, ctx.Services.Template))
-	ctx.Services.Locales = errors.Must(locales.NewService(cfg, []locales.Locale{
+	ctx.Services.Locales = errors.Must(locales.NewService(cfg, []locales.LocaleDto{
 		{Code: "en", ShortName: "en", FullName: "English"},
 		{Code: "ru", ShortName: "ru", FullName: "Русский"},
 	}))
 	ctx.Services.Hash = errors.Must(hash.NewService())
 	ctx.Services.RateLimit = errors.Must(rate_limit.NewService(ctx.Services.Translator))
-	ctx.Services.Auth = errors.Must(auth.NewService(ctx.Services.Hash, auth.NewDbRepoImpl(ctx.Infra.Db)))
+	ctx.Services.Auth = errors.Must(auth.NewService(ctx.Services.Hash, auth.NewDbRepoImpl(cfg, ctx.Infra.Db)))
 	return ctx
 }

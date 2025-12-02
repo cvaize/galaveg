@@ -14,9 +14,9 @@ type View struct {
 	DarkMode string
 	Title    string
 	Heading  string
-	Alerts   []alerts.Alert
-	Locale   locales.Locale
-	Locales  []locales.Locale
+	Alerts   []alerts.AlertDto
+	Locale   locales.LocaleDto
+	Locales  []locales.LocaleDto
 	Form     form.View
 	Back     *btn.View
 }
