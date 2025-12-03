@@ -8,24 +8,26 @@ import (
 	"strings"
 )
 
-type DbRepo[DTO any] struct {
+type DbRepo[DTO any, IdType any] struct {
 	db          db.Db
 	table       string
 	columns     []string
+	idColumnKey string
 	dtoMapFun   func(columns []string, values []interface{}) (*DTO, error)
 	queryMapFun func(column string, dto *DTO) (interface{}, error)
 }
 
-type DbRepoSettings[DTO any] struct {
+type DbRepoSettings[DTO any, IdType any] struct {
 	Db          db.Db
 	Table       string
 	Prefix      string
 	Columns     []string
+	IdColumnKey string
 	DtoMapFun   func(columns []string, values []interface{}) (*DTO, error)
 	QueryMapFun func(column string, dto *DTO) (interface{}, error)
 }
 
-func NewDbRepo[DTO any](settings DbRepoSettings[DTO]) (*DbRepo[DTO], error) {
+func NewDbRepo[DTO any, IdType any](settings DbRepoSettings[DTO, IdType]) (*DbRepo[DTO, IdType], error) {
 	if settings.Db == nil {
 		return nil, fmt.Errorf("when creating a DB repository, no Db was specified")
 	}
@@ -38,14 +40,24 @@ func NewDbRepo[DTO any](settings DbRepoSettings[DTO]) (*DbRepo[DTO], error) {
 	if settings.Table == "" {
 		return nil, fmt.Errorf("when creating a DB repository, no Table was specified")
 	}
+	if settings.IdColumnKey == "" {
+		settings.IdColumnKey = "id"
+	}
 	table := settings.Table
 	if settings.Prefix != "" && !strings.HasPrefix(table, settings.Prefix) {
 		table = settings.Prefix + table
 	}
-	return &DbRepo[DTO]{settings.Db, table, settings.Columns, settings.DtoMapFun, settings.QueryMapFun}, nil
+	return &DbRepo[DTO, IdType]{
+		settings.Db,
+		table,
+		settings.Columns,
+		settings.IdColumnKey,
+		settings.DtoMapFun,
+		settings.QueryMapFun,
+	}, nil
 }
 
-func (r *DbRepo[DTO]) First(filters map[string]interface{}, columns []string) (*DTO, error) {
+func (r *DbRepo[DTO, IdType]) First(filters map[string]interface{}, columns []string) (*DTO, error) {
 	if columns == nil || len(columns) == 0 {
 		columns = r.columns
 	}
@@ -90,7 +102,48 @@ func (r *DbRepo[DTO]) First(filters map[string]interface{}, columns []string) (*
 	return dto, nil
 }
 
-func (r *DbRepo[DTO]) Exists(filters map[string]interface{}) (bool, error) {
+func (r *DbRepo[DTO, IdType]) AllIds(filters map[string]interface{}, orderBy string) ([]IdType, error) {
+	query := fmt.Sprintf("SELECT id FROM %s", r.table)
+
+	values := make([]interface{}, len(filters))
+
+	if filters != nil && len(filters) > 0 {
+		whereClauses := make([]string, len(filters))
+
+		i := -1
+		for field, value := range filters {
+			i++
+			whereClauses[i] = fmt.Sprintf("%s = ?", field)
+			values[i] = value
+		}
+
+		query += " WHERE " + strings.Join(whereClauses, " AND ")
+	}
+
+	if orderBy != "" {
+		query += " ORDER BY " + orderBy
+	}
+
+	rows, err := r.db.Query(query, values...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var ids []IdType
+	for rows.Next() {
+		var id IdType
+		err = rows.Scan(&id)
+		if err != nil {
+			return nil, err
+		}
+		ids = append(ids, id)
+	}
+
+	return ids, nil
+}
+
+func (r *DbRepo[DTO, IdType]) Exists(filters map[string]interface{}) (bool, error) {
 	// Building a query
 	query := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM %s", r.table)
 
@@ -120,7 +173,7 @@ func (r *DbRepo[DTO]) Exists(filters map[string]interface{}) (bool, error) {
 	return exists, nil
 }
 
-func (r *DbRepo[DTO]) Insert(dto *DTO, columns []string) error {
+func (r *DbRepo[DTO, IdType]) Insert(dto *DTO, columns []string) error {
 	if columns == nil || len(columns) == 0 {
 		columns = r.columns
 	}
@@ -153,7 +206,7 @@ func (r *DbRepo[DTO]) Insert(dto *DTO, columns []string) error {
 	return nil
 }
 
-func (r *DbRepo[DTO]) Update(dto *DTO, filters map[string]interface{}, columns []string) error {
+func (r *DbRepo[DTO, IdType]) Update(dto *DTO, filters map[string]interface{}, columns []string) error {
 	// If there are no filters, prevent all records from being updated
 	if filters == nil || len(filters) == 0 {
 		return fmt.Errorf("filters are required for the UPDATE operation")
@@ -202,7 +255,7 @@ func (r *DbRepo[DTO]) Update(dto *DTO, filters map[string]interface{}, columns [
 	return nil
 }
 
-func (r *DbRepo[DTO]) Delete(filters map[string]interface{}) error {
+func (r *DbRepo[DTO, IdType]) Delete(filters map[string]interface{}) error {
 	if filters == nil || len(filters) == 0 {
 		// If there are no filters, prevent all records from being deleted
 		return fmt.Errorf("filters are required for the delete operation")

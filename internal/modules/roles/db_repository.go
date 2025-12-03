@@ -10,7 +10,7 @@ import (
 type DbRepo = *DbRepoImpl
 
 type DbRepoImpl struct {
-	dbRepo *dbModule.DbRepo[RoleDto]
+	dbRepo *dbModule.DbRepo[RoleDto, ID]
 }
 
 type DbRepoImplSettings struct {
@@ -23,11 +23,12 @@ func NewDbRepoImpl(settings DbRepoImplSettings) (*DbRepoImpl, error) {
 	if settings.Table == "" {
 		settings.Table = "roles"
 	}
-	dbRepo, e := dbModule.NewDbRepo[RoleDto](dbModule.DbRepoSettings[RoleDto]{
-		Db:      settings.Db,
-		Table:   settings.Table,
-		Prefix:  settings.Prefix,
-		Columns: []string{"id", "code", "name", "description", "permissions"},
+	dbRepo, e := dbModule.NewDbRepo[RoleDto, ID](dbModule.DbRepoSettings[RoleDto, ID]{
+		Db:          settings.Db,
+		Table:       settings.Table,
+		Prefix:      settings.Prefix,
+		IdColumnKey: "id",
+		Columns:     []string{"id", "code", "name", "description", "permissions"},
 		DtoMapFun: func(columns []string, values []interface{}) (*RoleDto, error) {
 			var dto RoleDto
 			for i, column := range columns {
@@ -98,6 +99,10 @@ func NewDbRepoImpl(settings DbRepoImplSettings) (*DbRepoImpl, error) {
 		return nil, e
 	}
 	return &DbRepoImpl{dbRepo}, nil
+}
+
+func (r *DbRepoImpl) AllIds(filters map[string]interface{}, orderBy string) ([]ID, error) {
+	return r.dbRepo.AllIds(filters, orderBy)
 }
 
 func (r *DbRepoImpl) First(filters map[string]interface{}, columns []string) (*RoleDto, error) {
