@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"galaveg/internal/infrastructures/db"
 	dbModule "galaveg/internal/modules/db"
-	"github.com/goforj/godump"
 	"strings"
 )
 
@@ -34,39 +33,35 @@ func NewDbRepoImpl(settings DbRepoImplSettings) (*DbRepoImpl, error) {
 			for i, column := range columns {
 				value := values[i]
 
-				//godump.Dump(column)
-				//godump.Dump(value)
-				var ok bool
+				var e error
 				switch column {
 				case "id":
-					dto.ID, ok = (*value.(*interface{})).(ID)
+					dto.ID, e, _ = dbModule.ToInt64(value)
 					break
 				case "name":
-					dto.Name, ok = (*value.(*interface{})).(string)
+					dto.Name, e, _ = dbModule.ToString(value)
 					break
 				case "code":
-					godump.Dump(value)
-					var v []uint8
-					v, ok = (*value.(*interface{})).([]uint8)
-					if ok {
-						dto.Code = string(v)
-					}
+					dto.Code, e, _ = dbModule.ToString(value)
 					break
 				case "description":
-					dto.Description, ok = (*value.(*interface{})).(string)
+					dto.Description, e, _ = dbModule.ToString(value)
 					break
 				case "permissions":
-					var permissions string
-					permissions, ok = (*value.(*interface{})).(string)
-					godump.Dump(permissions)
+					var vStr string
+					vStr, e, _ = dbModule.ToString(value)
+					if vStr != "" {
+						dto.Permissions = strings.Split(vStr, ",")
+						for i2, permission := range dto.Permissions {
+							dto.Permissions[i2] = strings.Trim(permission, " []\"")
+						}
+					}
 					break
-				//case "permissions":
 				default:
 					continue
-					//return nil, fmt.Errorf("no type conversion is specified in the column: %s", column)
 				}
-				if !ok {
-					return nil, fmt.Errorf("couldn't convert the value to the type in the column: %s", column)
+				if e != nil {
+					return nil, e
 				}
 			}
 			return &dto, nil
@@ -80,12 +75,19 @@ func NewDbRepoImpl(settings DbRepoImplSettings) (*DbRepoImpl, error) {
 			case "name":
 				return dto.Name, nil
 			case "description":
-				return dto.Description, nil
+				str := strings.TrimSpace(dto.Description)
+				if str == "" {
+					return nil, nil
+				}
+				return str, nil
 			case "permissions":
 				// Convert the permissions array to a JSON string
 				permissionsJSON := "[]"
 				if len(dto.Permissions) > 0 {
 					permissionsJSON = fmt.Sprintf(`["%s"]`, strings.Join(dto.Permissions, `","`))
+				}
+				if permissionsJSON == "[]" {
+					return nil, nil
 				}
 				return permissionsJSON, nil
 			}
