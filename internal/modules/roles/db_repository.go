@@ -101,6 +101,10 @@ func NewDbRepoImpl(settings DbRepoImplSettings) (*DbRepoImpl, error) {
 	return &DbRepoImpl{dbRepo}, nil
 }
 
+func (r *DbRepoImpl) All(filters map[string]interface{}, orderBy string, columns []string) ([]*RoleDto, error) {
+	return r.dbRepo.All(filters, orderBy, columns)
+}
+
 func (r *DbRepoImpl) AllIds(filters map[string]interface{}, orderBy string) ([]ID, error) {
 	return r.dbRepo.AllIds(filters, orderBy)
 }

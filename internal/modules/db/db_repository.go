@@ -102,6 +102,61 @@ func (r *DbRepo[DTO, IdType]) First(filters map[string]interface{}, columns []st
 	return dto, nil
 }
 
+func (r *DbRepo[DTO, IdType]) All(filters map[string]interface{}, orderBy string, columns []string) ([]*DTO, error) {
+	if columns == nil || len(columns) == 0 {
+		columns = r.columns
+	}
+
+	query := fmt.Sprintf("SELECT %s FROM %s", strings.Join(columns, ", "), r.table)
+
+	values := make([]interface{}, len(filters))
+
+	if filters != nil && len(filters) > 0 {
+		whereClauses := make([]string, len(filters))
+
+		i := -1
+		for field, value := range filters {
+			i++
+			whereClauses[i] = fmt.Sprintf("%s = ?", field)
+			values[i] = value
+		}
+
+		query += " WHERE " + strings.Join(whereClauses, " AND ")
+	}
+
+	if orderBy != "" {
+		query += " ORDER BY " + orderBy
+	}
+
+	rows, err := r.db.Query(query, values...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var dtos []*DTO
+	for rows.Next() {
+		vals := make([]interface{}, len(columns))
+		for i := range columns {
+			var ii interface{}
+			vals[i] = &ii
+		}
+
+		err = rows.Scan(vals...)
+		if err != nil {
+			return nil, err
+		}
+
+		dto, e := r.dtoMapFun(columns, vals)
+		if e != nil {
+			return nil, e
+		}
+		dtos = append(dtos, dto)
+	}
+
+	return dtos, nil
+}
+
 func (r *DbRepo[DTO, IdType]) AllIds(filters map[string]interface{}, orderBy string) ([]IdType, error) {
 	query := fmt.Sprintf("SELECT id FROM %s", r.table)
 
