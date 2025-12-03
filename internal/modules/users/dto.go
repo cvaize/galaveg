@@ -13,8 +13,8 @@ type UserDto struct {
 	Name         string
 	Patronymic   string
 	IsSuperAdmin bool
-	RolesIds     []uint64
-	AvatarId     uint64
+	RolesIds     []int64
+	AvatarId     int64
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 	Roles        []roles.RoleDto

@@ -42,7 +42,7 @@ func createMigrationsTable(ctx *context.Context) error {
 }
 
 type migrationRow struct {
-	id   uint64
+	id   int64
 	name string
 }
 
@@ -91,7 +91,7 @@ func UpMigration(ctx *context.Context) error {
 		return err
 	}
 
-	index := make(map[string]uint64)
+	index := make(map[string]int64)
 
 	for _, m := range migrationRows {
 		index[m.name] = m.id

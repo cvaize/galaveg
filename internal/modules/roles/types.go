@@ -1,3 +1,3 @@
 package roles
 
-type ID uint64
+type ID = int64
