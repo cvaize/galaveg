@@ -234,6 +234,36 @@ func (r *DbRepo[DTO, IdType]) Paginate(page int, perPage int, filterValues []int
 	return records, totalRecords, totalPages, nil
 }
 
+// Count
+// Example:
+// search := "%ADMIN%"
+// values := make([]interface{}, 2)
+// values[0] = search
+// values[1] = search
+// whereClauses := []string{"(name like ? or description like ?)"}
+// totalRecords, err := rep.Count(values, whereClauses)
+func (r *DbRepo[DTO, IdType]) Count(filterValues []interface{}, whereClauses []string) (int64, error) {
+	filterValues = makeValues(filterValues)
+
+	key := "*"
+	if r.idColumnKey != "" {
+		key = r.idColumnKey
+	}
+	query := fmt.Sprintf("SELECT COUNT(%s) FROM %s", key, r.table)
+
+	queryWhereClauses(&query, whereClauses)
+
+	var totalRecords int64
+	err := r.db.QueryRow(query, filterValues...).Scan(&totalRecords)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return 0, nil // Entry not found
+		}
+		return 0, err
+	}
+	return totalRecords, nil
+}
+
 func (r *DbRepo[DTO, IdType]) AllIds(filterValues []interface{}, whereClauses []string, orderBy string, limit int, offset int) ([]IdType, error) {
 	filterValues = makeValues(filterValues)
 	query := fmt.Sprintf("SELECT id FROM %s", r.table)

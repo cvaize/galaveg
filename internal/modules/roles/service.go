@@ -14,6 +14,6 @@ func NewService(dbRepo DbRepo) (*ServiceImpl, *errors.Error) {
 	return &ServiceImpl{dbRepo}, nil
 }
 
-func (r *ServiceImpl) Paginate(page int, perPage int, filterValues []interface{}, whereClauses []string, columns []string, orderBy string) ([]*RoleDto, int64, int, error) {
-	return r.dbRepo.Paginate(page, perPage, filterValues, whereClauses, columns, orderBy)
+func (r *ServiceImpl) Count(filterValues []interface{}, whereClauses []string) (int64, error) {
+	return r.dbRepo.Count(filterValues, whereClauses)
 }
