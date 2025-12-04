@@ -101,30 +101,32 @@ func NewDbRepoImpl(settings DbRepoImplSettings) (*DbRepoImpl, error) {
 	return &DbRepoImpl{dbRepo}, nil
 }
 
-func (r *DbRepoImpl) All(query *dbModule.DbRepoQuery) ([]*RoleDto, error) {
-	return r.dbRepo.All(query)
+//
+//func (r *DbRepoImpl) All(query *dbModule.DbRepoQuery) ([]*RoleDto, error) {
+//	return r.dbRepo.All(query)
+//}
+//
+//func (r *DbRepoImpl) AllIds(query *dbModule.DbRepoQuery) ([]ID, error) {
+//	return r.dbRepo.AllIds(query)
+//}
+
+func (r *DbRepoImpl) First(values []interface{}, whereClauses []string, columns []string, orderBy string) (*RoleDto, error) {
+	return r.dbRepo.First(values, whereClauses, columns, orderBy)
 }
 
-func (r *DbRepoImpl) AllIds(query *dbModule.DbRepoQuery) ([]ID, error) {
-	return r.dbRepo.AllIds(query)
-}
-
-func (r *DbRepoImpl) First(query *dbModule.DbRepoQuery) (*RoleDto, error) {
-	return r.dbRepo.First(query)
-}
-
-func (r *DbRepoImpl) Exists(query *dbModule.DbRepoQuery) (bool, error) {
-	return r.dbRepo.Exists(query)
-}
-
-func (r *DbRepoImpl) Insert(role *RoleDto, columns []string) error {
-	return r.dbRepo.Insert(role, columns)
-}
-
-func (r *DbRepoImpl) Update(role *RoleDto, filters *dbModule.DbRepoFilters, columns []string) error {
-	return r.dbRepo.Update(role, filters, columns)
-}
-
-func (r *DbRepoImpl) Delete(filters *dbModule.DbRepoFilters) error {
-	return r.dbRepo.Delete(filters)
-}
+//
+//func (r *DbRepoImpl) Exists(query *dbModule.DbRepoQuery) (bool, error) {
+//	return r.dbRepo.Exists(query)
+//}
+//
+//func (r *DbRepoImpl) Insert(role *RoleDto, columns []string) error {
+//	return r.dbRepo.Insert(role, columns)
+//}
+//
+//func (r *DbRepoImpl) Update(role *RoleDto, filters *dbModule.DbRepoFilters, columns []string) error {
+//	return r.dbRepo.Update(role, filters, columns)
+//}
+//
+//func (r *DbRepoImpl) Delete(filters *dbModule.DbRepoFilters) error {
+//	return r.dbRepo.Delete(filters)
+//}

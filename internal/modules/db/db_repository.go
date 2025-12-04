@@ -5,19 +5,19 @@ import (
 	"errors"
 	"fmt"
 	"galaveg/internal/infrastructures/db"
+	"github.com/samber/lo"
 	"strconv"
 	"strings"
 )
 
-var emptyDbRepoQuery = &DbRepoQuery{}
-
 type DbRepo[DTO any, IdType any] struct {
-	db          db.Db
-	table       string
-	columns     []string
-	idColumnKey string
-	dtoMapFun   func(columns []string, values []interface{}) (*DTO, error)
-	queryMapFun func(column string, dto *DTO) (interface{}, error)
+	db               db.Db
+	table            string
+	columns          []string
+	withoutIdColumns []string
+	idColumnKey      string
+	dtoMapFun        func(columns []string, values []interface{}) (*DTO, error)
+	queryMapFun      func(column string, dto *DTO) (interface{}, error)
 }
 
 type DbRepoSettings[DTO any, IdType any] struct {
@@ -50,34 +50,73 @@ func NewDbRepo[DTO any, IdType any](settings DbRepoSettings[DTO, IdType]) (*DbRe
 	if settings.Prefix != "" && !strings.HasPrefix(table, settings.Prefix) {
 		table = settings.Prefix + table
 	}
+	withoutIdColumns := lo.Filter(settings.Columns, func(s string, _ int) bool {
+		return s != settings.IdColumnKey
+	})
+
 	return &DbRepo[DTO, IdType]{
 		settings.Db,
 		table,
 		settings.Columns,
+		withoutIdColumns,
 		settings.IdColumnKey,
 		settings.DtoMapFun,
 		settings.QueryMapFun,
 	}, nil
 }
 
-func (r *DbRepo[DTO, IdType]) prepare(q *DbRepoQuery) (*DbRepoQuery, []string) {
-	if q == nil {
-		q = emptyDbRepoQuery
-	}
-	columns := q.Columns
+func (r *DbRepo[DTO, IdType]) getColumns(columns []string) []string {
 	if columns == nil || len(columns) == 0 {
 		columns = r.columns
 	}
-	return q, columns
+	return columns
 }
 
-func (r *DbRepo[DTO, IdType]) First(q *DbRepoQuery) (*DTO, error) {
-	q, columns := r.prepare(q)
+func (r *DbRepo[DTO, IdType]) getWithoutIdColumns(columns []string) []string {
+	if columns == nil || len(columns) == 0 {
+		columns = r.withoutIdColumns
+	}
+	return columns
+}
+
+func queryWhereClauses(query *string, whereClauses []string) {
+	if whereClauses != nil && len(whereClauses) > 0 {
+		*query += " WHERE " + strings.Join(whereClauses, " AND ")
+	}
+}
+
+func queryOrderBy(query *string, orderBy string) {
+	if len(orderBy) > 0 {
+		*query += " ORDER BY " + orderBy
+	}
+}
+
+func queryLimit(query *string, limit int) {
+	if limit > 0 {
+		*query += " LIMIT " + strconv.Itoa(limit)
+	}
+}
+
+func queryOffset(query *string, offset int) {
+	if offset > 0 {
+		*query += " OFFSET " + strconv.Itoa(offset)
+	}
+}
+
+func makeValues(values []interface{}) []interface{} {
+	if values != nil {
+		return values
+	}
+	return make([]interface{}, 0)
+}
+
+func (r *DbRepo[DTO, IdType]) First(filterValues []interface{}, whereClauses []string, columns []string, orderBy string) (*DTO, error) {
+	filterValues = makeValues(filterValues)
+	columns = r.getColumns(columns)
 	query := fmt.Sprintf("SELECT %s FROM %s", strings.Join(columns, ", "), r.table)
 
-	query += q.getQuery()
-	values := q.getValues()
-
+	queryWhereClauses(&query, whereClauses)
+	queryOrderBy(&query, orderBy)
 	query += " LIMIT 1"
 
 	vals := make([]interface{}, len(columns))
@@ -86,7 +125,7 @@ func (r *DbRepo[DTO, IdType]) First(q *DbRepoQuery) (*DTO, error) {
 		vals[i] = &ii
 	}
 
-	err := r.db.QueryRow(query, values...).Scan(vals...)
+	err := r.db.QueryRow(query, filterValues...).Scan(vals...)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil // Entry not found
@@ -102,26 +141,17 @@ func (r *DbRepo[DTO, IdType]) First(q *DbRepoQuery) (*DTO, error) {
 	return dto, nil
 }
 
-// All
-//
-// Example:
-//
-//	search := "%ADMIN%"
-//	values := make([]interface{}, 2)
-//	values[0] = search
-//	values[1] = search
-//	filters := &dbModule.DbRepoFilters{[]string{"(name like ? or description like ?)"}, values}
-//	query := &dbModule.DbRepoQuery{
-//	    Filters: filters,
-//	}
-func (r *DbRepo[DTO, IdType]) All(q *DbRepoQuery) ([]*DTO, error) {
-	q, columns := r.prepare(q)
+func (r *DbRepo[DTO, IdType]) All(filterValues []interface{}, whereClauses []string, columns []string, orderBy string, limit int, offset int) ([]*DTO, error) {
+	filterValues = makeValues(filterValues)
+	columns = r.getColumns(columns)
 	query := fmt.Sprintf("SELECT %s FROM %s", strings.Join(columns, ", "), r.table)
 
-	query += q.getQuery()
-	values := q.getValues()
+	queryWhereClauses(&query, whereClauses)
+	queryOrderBy(&query, orderBy)
+	queryLimit(&query, limit)
+	queryOffset(&query, offset)
 
-	rows, err := r.db.Query(query, values...)
+	rows, err := r.db.Query(query, filterValues...)
 	if err != nil {
 		return nil, err
 	}
@@ -150,14 +180,16 @@ func (r *DbRepo[DTO, IdType]) All(q *DbRepoQuery) ([]*DTO, error) {
 	return dtos, nil
 }
 
-func (r *DbRepo[DTO, IdType]) AllIds(q *DbRepoQuery) ([]IdType, error) {
-	q, _ = r.prepare(q)
+func (r *DbRepo[DTO, IdType]) AllIds(filterValues []interface{}, whereClauses []string, orderBy string, limit int, offset int) ([]IdType, error) {
+	filterValues = makeValues(filterValues)
 	query := fmt.Sprintf("SELECT id FROM %s", r.table)
 
-	query += q.getQuery()
-	values := q.getValues()
+	queryWhereClauses(&query, whereClauses)
+	queryOrderBy(&query, orderBy)
+	queryLimit(&query, limit)
+	queryOffset(&query, offset)
 
-	rows, err := r.db.Query(query, values...)
+	rows, err := r.db.Query(query, filterValues...)
 	if err != nil {
 		return nil, err
 	}
@@ -176,18 +208,16 @@ func (r *DbRepo[DTO, IdType]) AllIds(q *DbRepoQuery) ([]IdType, error) {
 	return ids, nil
 }
 
-func (r *DbRepo[DTO, IdType]) Exists(q *DbRepoQuery) (bool, error) {
-	q, _ = r.prepare(q)
-	// Building a query
+func (r *DbRepo[DTO, IdType]) Exists(filterValues []interface{}, whereClauses []string) (bool, error) {
+	filterValues = makeValues(filterValues)
 	query := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM %s", r.table)
 
-	query += q.getQuery()
-	values := q.getValues()
+	queryWhereClauses(&query, whereClauses)
 
 	query += " LIMIT 1)"
 
 	var exists bool
-	err := r.db.QueryRow(query, values...).Scan(&exists)
+	err := r.db.QueryRow(query, filterValues...).Scan(&exists)
 	if err != nil {
 		return false, err
 	}
@@ -196,9 +226,7 @@ func (r *DbRepo[DTO, IdType]) Exists(q *DbRepoQuery) (bool, error) {
 }
 
 func (r *DbRepo[DTO, IdType]) Insert(dto *DTO, columns []string) error {
-	if columns == nil || len(columns) == 0 {
-		columns = r.columns
-	}
+	columns = r.getWithoutIdColumns(columns)
 
 	// Preparing an SQL query
 	placeholders := make([]string, len(columns))
@@ -228,18 +256,16 @@ func (r *DbRepo[DTO, IdType]) Insert(dto *DTO, columns []string) error {
 	return nil
 }
 
-func (r *DbRepo[DTO, IdType]) Update(dto *DTO, filters *DbRepoFilters, columns []string) error {
+func (r *DbRepo[DTO, IdType]) Update(dto *DTO, filterValues []interface{}, whereClauses []string, columns []string) error {
+	filterValues = makeValues(filterValues)
 	// If there are no filters, prevent all records from being updated
-	if filters == nil || len(filters.WhereClauses) == 0 {
+	if whereClauses == nil || len(whereClauses) == 0 {
 		return fmt.Errorf("filters are required for the UPDATE operation")
 	}
-	if columns == nil || len(columns) == 0 {
-		columns = r.columns
-	}
+	columns = r.getWithoutIdColumns(columns)
 
 	// Prepare the SET part of the query
 	setClauses := make([]string, len(columns))
-	filterValues := filters.getValues()
 	values := make([]interface{}, len(columns)+len(filterValues))
 
 	var index int
@@ -248,6 +274,7 @@ func (r *DbRepo[DTO, IdType]) Update(dto *DTO, filters *DbRepoFilters, columns [
 		if e != nil {
 			return e
 		}
+		setClauses[i] = col + " = ?"
 		values[i] = v
 		index = i
 	}
@@ -258,10 +285,10 @@ func (r *DbRepo[DTO, IdType]) Update(dto *DTO, filters *DbRepoFilters, columns [
 	}
 
 	query := fmt.Sprintf(
-		"UPDATE %s SET %s %s",
+		"UPDATE %s SET %s WHERE %s",
 		r.table,
 		strings.Join(setClauses, ", "),
-		filters.getWhereClauses(),
+		strings.Join(whereClauses, " AND "),
 	)
 
 	_, err := r.db.Exec(query, values...)
@@ -272,74 +299,19 @@ func (r *DbRepo[DTO, IdType]) Update(dto *DTO, filters *DbRepoFilters, columns [
 	return nil
 }
 
-func (r *DbRepo[DTO, IdType]) Delete(filters *DbRepoFilters) error {
-	if filters == nil || len(filters.WhereClauses) == 0 {
+func (r *DbRepo[DTO, IdType]) Delete(filterValues []interface{}, whereClauses []string) error {
+	filterValues = makeValues(filterValues)
+	if whereClauses == nil || len(whereClauses) == 0 {
 		// If there are no filters, prevent all records from being deleted
 		return fmt.Errorf("filters are required for the delete operation")
 	}
 
-	query := fmt.Sprintf("DELETE FROM %s", r.table)
+	query := fmt.Sprintf("DELETE FROM %s WHERE %s", r.table, strings.Join(whereClauses, " AND "))
 
-	query += filters.getWhereClauses()
-	values := filters.getValues()
-
-	_, err := r.db.Exec(query, values...)
+	_, err := r.db.Exec(query, filterValues...)
 	if err != nil {
 		return err
 	}
 
 	return nil
-}
-
-type DbRepoFilters struct {
-	WhereClauses []string
-	Values       []interface{}
-}
-
-type DbRepoQuery struct {
-	Filters *DbRepoFilters
-	Columns []string
-	OrderBy string
-	Limit   int
-}
-
-func (q *DbRepoQuery) getValues() []interface{} {
-	var values []interface{}
-
-	if q.Filters != nil {
-		values = q.Filters.getValues()
-	}
-
-	return values
-}
-
-func (q *DbRepoQuery) getQuery() string {
-	query := ""
-
-	if q.Filters != nil {
-		query += q.Filters.getWhereClauses()
-	}
-
-	if q.OrderBy != "" {
-		query += " ORDER BY " + q.OrderBy
-	}
-
-	if q.Limit > 0 {
-		query += " LIMIT " + strconv.Itoa(q.Limit)
-	}
-
-	return query
-}
-
-func (q *DbRepoFilters) getValues() []interface{} {
-	return q.Values
-}
-
-func (q *DbRepoFilters) getWhereClauses() string {
-	query := ""
-	if len(q.WhereClauses) > 0 {
-		query += " WHERE " + strings.Join(q.WhereClauses, " AND ")
-	}
-
-	return query
 }

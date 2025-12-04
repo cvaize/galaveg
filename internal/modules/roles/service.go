@@ -1,7 +1,6 @@
 package roles
 
 import (
-	dbModule "galaveg/internal/modules/db"
 	"galaveg/internal/modules/errors"
 )
 
@@ -15,6 +14,6 @@ func NewService(dbRepo DbRepo) (*ServiceImpl, *errors.Error) {
 	return &ServiceImpl{dbRepo}, nil
 }
 
-func (r *ServiceImpl) All(query *dbModule.DbRepoQuery) ([]*RoleDto, error) {
-	return r.dbRepo.All(query)
+func (r *ServiceImpl) First(values []interface{}, whereClauses []string, columns []string, orderBy string) (*RoleDto, error) {
+	return r.dbRepo.First(values, whereClauses, columns, orderBy)
 }
