@@ -21,8 +21,9 @@ func (ctr *Controller) Index(c *gin.Context) {
 	values[0] = search
 	values[1] = search
 	whereClauses := []string{"(name like ? or description like ?)"}
-	columns := []string{"id", "name"}
+	columns := []string{}
 	orderBy := "name ASC"
+	// TODO: Roles.Count
 	records, totalRecords, totalPages, err := ctr.ctx.Services.Roles.Paginate(1, 10, values, whereClauses, columns, orderBy)
 	debug.Dump(records)
 	debug.Dump(totalRecords)

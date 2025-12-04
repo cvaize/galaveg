@@ -182,7 +182,7 @@ func (r *DbRepo[DTO, IdType]) All(filterValues []interface{}, whereClauses []str
 	return records, nil
 }
 
-func (r *DbRepo[DTO, IdType]) Paginate(page int, perPage int, filterValues []interface{}, whereClauses []string, columns []string, orderBy string) ([]*DTO, int, int, error) {
+func (r *DbRepo[DTO, IdType]) Paginate(page int, perPage int, filterValues []interface{}, whereClauses []string, columns []string, orderBy string) ([]*DTO, int64, int, error) {
 	filterValues = makeValues(filterValues)
 	columns = r.getColumns(columns)
 
@@ -200,7 +200,7 @@ func (r *DbRepo[DTO, IdType]) Paginate(page int, perPage int, filterValues []int
 	}
 	defer rows.Close()
 
-	totalRecords := 0
+	var totalRecords int64
 	columnsLen := len(columns)
 	valsLen := columnsLen + 1
 	var records []*DTO
@@ -221,7 +221,7 @@ func (r *DbRepo[DTO, IdType]) Paginate(page int, perPage int, filterValues []int
 			if e != nil {
 				return nil, 0, 0, e
 			}
-			totalRecords = int(count)
+			totalRecords = count
 		}
 		dto, e := r.dtoMapFun(columns, vals[:columnsLen])
 		if e != nil {
