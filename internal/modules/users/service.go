@@ -20,12 +20,12 @@ func (s *ServiceImpl) ExistsByEmail(email string) (bool, *errors.Error) {
 	return false, nil
 }
 
-func (s *ServiceImpl) Create(data *UserDto) (ID, *errors.Error) {
+func (s *ServiceImpl) Create(data *UserDto) (int64, *errors.Error) {
 	// TODO: Email to LowCase
 	return 0, nil
 }
 
-func (s *ServiceImpl) Update(data *UserDto, fields []string) (ID, *errors.Error) {
+func (s *ServiceImpl) Update(data *UserDto, fields []string) (int64, *errors.Error) {
 	// TODO: Email to LowCase
 	return 0, nil
 }

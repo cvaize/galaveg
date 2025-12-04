@@ -6,7 +6,7 @@ import (
 )
 
 type UserDto struct {
-	ID           ID
+	Id           int64
 	Email        string
 	Locale       string
 	Surname      string

@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"galaveg/internal/modules/errors"
-	"galaveg/internal/modules/users"
 	"github.com/samber/lo"
 	"time"
 )
@@ -31,7 +30,7 @@ func Send(ctx *Context, locale, email string) *errors.Error {
 		return errors.E404(e, "auth.reset_password.UserNotFound", "")
 	}
 
-	rlKey := makeRLSendKey(user.ID)
+	rlKey := makeRLSendKey(user.Id)
 	executed, e := ctx.rl.Attempt(rlKey, rateLimitMaxAttempts, rateLimitTTL)
 	if e != nil {
 		return errors.E500(e, "auth.reset_password.RateLimit.Attempt", "")
@@ -46,7 +45,7 @@ func Send(ctx *Context, locale, email string) *errors.Error {
 	}
 
 	code := makeCode()
-	key := makeKey(user.ID, code)
+	key := makeKey(user.Id, code)
 
 	// TODO: Изменить хранение на массив, иначе ключом могут сломать хранилище
 	// Лучше всего наверное реализовать как это сделал Steam или шифровать код
@@ -69,11 +68,11 @@ func Send(ctx *Context, locale, email string) *errors.Error {
 	return nil
 }
 
-func makeKey(id users.ID, code string) string {
+func makeKey(id int64, code string) string {
 	return fmt.Sprintf("auth.reset_password_link.code.%d_%s", id, code)
 }
 
-func makeRLSendKey(id users.ID) string {
+func makeRLSendKey(id int64) string {
 	return fmt.Sprintf("auth.reset_password_link.%d", id)
 }
 

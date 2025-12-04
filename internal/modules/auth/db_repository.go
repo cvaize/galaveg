@@ -24,7 +24,7 @@ func (r *DbRepoImpl) FirstByEmail(email string) (*UserDto, *moduleErrors.Error) 
 	var user UserDto
 	query := "SELECT id, email, password FROM " + r.cfg.Db.Prefix + "users WHERE email = ?"
 	err := r.db.QueryRow(query, email).Scan(
-		&user.ID,
+		&user.Id,
 		&user.Email.Value,
 		&user.PasswordHash,
 	)

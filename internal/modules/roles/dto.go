@@ -3,7 +3,7 @@ package roles
 import "time"
 
 type RoleDto struct {
-	ID          ID
+	Id          int64
 	Code        string
 	Name        string
 	Description string

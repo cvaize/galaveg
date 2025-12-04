@@ -71,6 +71,20 @@ func NilIfEmptyString(value string) interface{} {
 	return str
 }
 
+func NilIfZeroInt64(value int64) interface{} {
+	if value == 0 {
+		return nil
+	}
+	return value
+}
+
+func NilIfZeroTime(value time.Time) interface{} {
+	if value.IsZero() {
+		return nil
+	}
+	return value
+}
+
 func JsonToArrayInt64(value string) ([]int64, error) {
 	rows := strings.Split(value, ",")
 	ids := make([]int64, len(rows))

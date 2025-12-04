@@ -1,10 +1,9 @@
-package users
+package files
 
 import (
 	"fmt"
 	"galaveg/internal/infrastructures/db"
 	dbModule "galaveg/internal/modules/db"
-	"strings"
 )
 
 type DbRepo = *DbRepoImpl
@@ -21,59 +20,60 @@ type DbRepoImplSettings struct {
 
 func NewDbRepoImpl(settings DbRepoImplSettings) (*DbRepoImpl, error) {
 	if settings.Table == "" {
-		settings.Table = "users"
+		settings.Table = "users_files"
 	}
 	dbRepo, e := dbModule.NewDbRepo[UserDto, int64](dbModule.DbRepoSettings[UserDto, int64]{
 		Db:          settings.Db,
 		Table:       settings.Table,
 		Prefix:      settings.Prefix,
 		IdColumnKey: "id",
-		Columns:     []string{"id", "email", "locale", "surname", "name", "patronymic", "is_super_admin", "roles_ids", "avatar_id", "created_at", "updated_at"},
+		Columns:     []string{"id", "file_id", "filename", "path", "upload_filename", "mime", "user_id", "created_at", "updated_at", "deleted_at", "is_deleted", "is_public", "disk"},
 		//
 		ColumnsThatShouldNotBeUpdatedByDefault: []string{"created_at", "updated_at"},
 		DtoMapFun: func(columns []string, values []interface{}) (*UserDto, error) {
 			var dto UserDto
 			for i, column := range columns {
 				value := values[i]
-
 				var e error
 				switch column {
 				case "id":
 					dto.Id, e, _ = dbModule.ToInt64(value)
 					break
-				case "email":
-					dto.Email, e, _ = dbModule.ToString(value)
+				case "file_id":
+					dto.FileId, e, _ = dbModule.ToInt64(value)
 					break
-				case "locale":
-					dto.Locale, e, _ = dbModule.ToString(value)
+				case "filename":
+					dto.Filename, e, _ = dbModule.ToString(value)
 					break
-				case "surname":
-					dto.Surname, e, _ = dbModule.ToString(value)
+				case "path":
+					dto.Path, e, _ = dbModule.ToString(value)
 					break
-				case "name":
-					dto.Name, e, _ = dbModule.ToString(value)
+				case "upload_filename":
+					dto.UploadFilename, e, _ = dbModule.ToString(value)
 					break
-				case "patronymic":
-					dto.Patronymic, e, _ = dbModule.ToString(value)
+				case "mime":
+					dto.Mime, e, _ = dbModule.ToString(value)
 					break
-				case "is_super_admin":
-					dto.IsSuperAdmin, e, _ = dbModule.ToBool(value)
-					break
-				case "roles_ids":
-					var vStr string
-					vStr, e, _ = dbModule.ToString(value)
-					if vStr != "" {
-						dto.RolesIds, e = dbModule.JsonToArrayInt64(vStr)
-					}
-					break
-				case "avatar_id":
-					dto.AvatarId, e, _ = dbModule.ToInt64(value)
+				case "user_id":
+					dto.UserId, e, _ = dbModule.ToInt64(value)
 					break
 				case "created_at":
 					dto.CreatedAt, e, _ = dbModule.ToTime(value)
 					break
 				case "updated_at":
 					dto.UpdatedAt, e, _ = dbModule.ToTime(value)
+					break
+				case "deleted_at":
+					dto.DeletedAt, e, _ = dbModule.ToTime(value)
+					break
+				case "is_deleted":
+					dto.IsDeleted, e, _ = dbModule.ToBool(value)
+					break
+				case "is_public":
+					dto.IsPublic, e, _ = dbModule.ToBool(value)
+					break
+				case "disk":
+					dto.Disk, e, _ = dbModule.ToString(value)
 					break
 				default:
 					continue
@@ -88,29 +88,30 @@ func NewDbRepoImpl(settings DbRepoImplSettings) (*DbRepoImpl, error) {
 			switch column {
 			case "id":
 				return dto.Id, nil
-			case "email":
-				return dto.Email, nil
-			case "locale":
-				return dbModule.NilIfEmptyString(dto.Locale), nil
-			case "surname":
-				return dbModule.NilIfEmptyString(dto.Surname), nil
-			case "name":
-				return dbModule.NilIfEmptyString(dto.Name), nil
-			case "patronymic":
-				return dbModule.NilIfEmptyString(dto.Patronymic), nil
-			case "is_super_admin":
-				return dto.IsSuperAdmin, nil
-			case "roles_ids":
-				if len(dto.RolesIds) == 0 {
-					return nil, nil
-				}
-				return strings.ReplaceAll(fmt.Sprint(dto.RolesIds), " ", ","), nil
-			case "avatar_id":
-				return dbModule.NilIfZeroInt64(dto.AvatarId), nil
+			case "file_id":
+				return dto.FileId, nil
+			case "filename":
+				return dbModule.NilIfEmptyString(dto.Filename), nil
+			case "path":
+				return dbModule.NilIfEmptyString(dto.Path), nil
+			case "upload_filename":
+				return dbModule.NilIfEmptyString(dto.UploadFilename), nil
+			case "mime":
+				return dbModule.NilIfEmptyString(dto.Mime), nil
+			case "user_id":
+				return dto.UserId, nil
 			case "created_at":
 				return dto.CreatedAt, nil
 			case "updated_at":
 				return dto.UpdatedAt, nil
+			case "deleted_at":
+				return dbModule.NilIfZeroTime(dto.DeletedAt), nil
+			case "is_deleted":
+				return dto.IsDeleted, nil
+			case "is_public":
+				return dto.IsPublic, nil
+			case "disk":
+				return dto.Disk, nil
 			}
 			return nil, fmt.Errorf("unknown column: %s", column)
 		},

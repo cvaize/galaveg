@@ -10,7 +10,7 @@ import (
 type DbRepo = *DbRepoImpl
 
 type DbRepoImpl struct {
-	dbRepo *dbModule.DbRepo[RoleDto, ID]
+	dbRepo *dbModule.DbRepo[RoleDto, int64]
 }
 
 type DbRepoImplSettings struct {
@@ -23,7 +23,7 @@ func NewDbRepoImpl(settings DbRepoImplSettings) (*DbRepoImpl, error) {
 	if settings.Table == "" {
 		settings.Table = "roles"
 	}
-	dbRepo, e := dbModule.NewDbRepo[RoleDto, ID](dbModule.DbRepoSettings[RoleDto, ID]{
+	dbRepo, e := dbModule.NewDbRepo[RoleDto, int64](dbModule.DbRepoSettings[RoleDto, int64]{
 		Db:          settings.Db,
 		Table:       settings.Table,
 		Prefix:      settings.Prefix,
@@ -39,7 +39,7 @@ func NewDbRepoImpl(settings DbRepoImplSettings) (*DbRepoImpl, error) {
 				var e error
 				switch column {
 				case "id":
-					dto.ID, e, _ = dbModule.ToInt64(value)
+					dto.Id, e, _ = dbModule.ToInt64(value)
 					break
 				case "name":
 					dto.Name, e, _ = dbModule.ToString(value)
@@ -75,7 +75,7 @@ func NewDbRepoImpl(settings DbRepoImplSettings) (*DbRepoImpl, error) {
 		QueryMapFun: func(column string, dto *RoleDto) (interface{}, error) {
 			switch column {
 			case "id":
-				return dto.ID, nil
+				return dto.Id, nil
 			case "code":
 				return dto.Code, nil
 			case "name":

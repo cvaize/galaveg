@@ -17,7 +17,7 @@ func Confirm(ctx *Context, code, email, password string) *errors.Error {
 		return errors.E404(e, "auth.reset_password.UserNotFound", "")
 	}
 
-	key := makeKey(user.ID, code)
+	key := makeKey(user.Id, code)
 
 	val, err := ctx.kv.GetDel(kvContext, key).Result()
 	if err != nil {
@@ -30,7 +30,7 @@ func Confirm(ctx *Context, code, email, password string) *errors.Error {
 		return errors.E400(e, "auth.reset_password.CodeIsNotEqual", "")
 	}
 
-	err = ctx.auth.UpdatePassword(user.ID, password)
+	err = ctx.auth.UpdatePassword(user.Id, password)
 	if err != nil {
 		return errors.E500(e, "auth.reset_password.UpdatePassword", "")
 	}

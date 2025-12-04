@@ -1,11 +1,7 @@
 package auth
 
-import (
-	"galaveg/internal/modules/users"
-)
-
 type UserDto struct {
-	ID           users.ID
+	Id           int64
 	Email        EmailVO
 	PasswordHash string
 }
