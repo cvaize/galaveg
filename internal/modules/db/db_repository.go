@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"galaveg/internal/infrastructures/db"
 	"github.com/samber/lo"
+	"math"
 	"strconv"
 	"strings"
 )
@@ -157,10 +158,11 @@ func (r *DbRepo[DTO, IdType]) All(filterValues []interface{}, whereClauses []str
 	}
 	defer rows.Close()
 
-	var dtos []*DTO
+	columnsLen := len(columns)
+	var records []*DTO
 	for rows.Next() {
-		vals := make([]interface{}, len(columns))
-		for i := range columns {
+		vals := make([]interface{}, columnsLen)
+		for i := 0; i < columnsLen; i++ {
 			var ii interface{}
 			vals[i] = &ii
 		}
@@ -174,10 +176,62 @@ func (r *DbRepo[DTO, IdType]) All(filterValues []interface{}, whereClauses []str
 		if e != nil {
 			return nil, e
 		}
-		dtos = append(dtos, dto)
+		records = append(records, dto)
 	}
 
-	return dtos, nil
+	return records, nil
+}
+
+func (r *DbRepo[DTO, IdType]) Paginate(page int, perPage int, filterValues []interface{}, whereClauses []string, columns []string, orderBy string) ([]*DTO, int, int, error) {
+	filterValues = makeValues(filterValues)
+	columns = r.getColumns(columns)
+
+	query := fmt.Sprintf("SELECT %s, COUNT(*) OVER () as total_records FROM %s", strings.Join(columns, ", "), r.table)
+	offset := (page - 1) * perPage
+
+	queryWhereClauses(&query, whereClauses)
+	queryOrderBy(&query, orderBy)
+	queryLimit(&query, perPage)
+	queryOffset(&query, offset)
+
+	rows, err := r.db.Query(query, filterValues...)
+	if err != nil {
+		return nil, 0, 0, err
+	}
+	defer rows.Close()
+
+	totalRecords := 0
+	columnsLen := len(columns)
+	valsLen := columnsLen + 1
+	var records []*DTO
+	for rows.Next() {
+		vals := make([]interface{}, valsLen)
+		for i := 0; i < valsLen; i++ {
+			var ii interface{}
+			vals[i] = &ii
+		}
+
+		err = rows.Scan(vals...)
+		if err != nil {
+			return nil, 0, 0, err
+		}
+
+		if totalRecords == 0 {
+			count, e, _ := ToInt64(vals[columnsLen:][0])
+			if e != nil {
+				return nil, 0, 0, e
+			}
+			totalRecords = int(count)
+		}
+		dto, e := r.dtoMapFun(columns, vals[:columnsLen])
+		if e != nil {
+			return nil, 0, 0, e
+		}
+		records = append(records, dto)
+	}
+
+	totalPages := int(math.Ceil(float64(totalRecords) / float64(perPage)))
+	return records, totalRecords, totalPages, nil
 }
 
 func (r *DbRepo[DTO, IdType]) AllIds(filterValues []interface{}, whereClauses []string, orderBy string, limit int, offset int) ([]IdType, error) {

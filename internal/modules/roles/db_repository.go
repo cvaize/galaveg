@@ -110,8 +110,8 @@ func NewDbRepoImpl(settings DbRepoImplSettings) (*DbRepoImpl, error) {
 //	return r.dbRepo.AllIds(query)
 //}
 
-func (r *DbRepoImpl) First(values []interface{}, whereClauses []string, columns []string, orderBy string) (*RoleDto, error) {
-	return r.dbRepo.First(values, whereClauses, columns, orderBy)
+func (r *DbRepoImpl) Paginate(page int, perPage int, filterValues []interface{}, whereClauses []string, columns []string, orderBy string) ([]*RoleDto, int, int, error) {
+	return r.dbRepo.Paginate(page, perPage, filterValues, whereClauses, columns, orderBy)
 }
 
 //

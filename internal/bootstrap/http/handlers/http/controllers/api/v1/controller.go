@@ -23,8 +23,10 @@ func (ctr *Controller) Index(c *gin.Context) {
 	whereClauses := []string{"(name like ? or description like ?)"}
 	columns := []string{"id", "name"}
 	orderBy := "name ASC"
-	dto, err := ctr.ctx.Services.Roles.First(values, whereClauses, columns, orderBy)
-	debug.Dump(dto)
+	records, totalRecords, totalPages, err := ctr.ctx.Services.Roles.Paginate(1, 10, values, whereClauses, columns, orderBy)
+	debug.Dump(records)
+	debug.Dump(totalRecords)
+	debug.Dump(totalPages)
 	debug.Dump(err)
 	c.JSON(http.StatusOK, gin.H{
 		"status": "ok",
