@@ -65,7 +65,7 @@ func Must(cfg *config.Config) *Context {
 	ctx.Infra.SessionStore = utils.Must(session.NewStore(cfg))
 
 	ctx.Services.App = errors.Must(app.NewService(cfg))
-	ctx.Services.Users = errors.Must(users.NewService(users.NewDbRepoImpl(cfg, ctx.Infra.Db)))
+	ctx.Services.Users = errors.Must(users.NewService(utils.Must(users.NewDbRepoImpl(users.DbRepoImplSettings{Db: ctx.Infra.Db, Prefix: cfg.Db.Prefix}))))
 	// TODO: Добавить в конфигурацию "resources/translates/" и локали
 	ctx.Services.Translator = errors.Must(translator.NewServiceFromFiles(cfg.GetFolder("resources/translates/"), cfg.App.Locale))
 	ctx.Services.Template = errors.Must(template.NewService(ctx.Infra.Html))

@@ -2,6 +2,8 @@ package db
 
 import (
 	"database/sql"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -59,4 +61,34 @@ func ToByte(value any) (byte, error, bool) {
 	var v sql.NullByte
 	e := v.Scan(*value.(*interface{}))
 	return v.Byte, e, !v.Valid
+}
+
+func NilIfEmptyString(value string) interface{} {
+	str := strings.TrimSpace(value)
+	if str == "" {
+		return nil
+	}
+	return str
+}
+
+func JsonToArrayInt64(value string) ([]int64, error) {
+	rows := strings.Split(value, ",")
+	ids := make([]int64, len(rows))
+	for i, str := range rows {
+		str = strings.Trim(str, " \n\t[]")
+		i64, i64e := strconv.ParseInt(str, 10, 64)
+		if i64e != nil {
+			return nil, i64e
+		}
+		ids[i] = i64
+	}
+	return ids, nil
+}
+
+func JsonToArrayString(value string) ([]string, error) {
+	result := strings.Split(value, ",")
+	for i2, permission := range result {
+		result[i2] = strings.Trim(permission, " \n\t[]\"")
+	}
+	return result, nil
 }

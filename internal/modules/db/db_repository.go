@@ -7,28 +7,30 @@ import (
 	"galaveg/internal/infrastructures/db"
 	"github.com/samber/lo"
 	"math"
+	"slices"
 	"strconv"
 	"strings"
 )
 
 type DbRepo[DTO any, IdType any] struct {
-	db               db.Db
-	table            string
-	columns          []string
-	withoutIdColumns []string
-	idColumnKey      string
-	dtoMapFun        func(columns []string, values []interface{}) (*DTO, error)
-	queryMapFun      func(column string, dto *DTO) (interface{}, error)
+	db            db.Db
+	table         string
+	selectColumns []string
+	updateColumns []string
+	idColumnKey   string
+	dtoMapFun     func(columns []string, values []interface{}) (*DTO, error)
+	queryMapFun   func(column string, dto *DTO) (interface{}, error)
 }
 
 type DbRepoSettings[DTO any, IdType any] struct {
-	Db          db.Db
-	Table       string
-	Prefix      string
-	Columns     []string
-	IdColumnKey string
-	DtoMapFun   func(columns []string, values []interface{}) (*DTO, error)
-	QueryMapFun func(column string, dto *DTO) (interface{}, error)
+	Db                                     db.Db
+	Table                                  string
+	Prefix                                 string
+	Columns                                []string
+	ColumnsThatShouldNotBeUpdatedByDefault []string
+	IdColumnKey                            string
+	DtoMapFun                              func(columns []string, values []interface{}) (*DTO, error)
+	QueryMapFun                            func(column string, dto *DTO) (interface{}, error)
 }
 
 func NewDbRepo[DTO any, IdType any](settings DbRepoSettings[DTO, IdType]) (*DbRepo[DTO, IdType], error) {
@@ -51,15 +53,15 @@ func NewDbRepo[DTO any, IdType any](settings DbRepoSettings[DTO, IdType]) (*DbRe
 	if settings.Prefix != "" && !strings.HasPrefix(table, settings.Prefix) {
 		table = settings.Prefix + table
 	}
-	withoutIdColumns := lo.Filter(settings.Columns, func(s string, _ int) bool {
-		return s != settings.IdColumnKey
+	updateColumns := lo.Filter(settings.Columns, func(s string, _ int) bool {
+		return s != settings.IdColumnKey && !slices.Contains(settings.ColumnsThatShouldNotBeUpdatedByDefault, s)
 	})
 
 	return &DbRepo[DTO, IdType]{
 		settings.Db,
 		table,
 		settings.Columns,
-		withoutIdColumns,
+		updateColumns,
 		settings.IdColumnKey,
 		settings.DtoMapFun,
 		settings.QueryMapFun,
@@ -68,14 +70,14 @@ func NewDbRepo[DTO any, IdType any](settings DbRepoSettings[DTO, IdType]) (*DbRe
 
 func (r *DbRepo[DTO, IdType]) getColumns(columns []string) []string {
 	if columns == nil || len(columns) == 0 {
-		columns = r.columns
+		columns = r.selectColumns
 	}
 	return columns
 }
 
-func (r *DbRepo[DTO, IdType]) getWithoutIdColumns(columns []string) []string {
+func (r *DbRepo[DTO, IdType]) getUpdateColumns(columns []string) []string {
 	if columns == nil || len(columns) == 0 {
-		columns = r.withoutIdColumns
+		columns = r.updateColumns
 	}
 	return columns
 }
@@ -245,11 +247,7 @@ func (r *DbRepo[DTO, IdType]) Paginate(page int, perPage int, filterValues []int
 func (r *DbRepo[DTO, IdType]) Count(filterValues []interface{}, whereClauses []string) (int64, error) {
 	filterValues = makeValues(filterValues)
 
-	key := "*"
-	if r.idColumnKey != "" {
-		key = r.idColumnKey
-	}
-	query := fmt.Sprintf("SELECT COUNT(%s) FROM %s", key, r.table)
+	query := fmt.Sprintf("SELECT COUNT(*) FROM %s", r.table)
 
 	queryWhereClauses(&query, whereClauses)
 
@@ -310,7 +308,7 @@ func (r *DbRepo[DTO, IdType]) Exists(filterValues []interface{}, whereClauses []
 }
 
 func (r *DbRepo[DTO, IdType]) Insert(dto *DTO, columns []string) error {
-	columns = r.getWithoutIdColumns(columns)
+	columns = r.getUpdateColumns(columns)
 
 	// Preparing an SQL query
 	placeholders := make([]string, len(columns))
@@ -346,7 +344,7 @@ func (r *DbRepo[DTO, IdType]) Update(dto *DTO, filterValues []interface{}, where
 	if whereClauses == nil || len(whereClauses) == 0 {
 		return fmt.Errorf("filters are required for the UPDATE operation")
 	}
-	columns = r.getWithoutIdColumns(columns)
+	columns = r.getUpdateColumns(columns)
 
 	// Prepare the SET part of the query
 	setClauses := make([]string, len(columns))

@@ -28,7 +28,9 @@ func NewDbRepoImpl(settings DbRepoImplSettings) (*DbRepoImpl, error) {
 		Table:       settings.Table,
 		Prefix:      settings.Prefix,
 		IdColumnKey: "id",
-		Columns:     []string{"id", "code", "name", "description", "permissions"},
+		Columns:     []string{"id", "code", "name", "description", "permissions", "created_at", "updated_at"},
+		//
+		ColumnsThatShouldNotBeUpdatedByDefault: []string{"created_at", "updated_at"},
 		DtoMapFun: func(columns []string, values []interface{}) (*RoleDto, error) {
 			var dto RoleDto
 			for i, column := range columns {
@@ -52,11 +54,14 @@ func NewDbRepoImpl(settings DbRepoImplSettings) (*DbRepoImpl, error) {
 					var vStr string
 					vStr, e, _ = dbModule.ToString(value)
 					if vStr != "" {
-						dto.Permissions = strings.Split(vStr, ",")
-						for i2, permission := range dto.Permissions {
-							dto.Permissions[i2] = strings.Trim(permission, " []\"")
-						}
+						dto.Permissions, e = dbModule.JsonToArrayString(vStr)
 					}
+					break
+				case "created_at":
+					dto.CreatedAt, e, _ = dbModule.ToTime(value)
+					break
+				case "updated_at":
+					dto.UpdatedAt, e, _ = dbModule.ToTime(value)
 					break
 				default:
 					continue
@@ -76,21 +81,16 @@ func NewDbRepoImpl(settings DbRepoImplSettings) (*DbRepoImpl, error) {
 			case "name":
 				return dto.Name, nil
 			case "description":
-				str := strings.TrimSpace(dto.Description)
-				if str == "" {
-					return nil, nil
-				}
-				return str, nil
+				return dbModule.NilIfEmptyString(dto.Description), nil
 			case "permissions":
-				// Convert the permissions array to a JSON string
-				permissionsJSON := "[]"
-				if len(dto.Permissions) > 0 {
-					permissionsJSON = fmt.Sprintf(`["%s"]`, strings.Join(dto.Permissions, `","`))
-				}
-				if permissionsJSON == "[]" {
+				if len(dto.Permissions) == 0 {
 					return nil, nil
 				}
-				return permissionsJSON, nil
+				return "[\"" + strings.Join(dto.Permissions, `","`) + "\"]", nil
+			case "created_at":
+				return dto.CreatedAt, nil
+			case "updated_at":
+				return dto.UpdatedAt, nil
 			}
 			return nil, fmt.Errorf("unknown column: %s", column)
 		},
@@ -100,33 +100,3 @@ func NewDbRepoImpl(settings DbRepoImplSettings) (*DbRepoImpl, error) {
 	}
 	return &DbRepoImpl{dbRepo}, nil
 }
-
-//
-//func (r *DbRepoImpl) All(query *dbModule.DbRepoQuery) ([]*RoleDto, error) {
-//	return r.dbRepo.All(query)
-//}
-//
-//func (r *DbRepoImpl) AllIds(query *dbModule.DbRepoQuery) ([]ID, error) {
-//	return r.dbRepo.AllIds(query)
-//}
-
-func (r *DbRepoImpl) Count(filterValues []interface{}, whereClauses []string) (int64, error) {
-	return r.dbRepo.Count(filterValues, whereClauses)
-}
-
-//
-//func (r *DbRepoImpl) Exists(query *dbModule.DbRepoQuery) (bool, error) {
-//	return r.dbRepo.Exists(query)
-//}
-//
-//func (r *DbRepoImpl) Insert(role *RoleDto, columns []string) error {
-//	return r.dbRepo.Insert(role, columns)
-//}
-//
-//func (r *DbRepoImpl) Update(role *RoleDto, filters *dbModule.DbRepoFilters, columns []string) error {
-//	return r.dbRepo.Update(role, filters, columns)
-//}
-//
-//func (r *DbRepoImpl) Delete(filters *dbModule.DbRepoFilters) error {
-//	return r.dbRepo.Delete(filters)
-//}
