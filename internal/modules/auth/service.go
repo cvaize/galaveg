@@ -4,7 +4,7 @@ import (
 	"galaveg/internal/modules/errors"
 	"galaveg/internal/modules/hash"
 	"galaveg/pkg/debug"
-	"strings"
+	"github.com/goforj/godump"
 )
 
 // Errors codes
@@ -87,20 +87,25 @@ func (s *ServiceImpl) Register(email EmailVO, password PasswordVO) *errors.Error
 		return errors.E500(e, "auth.ServiceImpl.Register.HashPasswordFail", "")
 	}
 
-	err := s.dbRepo.Create(&UserDto{Email: email, PasswordHash: passwordHash})
-	if err != nil {
-		eStr := err.Error()
-		if strings.Contains(eStr, "Duplicate entry") {
-			if strings.Contains(eStr, ".email'") {
-				// There is already such a user
-				return errors.E400(e, ErrorRegisterDuplicateUser, "")
-			}
-			// There is already such a user, not intended behavior
-			return errors.E500(e, ErrorRegisterDuplicateUser, "")
-		}
-		// Failed to register user
-		return errors.E500(e, "auth.ServiceImpl.Register.InsertNewUserFail", "")
-	}
+	godump.Dump(passwordHash)
 
-	return nil
+	// TODO: Delete after tests
+	return errors.E500(e, ErrorRegisterDuplicateUser, "")
+	//
+	//err := s.dbRepo.Create(&UserDto{Email: email, PasswordHash: passwordHash})
+	//if err != nil {
+	//	eStr := err.Error()
+	//	if strings.Contains(eStr, "Duplicate entry") {
+	//		if strings.Contains(eStr, ".email'") {
+	//			// There is already such a user
+	//			return errors.E400(e, ErrorRegisterDuplicateUser, "")
+	//		}
+	//		// There is already such a user, not intended behavior
+	//		return errors.E500(e, ErrorRegisterDuplicateUser, "")
+	//	}
+	//	// Failed to register user
+	//	return errors.E500(e, "auth.ServiceImpl.Register.InsertNewUserFail", "")
+	//}
+	//
+	//return nil
 }

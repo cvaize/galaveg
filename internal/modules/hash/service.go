@@ -2,6 +2,8 @@ package hash
 
 import "galaveg/internal/modules/errors"
 
+//import "golang.org/x/crypto/argon2"
+
 type Service = *ServiceImpl
 
 type ServiceImpl struct {
@@ -16,5 +18,6 @@ func (s *ServiceImpl) VerifyPassword(password, hash string) (bool, *errors.Error
 }
 
 func (s *ServiceImpl) HashPassword(password string) (string, *errors.Error) {
+	//argon2.IDKey()
 	return "", nil
 }
