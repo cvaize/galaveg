@@ -5,6 +5,10 @@ import (
 	"net/http"
 )
 
+// Translate keys
+
+const Translate500 = "error.500"
+
 func E400(cause error, code, message string) *Error {
 	logger.Infof("(400) %s: %v", code, cause)
 	return &Error{Code: code, Message: message, Status: http.StatusBadRequest}

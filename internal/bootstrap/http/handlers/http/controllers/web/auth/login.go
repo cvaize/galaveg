@@ -2,6 +2,7 @@ package auth
 
 import (
 	"galaveg/internal/modules/auth"
+	"galaveg/internal/modules/errors"
 	sessionsModule "galaveg/internal/modules/sessions"
 	view "galaveg/internal/modules/view/layouts/auth"
 	"github.com/gin-contrib/sessions"
@@ -47,19 +48,19 @@ func (ctr *Controller) Login(c *gin.Context) {
 			if e != nil {
 				status = e.Status
 				if status >= 500 {
-					viewData.Errors = append(viewData.Errors, ts.T(locale, "error.500"))
+					viewData.Errors = append(viewData.Errors, ts.T(locale, errors.Translate500))
 				} else {
-					if e.Code == "AuthService.Login.UserNotFound" {
-						viewData.Errors = append(viewData.Errors, ts.T(locale, "error.AuthS.UserHasNotYetRegistered"))
+					if e.Code == auth.ErrorLoginUserNotFound {
+						viewData.Errors = append(viewData.Errors, ts.T(locale, auth.TranslateUserHasNotYetRegistered))
 					} else {
-						viewData.Errors = append(viewData.Errors, ts.T(locale, "error.AuthS.CredentialsInvalid"))
+						viewData.Errors = append(viewData.Errors, ts.T(locale, auth.TranslateCredentialsInvalid))
 					}
 				}
 			} else {
 				e = sessionsModule.Login(ctr.ctx.Cfg, session, userId)
 				if e != nil {
 					status = e.Status
-					viewData.Errors = append(viewData.Errors, ts.T(locale, "error.500"))
+					viewData.Errors = append(viewData.Errors, ts.T(locale, errors.Translate500))
 				} else {
 					c.Redirect(http.StatusFound, "/")
 					return

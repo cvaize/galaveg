@@ -3,7 +3,6 @@ package auth
 import (
 	"database/sql"
 	"errors"
-	"galaveg/internal/config"
 	"galaveg/internal/infrastructures/db"
 	moduleErrors "galaveg/internal/modules/errors"
 )
@@ -11,18 +10,28 @@ import (
 type DbRepo = *DbRepoImpl
 
 type DbRepoImpl struct {
-	cfg *config.Config
-	db  db.Db
+	db         db.Db
+	usersTable string
 }
 
-func NewDbRepoImpl(cfg *config.Config, db db.Db) *DbRepoImpl {
-	return &DbRepoImpl{cfg, db}
+type DbRepoImplSettings struct {
+	Db         db.Db
+	UsersTable string
+	Prefix     string
+}
+
+func NewDbRepoImpl(settings DbRepoImplSettings) *DbRepoImpl {
+	if settings.UsersTable == "" {
+		settings.UsersTable = "users"
+	}
+	usersTable := settings.Prefix + settings.UsersTable
+	return &DbRepoImpl{settings.Db, usersTable}
 }
 
 // FirstByEmail retrieves a user by email from the database
 func (r *DbRepoImpl) FirstByEmail(email string) (*UserDto, *moduleErrors.Error) {
 	var user UserDto
-	query := "SELECT id, email, password FROM " + r.cfg.Db.Prefix + "users WHERE email = ?"
+	query := "SELECT id, email, password FROM " + r.usersTable + " WHERE email = ?"
 	err := r.db.QueryRow(query, email).Scan(
 		&user.Id,
 		&user.Email.Value,
@@ -39,7 +48,7 @@ func (r *DbRepoImpl) FirstByEmail(email string) (*UserDto, *moduleErrors.Error) 
 
 // Create creates a new user in the database
 func (r *DbRepoImpl) Create(user *UserDto) *moduleErrors.Error {
-	query := "INSERT INTO " + r.cfg.Db.Prefix + "users (email, password) VALUES (?, ?)"
+	query := "INSERT INTO " + r.usersTable + " (email, password) VALUES (?, ?)"
 	_, err := r.db.Exec(
 		query,
 		user.Email,

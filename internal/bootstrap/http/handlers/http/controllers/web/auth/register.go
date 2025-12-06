@@ -3,6 +3,7 @@ package auth
 import (
 	"galaveg/internal/modules/alerts"
 	"galaveg/internal/modules/auth"
+	"galaveg/internal/modules/errors"
 	sessionsModule "galaveg/internal/modules/sessions"
 	view "galaveg/internal/modules/view/layouts/auth"
 	"github.com/gin-contrib/sessions"
@@ -61,12 +62,12 @@ func (ctr *Controller) Register(c *gin.Context) {
 		if valid {
 			e := authService.Register(auth.NewEmailVO(reqData.Email), auth.NewPasswordVO(reqData.Password))
 			if e != nil {
-				if e.Code == "AuthService.Register.DuplicateUser" {
+				if e.Code == auth.ErrorRegisterDuplicateUser {
 					status = http.StatusBadRequest
-					viewData.Errors = append(viewData.Errors, ts.T(locale, "error.AuthS.UserIsAlreadyRegistered"))
+					viewData.Errors = append(viewData.Errors, ts.T(locale, auth.TranslateUserIsAlreadyRegistered))
 				} else {
 					status = e.Status
-					viewData.Errors = append(viewData.Errors, ts.T(locale, "error.500"))
+					viewData.Errors = append(viewData.Errors, ts.T(locale, errors.Translate500))
 				}
 			} else {
 				alert := alerts.NewSuccessAlert(ts.T(locale, "alert.register.success"))

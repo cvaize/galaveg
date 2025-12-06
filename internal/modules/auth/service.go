@@ -7,6 +7,17 @@ import (
 	"strings"
 )
 
+// Errors codes
+
+const ErrorRegisterDuplicateUser = "auth.ServiceImpl.Register.DuplicateUser"
+const ErrorLoginUserNotFound = "auth.ServiceImpl.Login.UserNotFound"
+
+// Translate keys
+
+const TranslateCredentialsInvalid = "error.Auth.CredentialsInvalid"
+const TranslateUserHasNotYetRegistered = "error.Auth.UserHasNotYetRegistered"
+const TranslateUserIsAlreadyRegistered = "error.Auth.UserIsAlreadyRegistered"
+
 type Service = *ServiceImpl
 
 type ServiceImpl struct {
@@ -40,7 +51,7 @@ func (s *ServiceImpl) Login(email EmailVO, password PasswordVO) (int64, *errors.
 
 	if user == nil {
 		// UserDto not found
-		return 0, errors.E404(e, "auth.ServiceImpl.Login.UserNotFound", "")
+		return 0, errors.E404(e, ErrorLoginUserNotFound, "")
 	}
 
 	is, e := s.hs.VerifyPassword(password.Value, user.PasswordHash)
@@ -67,7 +78,7 @@ func (s *ServiceImpl) Register(email EmailVO, password PasswordVO) *errors.Error
 			return errors.E500(e, "auth.ServiceImpl.Register.EmailParamNotEqualFindEmail", "")
 		}
 		// This user is already registered
-		return errors.E400(e, "auth.ServiceImpl.Register.DuplicateUser", "")
+		return errors.E400(e, ErrorRegisterDuplicateUser, "")
 	}
 
 	passwordHash, e := s.hs.HashPassword(password.Value)
@@ -82,10 +93,10 @@ func (s *ServiceImpl) Register(email EmailVO, password PasswordVO) *errors.Error
 		if strings.Contains(eStr, "Duplicate entry") {
 			if strings.Contains(eStr, ".email'") {
 				// There is already such a user
-				return errors.E400(e, "auth.ServiceImpl.Register.DuplicateUser", "")
+				return errors.E400(e, ErrorRegisterDuplicateUser, "")
 			}
 			// There is already such a user, not intended behavior
-			return errors.E500(e, "auth.ServiceImpl.Register.DuplicateUser", "")
+			return errors.E500(e, ErrorRegisterDuplicateUser, "")
 		}
 		// Failed to register user
 		return errors.E500(e, "auth.ServiceImpl.Register.InsertNewUserFail", "")

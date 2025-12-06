@@ -78,6 +78,6 @@ func Must(cfg *config.Config) *Context {
 	}))
 	ctx.Services.Hash = errors.Must(hash.NewService())
 	ctx.Services.RateLimit = errors.Must(rate_limit.NewService(ctx.Services.Translator))
-	ctx.Services.Auth = errors.Must(auth.NewService(ctx.Services.Hash, auth.NewDbRepoImpl(cfg, ctx.Infra.Db)))
+	ctx.Services.Auth = errors.Must(auth.NewService(ctx.Services.Hash, auth.NewDbRepoImpl(auth.DbRepoImplSettings{Db: ctx.Infra.Db, Prefix: cfg.Db.Prefix})))
 	return ctx
 }
